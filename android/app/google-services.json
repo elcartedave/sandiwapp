@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1014446807964",
+    "project_id": "sandiwapp-81440",
+    "storage_bucket": "sandiwapp-81440.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014446807964:android:52f15d3fc4a938d57c4659",
+        "android_client_info": {
+          "package_name": "com.example.sandiwapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwf8DJxElzlkNmmQhY1oHS4vM1v2Q3Ros"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

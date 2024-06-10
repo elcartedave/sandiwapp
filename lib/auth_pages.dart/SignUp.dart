@@ -1,8 +1,12 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
+import 'package:sandiwapp/providers/user_auth_provider.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -23,6 +27,7 @@ class _SignUpState extends State<SignUp> {
   final _contactnumberController = TextEditingController();
   final _ageController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,7 +211,47 @@ class _SignUpState extends State<SignUp> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      BlackButton(text: "SIGN UP"),
+                      !_isLoading
+                          ? BlackButton(
+                              text: "SIGN UP",
+                              onTap: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  _formKey.currentState!.save();
+                                  String? message = await context
+                                      .read<UserAuthProvider>()
+                                      .authService
+                                      .signUp(
+                                          _nameController.text,
+                                          _nicknameController.text,
+                                          _birthdayController.text,
+                                          _ageController.text,
+                                          _contactnumberController.text,
+                                          _collegeaddressController.text,
+                                          _homeaddressController.text,
+                                          _emailController.text,
+                                          _passwordController.text);
+                                  setState(() {
+                                    _isLoading = false;
+                                    if (message != "" && message!.isNotEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  message))); //shows error message
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(message!)));
+
+                                      Navigator.pop(context);
+                                    }
+                                  });
+                                }
+                              },
+                            )
+                          : const Center(child: CircularProgressIndicator()),
                       const SizedBox(height: 10),
                       MyTextButton(
                         text: "Go Back",

@@ -17,6 +17,11 @@ class MyTextField2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Please enter a valid input!";
+          }
+        },
         cursorColor: Colors.black,
         controller: controller,
         obscureText: obscureText,
@@ -30,6 +35,10 @@ class MyTextField2 extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(width: 2, color: Color(0xFF1A1A1A)),
             borderRadius: BorderRadius.circular(8),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 2, color: Color(0xFF1A1A1A)),
+            borderRadius: BorderRadius.circular(15),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(width: 2, color: Colors.black),

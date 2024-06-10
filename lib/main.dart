@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sandiwapp/auth_pages.dart/LogoPage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:sandiwapp/providers/user_auth_provider.dart';
+import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  runApp(const RootWidget());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: ((context) => UserAuthProvider()))
+    ],
+    child: const RootWidget(),
+  ));
 }
 
 class RootWidget extends StatelessWidget {
