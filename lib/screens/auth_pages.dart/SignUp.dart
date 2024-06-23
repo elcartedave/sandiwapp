@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:intl/intl.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
+import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 
 class SignUp extends StatefulWidget {
@@ -26,11 +28,28 @@ class _SignUpState extends State<SignUp> {
   final _homeaddressController = TextEditingController();
   final _contactnumberController = TextEditingController();
   final _ageController = TextEditingController();
+  final _sponsorController = TextEditingController();
+  final _batchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _birthdayController.text = DateFormat('MMMM d, yyyy').format(picked);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         backgroundColor: Color(0xFFEEEEEE),
@@ -91,15 +110,20 @@ class _SignUpState extends State<SignUp> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Birthday (mm/dd/yy)",
+                              "Birthday",
                               style: blackText,
                               textAlign: TextAlign.start,
                             ),
                             const SizedBox(height: 5),
-                            MyTextField2(
-                              controller: _birthdayController,
-                              obscureText: false,
-                              hintText: "Enter your birthday",
+                            GestureDetector(
+                              onTap: () => _selectDate(context),
+                              child: AbsorbPointer(
+                                child: MyTextField2(
+                                  controller: _birthdayController,
+                                  obscureText: false,
+                                  hintText: "Enter your birthday",
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -155,6 +179,26 @@ class _SignUpState extends State<SignUp> {
                       controller: _homeaddressController,
                       obscureText: false,
                       hintText: "Enter your address"),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Sponsor",
+                    style: blackText,
+                  ),
+                  const SizedBox(height: 5),
+                  MyTextField2(
+                      controller: _sponsorController,
+                      obscureText: false,
+                      hintText: "Enter your sponsor"),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Batch",
+                    style: blackText,
+                  ),
+                  const SizedBox(height: 5),
+                  MyTextField2(
+                      controller: _batchController,
+                      obscureText: false,
+                      hintText: "Enter your batch (e.g. Tindig, Alpas)"),
                   const SizedBox(height: 10),
                   Text(
                     "Email Address",
@@ -220,19 +264,34 @@ class _SignUpState extends State<SignUp> {
                                     _isLoading = true;
                                   });
                                   _formKey.currentState!.save();
+                                  MyUser user = MyUser(
+                                    name: _nameController.text,
+                                    nickname: _nicknameController.text,
+                                    birthday: _birthdayController.text,
+                                    age: _ageController.text,
+                                    contactno: _contactnumberController.text,
+                                    collegeAddress:
+                                        _collegeaddressController.text,
+                                    homeAddress: _homeaddressController.text,
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    sponsor: _sponsorController.text,
+                                    batch: _batchController.text,
+                                    confirmed: false,
+                                    paid: false,
+                                    balance: "0",
+                                    merit: "0",
+                                    demerit: "0",
+                                    position: "",
+                                    photoUrl: "",
+                                    lupon: "",
+                                    paymentProofUrl: "",
+                                    acknowledged: false,
+                                  );
                                   String? message = await context
                                       .read<UserAuthProvider>()
                                       .authService
-                                      .signUp(
-                                          _nameController.text,
-                                          _nicknameController.text,
-                                          _birthdayController.text,
-                                          _ageController.text,
-                                          _contactnumberController.text,
-                                          _collegeaddressController.text,
-                                          _homeaddressController.text,
-                                          _emailController.text,
-                                          _passwordController.text);
+                                      .signUp(user);
                                   setState(() {
                                     _isLoading = false;
                                     if (message != "" && message!.isNotEmpty) {
@@ -242,8 +301,9 @@ class _SignUpState extends State<SignUp> {
                                                   message))); //shows error message
                                     } else {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(message!)));
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Sign up success! Wait for the admin approval")));
 
                                       Navigator.pop(context);
                                     }

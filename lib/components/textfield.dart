@@ -6,9 +6,11 @@ class MyTextField2 extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final int? maxLines;
 
   const MyTextField2(
       {required this.controller,
+      this.maxLines,
       required this.obscureText,
       required this.hintText,
       super.key});
@@ -36,8 +38,12 @@ class MyTextField2 extends StatelessWidget {
             borderSide: const BorderSide(width: 2, color: Color(0xFF1A1A1A)),
             borderRadius: BorderRadius.circular(8),
           ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 2, color: Colors.red),
+            borderRadius: BorderRadius.circular(15),
+          ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(width: 2, color: Color(0xFF1A1A1A)),
+            borderSide: BorderSide(width: 2, color: Colors.red),
             borderRadius: BorderRadius.circular(15),
           ),
           focusedBorder: OutlineInputBorder(
@@ -48,6 +54,7 @@ class MyTextField2 extends StatelessWidget {
           hintStyle:
               GoogleFonts.patrickHand(color: Color(0xffA1A1A1), fontSize: 15),
         ),
+        maxLines: maxLines ?? 1,
         style: GoogleFonts.patrickHand(
             color: Color(0xFF1A1A1A),
             fontSize:

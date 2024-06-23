@@ -26,6 +26,63 @@ class BlackButton extends StatelessWidget {
   }
 }
 
+class WhiteButton extends StatefulWidget {
+  final Function()? onTap;
+  final bool? acknowledged;
+  final String text;
+  const WhiteButton(
+      {this.acknowledged, required this.text, this.onTap, super.key});
+
+  @override
+  State<WhiteButton> createState() => _WhiteButtonState();
+}
+
+class _WhiteButtonState extends State<WhiteButton> {
+  late bool isClicked;
+  void handleTap() {
+    setState(() {
+      isClicked = !isClicked;
+    });
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    isClicked = widget.acknowledged ?? false;
+
+    return GestureDetector(
+      onTap: handleTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        height: 50,
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: Colors.black),
+            color: widget.text != "Acknowledge"
+                ? Colors.white
+                : isClicked
+                    ? Colors.black
+                    : Colors.white,
+            borderRadius: BorderRadius.circular(10)),
+        child: Center(
+            child: Text(
+          widget.text != "Acknowledge"
+              ? widget.text
+              : isClicked
+                  ? "Acknowledged"
+                  : widget.text,
+          style: widget.text != "Acknowledge"
+              ? blackText
+              : isClicked
+                  ? whiteText
+                  : blackText,
+        )),
+      ),
+    );
+  }
+}
+
 class MyTextButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
