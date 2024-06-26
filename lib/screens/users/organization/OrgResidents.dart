@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class OrgResidents extends StatefulWidget {
 class _OrgResidentsState extends State<OrgResidents> {
   // Function to group users by lupon
   Map<String, List<MyUser>> groupByLupon(List<MyUser> users) {
-    Map<String, List<MyUser>> groupedUsers = {};
+    SplayTreeMap<String, List<MyUser>> groupedUsers = SplayTreeMap();
     for (var user in users) {
       if (user.lupon != null) {
         if (groupedUsers.containsKey(user.lupon)) {
@@ -33,10 +35,11 @@ class _OrgResidentsState extends State<OrgResidents> {
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _usersStream = context.watch<UserProvider>().users;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
           Container(
+              padding: const EdgeInsets.fromLTRB(16.0, 16, 0, 16),
               alignment: Alignment.topLeft,
               child: PatrickHand(text: "Mga Residente", fontSize: 33)),
           Expanded(

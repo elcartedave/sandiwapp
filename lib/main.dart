@@ -5,6 +5,7 @@ import 'package:sandiwapp/providers/announcement_provider.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
 import 'package:sandiwapp/providers/message_provider.dart';
+import 'package:sandiwapp/providers/payment_provider.dart';
 import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/HomePage.dart';
@@ -13,17 +14,12 @@ import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/screens/users/UserHomePage.dart';
 import 'firebase_options.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message: ${message.messageId}');
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: ((context) => UserAuthProvider())),
@@ -33,6 +29,7 @@ void main() async {
       ChangeNotifierProvider(create: ((context) => MessageProvider())),
       ChangeNotifierProvider(create: ((context) => EventProvider())),
       ChangeNotifierProvider(create: ((context) => FormsProvider())),
+      ChangeNotifierProvider(create: ((context) => PaymentProvider())),
     ],
     child: const RootWidget(),
   ));

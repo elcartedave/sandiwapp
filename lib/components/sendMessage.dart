@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
+import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/message_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
@@ -31,7 +33,7 @@ class _SendMessageState extends State<SendMessage> {
   ];
   String? _selectedLupon;
   late String id;
-
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
@@ -144,25 +146,34 @@ class _SendMessageState extends State<SendMessage> {
             }),
       ),
       actions: [
-        BlackButton(
-          text: "Ipadala",
-          onTap: () async {
-            if (_formKey.currentState!.validate()) {
-              String? result = await context
-                  .read<MessageProvider>()
-                  .sendMessage(id, _messageController.text, _selectedLupon!);
-              if (result == null || result == "") {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.white,
-                    content: Text("Message sent")));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.white, content: Text(result)));
-              }
-              Navigator.of(context).pop();
-            }
-          },
-        ),
+        _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+              )
+            : BlackButton(
+                text: "Ipadala",
+                onTap: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    String? result = await context
+                        .read<MessageProvider>()
+                        .sendMessage(
+                            id, _messageController.text, _selectedLupon!);
+                    if (result == null || result == "") {
+                      showCustomSnackBar(context, "Message sent", 100);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.white,
+                          content: Text(result)));
+                    }
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
         Center(
           child: Padding(
             padding: const EdgeInsets.only(top: 12.0),

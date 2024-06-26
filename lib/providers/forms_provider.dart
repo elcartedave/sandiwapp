@@ -16,4 +16,17 @@ class FormsProvider with ChangeNotifier {
     notifyListeners();
     return _formsStream;
   }
+
+  Future<String> createForms(String title, DateTime dueDate, String url) async {
+    return firebaseService.createForms(title, dueDate, url);
+  }
+
+  Future<String> editForms(
+      String title, DateTime dueDate, String url, String id) async {
+    return firebaseService.editForms(title, dueDate, url, id);
+  }
+
+  Future<String> deleteForms(String id) {
+    return firebaseService.deleteForms(id);
+  }
 }

@@ -11,6 +11,7 @@ import 'package:sandiwapp/components/taskManager.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
 import 'package:sandiwapp/screens/users/dashboard/CommiteeAnnouncement.dart';
 import 'package:sandiwapp/screens/users/dashboard/PaymentPage.dart';
 
@@ -26,7 +27,6 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
         context.watch<UserProvider>().fetchCurrentUser();
-
     return StreamBuilder(
         stream: _userStream,
         builder: (context, snapshot) {
@@ -41,12 +41,19 @@ class _UserDashboardState extends State<UserDashboard> {
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
             context.read<UserAuthProvider>().signOut();
-            return Center(child: Text("User data not available"));
+            return const Center(child: Text("User data not available"));
           }
 
           MyUser user =
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-          return Padding(
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                opacity: 0.5,
+                image: AssetImage("assets/images/bg.png"),
+                fit: BoxFit.fill,
+              ),
+            ),
             padding: const EdgeInsets.only(bottom: 16.0),
             child: SingleChildScrollView(
               child: Padding(
@@ -60,7 +67,7 @@ class _UserDashboardState extends State<UserDashboard> {
                       style: GoogleFonts.patrickHand(fontSize: 32),
                     ),
                     const SizedBox(height: 20),
-                    AmountBox(amount: "${user.balance}", onTap: () {}),
+                    AmountBox(amount: user.balance, onTap: () {}),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -71,12 +78,12 @@ class _UserDashboardState extends State<UserDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PaymentPage()),
+                                  builder: (context) => PaymentPage(user)),
                             );
                           },
                         ),
                         WhiteButton(
-                          acknowledged: user!.acknowledged,
+                          acknowledged: user.acknowledged,
                           text: "Acknowledge",
                           onTap: () async {
                             await context
@@ -127,7 +134,56 @@ class _UserDashboardState extends State<UserDashboard> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 25),
+                    SizedBox(height: 20),
+                    if (user.position!.contains("Pinuno") &&
+                        user.lupon!.contains("Pananalapi"))
+                      Column(
+                        children: [
+                          WhiteButton(
+                            text: "Mag-assign ng Balanse",
+                            onTap: () {},
+                          ),
+                          const SizedBox(height: 10),
+                          WhiteButton(
+                            text: "Mag-assign ng Merits/Demerits",
+                            onTap: () {},
+                          ),
+                          const SizedBox(height: 10),
+                          WhiteButton(
+                            text: "View Payments",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewPaymentsPage()), //pupunta sa sign in page
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                      ),
+                    if (user.position!.contains("Pinuno") &&
+                        user.lupon!.contains("Kasapian"))
+                      Column(
+                        children: [
+                          WhiteButton(
+                            text: "Applicant Announcements",
+                            onTap: () {},
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                      ),
+                    if (user.position!.contains("Kalihim"))
+                      Column(
+                        children: [
+                          WhiteButton(
+                            text: "Attendance Tracker",
+                            onTap: () {},
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                      ),
                     Text(
                       'Ang Aking Lupon:',
                       style: GoogleFonts.patrickHand(fontSize: 20),
@@ -139,6 +195,17 @@ class _UserDashboardState extends State<UserDashboard> {
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
+                            if (user.position!.contains("Pinuno"))
+                              Row(
+                                children: [
+                                  MyDottedBorder(
+                                    text: "Mga Kasapi ng Lupon",
+                                    icon: Icon(Icons.people),
+                                    onTap: () {},
+                                  ),
+                                  const SizedBox(width: 15)
+                                ],
+                              ),
                             MyDottedBorder(
                               text: "Committee Announcements",
                               icon: Icon(Icons.announcement),
@@ -147,7 +214,10 @@ class _UserDashboardState extends State<UserDashboard> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          CommitteeAnnouncement()), //pupunta sa sign in page
+                                          CommitteeAnnouncement(
+                                            isLuponHead: user.position!
+                                                .contains("Pinuno"),
+                                          )), //pupunta sa sign in page
                                 );
                               },
                             ),

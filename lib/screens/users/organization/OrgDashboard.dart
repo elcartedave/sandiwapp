@@ -62,7 +62,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
       case 1:
         return "Announcements";
       case 2:
-        return "Events";
+        return "Events/GA";
       case 3:
         return "Forms";
       case 4:
@@ -91,7 +91,14 @@ class _OrgDashboardState extends State<OrgDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          opacity: 0.7,
+          image: AssetImage("assets/images/bg1.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
       padding:
           const EdgeInsets.only(left: 16.0, right: 8.0, top: 0.0, bottom: 8.0),
       child: Column(
@@ -114,7 +121,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 ),
                 const SizedBox(width: 10),
                 OrgNavigator(
-                  label: "Events",
+                  label: "Events/GA",
                   onTap: () => _onItemTapped(2),
                   clicked: clicked,
                 ),
@@ -135,6 +142,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
           ),
           Expanded(
             child: PageView(
+              physics: RangeMaintainingScrollPhysics(),
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {

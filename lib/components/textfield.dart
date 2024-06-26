@@ -3,13 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 
 class MyTextField2 extends StatelessWidget {
   //HINGIAN NG INPUT SA USER
+  final TextInputType? keyboardType;
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
   final int? maxLines;
+  final bool? isNumber; //required
 
   const MyTextField2(
       {required this.controller,
+      this.keyboardType,
+      this.isNumber,
       this.maxLines,
       required this.obscureText,
       required this.hintText,
@@ -23,6 +27,11 @@ class MyTextField2 extends StatelessWidget {
           if (value == null || value.isEmpty) {
             return "Please enter a valid input!";
           }
+          if (isNumber != null) {
+            if (double.tryParse(value) == null) {
+              return "Please enter a number!";
+            }
+          }
         },
         cursorColor: Colors.black,
         controller: controller,
@@ -31,7 +40,7 @@ class MyTextField2 extends StatelessWidget {
           contentPadding: const EdgeInsets.only(
             top: 12,
             left: 14,
-            right: 48,
+            right: 14,
             bottom: 12,
           ),
           enabledBorder: OutlineInputBorder(
@@ -40,11 +49,11 @@ class MyTextField2 extends StatelessWidget {
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(width: 2, color: Colors.red),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(8),
           ),
           errorBorder: OutlineInputBorder(
             borderSide: BorderSide(width: 2, color: Colors.red),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(8),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(width: 2, color: Colors.black),
@@ -59,6 +68,8 @@ class MyTextField2 extends StatelessWidget {
             color: Color(0xFF1A1A1A),
             fontSize:
                 19), // appearance of the text being typed in the textfield
+        keyboardType: keyboardType,
+        keyboardAppearance: Brightness.dark,
       ),
     );
   }

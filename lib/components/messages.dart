@@ -99,7 +99,12 @@ class _MyMessagesState extends State<MyMessages> {
                   return ListView.builder(
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      return MessageItem(message: messages[index]);
+                      bool? doesContain =
+                          messages[index].sender.contains("Notification");
+                      return MessageItem(
+                        message: messages[index],
+                        doesContain: doesContain,
+                      );
                     },
                   );
                 }),

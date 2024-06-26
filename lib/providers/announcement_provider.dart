@@ -75,4 +75,17 @@ class AnnouncementProvider with ChangeNotifier {
   Stream<DocumentSnapshot> fetchSpecificAnnouncement(String id) {
     return firebaseService.getSpecificAnnouncement(id);
   }
+
+  Future<String> createAnnouncement(
+      String title, String content, String committee) async {
+    return firebaseService.createAnnouncement(title, content, committee);
+  }
+
+  Future<String> deleteAnnouncement(String id) {
+    return firebaseService.deleteAnnouncement(id);
+  }
+
+  Future<String> editAnnouncement(String title, String content, String id) {
+    return firebaseService.editAnnouncement(title, content, id);
+  }
 }

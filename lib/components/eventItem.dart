@@ -2,20 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart'; // Add this line
-import 'package:intl/intl.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
-import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart'; // Add this line
 
 class EventItem extends StatefulWidget {
   final Event event;
-  const EventItem({required this.event, super.key});
+  final bool isPast;
+  const EventItem({required this.isPast, required this.event, super.key});
 
   @override
   State<EventItem> createState() => _EventItemState();
@@ -25,6 +26,10 @@ class _EventItemState extends State<EventItem> {
   String clicked = "Not";
 
   void _toggleGoing(String userId, bool going) async {
+    // if (widget.isPast) {
+    //   showCustomSnackBar(context, "You cannot edit a past event", 85);
+    //   return;
+    // }
     await context.read<EventProvider>().toggleGoing(widget.event.id!, going);
     clicked = going ? "Going" : "Not";
   }
@@ -58,25 +63,26 @@ class _EventItemState extends State<EventItem> {
                     width: double.infinity,
                     fit: BoxFit.fill,
                   )
-                : Image.network(
-                    widget.event.photoUrl!,
+                : ImageBuffer(
+                    photoURL: widget.event.photoUrl!,
                     width: double.infinity,
                     height: 150,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.contain,
                   ),
           ),
           const SizedBox(height: 8),
           Text(
-            widget.event.title.toUpperCase(),
+            widget.event.title,
             style: GoogleFonts.patrickHand(
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 7),
-          PatrickHand(
-            text: widget.event.place,
-            fontSize: 20,
+          SelectableText(
+            widget.event.place,
+            style: GoogleFonts.patrickHand(fontSize: 20, color: Colors.black),
+            textAlign: TextAlign.left,
           ),
           const SizedBox(height: 5),
           PatrickHand(
@@ -96,8 +102,11 @@ class _EventItemState extends State<EventItem> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                      child: CircularProgressIndicator(
-                    color: Colors.black,
+                      child: SizedBox(
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
                   ));
                 }
                 if (snapshot.hasError) {
@@ -114,55 +123,66 @@ class _EventItemState extends State<EventItem> {
                     widget.event.attendees?.contains(user.id!) ?? false;
                 clicked = isGoing ? "Going" : "Not";
 
-                return Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          _toggleGoing(user.id!, true);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 2, color: Colors.black),
-                              color: clicked == "Going"
-                                  ? Colors.black
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                              child: Text(
-                            clicked == "Going" ? "I'm Going" : "Going",
-                            style: clicked == "Going" ? whiteText : blackText,
-                          )),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          _toggleGoing(user.id!, false);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 2, color: Colors.black),
-                              color: clicked != "Not"
-                                  ? Colors.white
-                                  : Colors.black,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                              child: Text(
-                            clicked != "Not" ? "Not Going" : "I'm Not Going",
-                            style: clicked != "Not" ? blackText : whiteText,
-                          )),
-                        ),
-                      ),
-                    )
-                  ],
-                );
+                return widget.isPast
+                    ? WhiteButton(
+                        text:
+                            "Bilang ng Mga Umattend: ${widget.event.attendees!.length}")
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _toggleGoing(user.id!, true);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2, color: Colors.black),
+                                    color: clicked == "Going"
+                                        ? Colors.black
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Center(
+                                    child: Text(
+                                  clicked == "Going" ? "I'm Going" : "Going",
+                                  style: clicked == "Going"
+                                      ? whiteText
+                                      : blackText,
+                                )),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _toggleGoing(user.id!, false);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2, color: Colors.black),
+                                    color: clicked != "Not"
+                                        ? Colors.white
+                                        : Colors.black,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Center(
+                                    child: Text(
+                                  clicked != "Not"
+                                      ? "Not Going"
+                                      : "I'm Not Going",
+                                  style:
+                                      clicked != "Not" ? blackText : whiteText,
+                                )),
+                              ),
+                            ),
+                          )
+                        ],
+                      );
               })
         ],
       ),

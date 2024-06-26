@@ -4,7 +4,7 @@ String dateFormatter(DateTime dateTime) {
   String day = dateTime.day.toString();
   String month = DateFormat.MMMM().format(dateTime);
   String year = dateTime.year.toString();
-  String time = DateFormat('h a').format(dateTime);
+  String time = DateFormat('h:mm a').format(dateTime);
   String dayOfWeek = DateFormat.EEEE().format(dateTime);
 
   return '${tagalogNg(dayOfWeek)}, Ika-$day ng $month $year, $time';

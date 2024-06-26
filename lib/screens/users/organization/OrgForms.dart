@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/showFormsDialog.dart';
+import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/formsModel.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
+import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/execs/CreateFormsPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrgForms extends StatefulWidget {
@@ -19,13 +24,56 @@ class _OrgFormsState extends State<OrgForms> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _formsStream = context.watch<FormsProvider>().forms;
+    Future<bool> isCurrentPinuno =
+        context.read<UserProvider>().isCurrentPinuno();
     return Container(
       padding: const EdgeInsets.fromLTRB(16.0, 16, 0, 16),
       child: Column(
         children: [
-          Container(
-            alignment: Alignment.topLeft,
-            child: PatrickHand(text: "Forms", fontSize: 33),
+          Row(
+            children: [
+              Expanded(child: PatrickHand(text: "Mga Forms", fontSize: 33)),
+              const SizedBox(width: 5),
+              FutureBuilder(
+                  future: isCurrentPinuno,
+                  builder: (context, pinunoSnapshot) {
+                    if (pinunoSnapshot.data == true) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateFormsPage()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: DottedBorder(
+                            borderType: BorderType.RRect,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 4),
+                            radius: Radius.circular(16),
+                            strokeWidth: 2,
+                            dashPattern: [8, 2],
+                            borderPadding: EdgeInsets.all(2),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.black,
+                                ),
+                                Text(
+                                  "Magdagdag",
+                                  style: blackText,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return Container();
+                  })
+            ],
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -70,7 +118,16 @@ class _OrgFormsState extends State<OrgForms> {
                         ...upcomingForms.map((form) => InkWell(
                               splashColor:
                                   const Color.fromARGB(0, 255, 255, 255),
-                              onTap: () {},
+                              onTap: () {
+                                launchUrl(Uri.parse(form.url),
+                                    mode: LaunchMode.platformDefault);
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        ShowFormsDialog(form: form));
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Row(
@@ -116,11 +173,11 @@ class _OrgFormsState extends State<OrgForms> {
                           child: const Center(
                             child: Text(
                               "No Active Forms!",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w300),
+                              style: TextStyle(fontSize: 13),
                             ),
                           ),
                         ),
+                      const SizedBox(height: 16),
                       if (pastForms.isNotEmpty) ...[
                         Center(
                           child: Text("Previous Forms",
@@ -132,6 +189,12 @@ class _OrgFormsState extends State<OrgForms> {
                               onTap: () {
                                 launchUrl(Uri.parse(form.url),
                                     mode: LaunchMode.platformDefault);
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        ShowFormsDialog(form: form));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -178,8 +241,7 @@ class _OrgFormsState extends State<OrgForms> {
                           child: const Center(
                             child: Text(
                               "No Previous Forms!",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w300),
+                              style: TextStyle(fontSize: 13),
                             ),
                           ),
                         ),

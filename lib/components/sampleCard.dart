@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
@@ -38,9 +39,9 @@ class _SampleCardState extends State<SampleCard> {
                           width: double.infinity,
                           height: 100,
                         )
-                      : Image.network(
-                          widget.user.photoUrl!,
-                          fit: BoxFit.fill,
+                      : ImageBuffer(
+                          photoURL: widget.user.photoUrl!,
+                          fit: BoxFit.contain,
                           width: double.infinity,
                           height: 100,
                         ),

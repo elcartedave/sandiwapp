@@ -32,4 +32,44 @@ class FirebaseMessageApi {
       return ("${e.toString()}");
     }
   }
+
+  Future<String?> messageEveryone(
+      String senderEmail, String content, String name) async {
+    try {
+      late String receiver;
+      if (name.contains("Lupon ng ")) {
+        receiver = await firebaseUserAPI.getEmailOfLuponHead("Pinuno ng $name");
+      } else {
+        receiver = await firebaseUserAPI.getEmailFromName(name);
+      }
+      print("RECEIVER: $receiver");
+      String sender = await firebaseUserAPI.getNameFromEmail(senderEmail);
+      print("sender: $sender");
+      await _firestore.collection('messages').doc().set({
+        'content': content,
+        'date': Timestamp.fromDate(DateTime.now()),
+        'receiver': receiver,
+        'sender': sender,
+      });
+      return "";
+    } catch (e) {
+      return ("${e.toString()}");
+    }
+  }
+
+  Future<void> notify(
+      String receiverId, String message, String senderName) async {
+    try {
+      String receiver = await firebaseUserAPI.getEmailFromID(receiverId);
+      print("Receiver: ${receiver}");
+      await _firestore.collection('messages').doc().set({
+        'content': message,
+        'date': Timestamp.fromDate(DateTime.now()),
+        'receiver': receiver,
+        'sender': senderName
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

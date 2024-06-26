@@ -36,6 +36,65 @@ class FirebaseUserAPI {
     }
   }
 
+  Future<String> getIDFromName(String name) async {
+    try {
+      QuerySnapshot querySnapshot = await db
+          .collection('users')
+          .where('name', isEqualTo: name)
+          .limit(1)
+          .get();
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      return documentSnapshot.id;
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
+  Future<String> getLuponOfPinuno() async {
+    try {
+      bool isPinuno = await isCurrentPinuno();
+      if (isPinuno) {
+        DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+            await db.collection("users").doc(firebaseService.getUserId()).get();
+        if (docSnapshot.exists) {
+          Map<String, dynamic>? data = docSnapshot.data();
+          if (data != null && data.containsKey('lupon')) {
+            print("Position: ${data['position']}");
+            if (data['position'] == "Pangkalahatang Kalihim" ||
+                data['position'] == "Ikalawang Tagapangulo" ||
+                data['position'] == "Tagapangulo") {
+              return data['position'] + data['lupon'];
+            }
+            print(data['lupon']);
+            return data['lupon'];
+          }
+          return '';
+        }
+        return '';
+      }
+      return '';
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
+  Future<String> getIDofHead(String lupon) async {
+    try {
+      QuerySnapshot querySnapshot = await db
+          .collection('users')
+          .where('position', isEqualTo: 'Pinuno ng $lupon')
+          .limit(1)
+          .get();
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      return documentSnapshot.id;
+    } catch (e) {
+      print(e.toString());
+      return "";
+    }
+  }
+
   Future<String> getIDFromEmail(String email) async {
     try {
       QuerySnapshot querySnapshot = await db
@@ -135,6 +194,51 @@ class FirebaseUserAPI {
     }
   }
 
+  Future<String> getNameOfLuponHead(String lupon) async {
+    try {
+      print(lupon);
+      QuerySnapshot querySnapshot = await db
+          .collection("users")
+          .where('position', isEqualTo: lupon)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.first.get('name');
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
+  Future<String> getEmailFromName(String name) async {
+    try {
+      print(name);
+      QuerySnapshot querySnapshot = await db
+          .collection("users")
+          .where('name', isEqualTo: name)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.first.get('email');
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
+  Future<String> getNameFromEmail(String email) async {
+    try {
+      print(email);
+      QuerySnapshot querySnapshot = await db
+          .collection("users")
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.first.get('name');
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
   Future<void> acceptAndAddLupon(String email, String lupon) async {
     final querySnapshot = await db
         .collection('users')
@@ -186,6 +290,13 @@ class FirebaseUserAPI {
     return db
         .collection("users")
         .where("confirmed", isEqualTo: false)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getApplicants() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Aplikante")
         .snapshots();
   }
 

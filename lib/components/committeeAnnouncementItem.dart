@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/models/announcementModel.dart';
 
 class CommAnnouncementItem extends StatefulWidget {
@@ -19,7 +20,7 @@ class _CommAnnouncementItemState extends State<CommAnnouncementItem> {
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
             border: Border.all(width: 2, color: Colors.black),
-            color: Colors.white,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
@@ -29,15 +30,17 @@ class _CommAnnouncementItemState extends State<CommAnnouncementItem> {
                   fontFamily: 'Inter',
                   fontSize: 20,
                   fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
             ),
             Text(
-              "${widget.commAnnouncement.date.year.toString()}-${widget.commAnnouncement.date.month.toString().padLeft(2, '0')}-${widget.commAnnouncement.date.day.toString().padLeft(2, '0')} ${widget.commAnnouncement.date.hour.toString().padLeft(2, '0')}:${widget.commAnnouncement.date.minute.toString().padLeft(2, '0')}",
+              dateFormatter(widget.commAnnouncement.date),
               style: TextStyle(fontFamily: 'Inter', fontSize: 15),
             ),
             const SizedBox(height: 10),
             Text(
               widget.commAnnouncement.content,
               style: TextStyle(fontFamily: 'Inter', fontSize: 15),
+              textAlign: TextAlign.justify,
             ),
           ],
         ),

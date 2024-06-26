@@ -55,6 +55,20 @@ class FirebaseAuthAPI {
     }
   }
 
+  Future<bool?> isApplicant(String email) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .where('position', isEqualTo: 'Aplikante')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<String?> signUp(MyUser user) async {
     UserCredential credential;
     try {

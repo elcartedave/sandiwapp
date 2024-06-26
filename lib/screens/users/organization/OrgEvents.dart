@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/eventItem.dart';
+import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
+import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/execs/CreateEventPage.dart';
+import 'package:sandiwapp/screens/users/organization/ViewEventPage.dart';
 
 class OrgEvents extends StatefulWidget {
   const OrgEvents({super.key});
@@ -14,44 +19,69 @@ class OrgEvents extends StatefulWidget {
 }
 
 class _OrgEventsState extends State<OrgEvents> {
-  final List<Event> events = [
-    Event(
-      date: DateTime.now(),
-      title: "UPSSB SEM ENDER",
-      place: "Pansol, Calamba City, Laguna",
-      fee: "250",
-      photoUrl:
-          "https://static.wixstatic.com/media/a2331f_ec8660a43e8e43328b15a7b834c9b6e9~mv2.jpg/v1/crop/x_0,y_25,w_1000,h_512/fill/w_972,h_494,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/_MG_9145.jpg",
-      attendees: [],
-    ),
-    Event(
-      date: DateTime.now(),
-      title: "Miting De Avance featuring alums brod and sisses night",
-      place: "Makiling Ballroom Hall pero kahit saan naman pwede",
-      fee: "0",
-      photoUrl: null,
-      attendees: [],
-    ),
-    Event(
-      date: DateTime.parse('2021-02-27T14:00:00-08:00'),
-      title: "General Assembly",
-      place: "Zoom Meeting",
-      fee: "0",
-      photoUrl: null,
-      attendees: [],
-    ),
-  ];
-
+  bool isPinuno = false;
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _eventsStream = context.watch<EventProvider>().events;
+    Future<bool> isCurrentPinuno =
+        context.read<UserProvider>().isCurrentPinuno();
     return Container(
-      padding: const EdgeInsets.fromLTRB(16.0, 16, 0, 16),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
       child: Column(
         children: [
           Container(
-            alignment: Alignment.topLeft,
-            child: const PatrickHand(text: "Mga Pangyayari", fontSize: 33),
+            padding: EdgeInsets.only(left: 16),
+            child: Row(
+              children: [
+                Expanded(
+                    child: PatrickHand(text: "Mga Events/GA", fontSize: 33)),
+                const SizedBox(width: 5),
+                FutureBuilder(
+                    future: isCurrentPinuno,
+                    builder: (context, pinunoSnapshot) {
+                      if (pinunoSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Container(); // Or a loading indicator
+                      }
+                      if (pinunoSnapshot.data == true) {
+                        isPinuno = true;
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreateEventPage()));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: DottedBorder(
+                              borderType: BorderType.RRect,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 4),
+                              radius: Radius.circular(16),
+                              strokeWidth: 2,
+                              dashPattern: [8, 2],
+                              borderPadding: EdgeInsets.all(2),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.add,
+                                    color: Colors.black,
+                                  ),
+                                  Text(
+                                    "Magdagdag",
+                                    style: blackText,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return Container();
+                    })
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -89,55 +119,77 @@ class _OrgEventsState extends State<OrgEvents> {
                   return ListView(
                     children: [
                       if (upcomingEvents.isNotEmpty) ...[
-                        const Center(
-                          child: Text("Upcoming Events",
-                              style:
-                                  TextStyle(fontSize: 16, fontFamily: 'Inter')),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          child: Center(
+                            child: Text("Upcoming Events",
+                                style: TextStyle(
+                                    fontSize: 16, fontFamily: 'Inter')),
+                          ),
                         ),
                         ...upcomingEvents.map((event) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ViewEventPage(
+                                            isPast: false,
+                                            event: event,
+                                            isPinuno: isPinuno)));
+                              },
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                    const EdgeInsets.symmetric(vertical: 16.0),
                                 child: FractionallySizedBox(
                                   widthFactor: 0.90,
-                                  child: EventItem(event: event),
+                                  child: EventItem(isPast: false, event: event),
                                 ),
                               ),
                             )),
                       ] else
                         const SizedBox(
                           height: 150,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               "No Upcoming Events!",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w300),
+                              style: TextStyle(fontSize: 13),
                             ),
                           ),
                         ),
                       if (pastEvents.isNotEmpty) ...[
-                        const Center(
-                          child: Text("Past Events",
-                              style: TextStyle(fontSize: 16)),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          child: Center(
+                            child: Text("Past Events",
+                                style: TextStyle(fontSize: 16)),
+                          ),
                         ),
                         ...pastEvents.map((event) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ViewEventPage(
+                                            isPast: true,
+                                            event: event,
+                                            isPinuno: isPinuno)));
+                              },
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                    const EdgeInsets.symmetric(vertical: 16.0),
                                 child: FractionallySizedBox(
                                   widthFactor: 0.90,
-                                  child: EventItem(event: event),
+                                  child: EventItem(isPast: true, event: event),
                                 ),
                               ),
                             )),
                       ] else
                         const SizedBox(
                           height: 150,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               "No Past Events!",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w300),
+                              style: TextStyle(fontSize: 13),
                             ),
                           ),
                         ),

@@ -37,7 +37,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
           }
           MyUser user =
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-          return Padding(
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: DecorationImage(
+                opacity: 0.6,
+                image: AssetImage("assets/images/bg2.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
             padding: EdgeInsets.only(top: 5, bottom: 25, left: 25, right: 25),
             child: Container(
               child: SingleChildScrollView(

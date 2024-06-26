@@ -8,15 +8,18 @@ class UserProvider with ChangeNotifier {
 
   late Stream<QuerySnapshot> _usersStream;
   late Stream<QuerySnapshot> _pendingUsersStream;
+  late Stream<QuerySnapshot> _applicantsStream;
   late MyUser _currentUser;
 
   Stream<QuerySnapshot> get users => _usersStream;
   Stream<QuerySnapshot> get pendingUsers => _pendingUsersStream;
+  Stream<QuerySnapshot> get applicants => _applicantsStream;
   MyUser get currentUser => _currentUser;
 
   UserProvider() {
     fetchUsers();
     fetchPendingUsers();
+    fetchApplicants();
   }
 
   Stream<DocumentSnapshot> fetchSpecificUser(String id) {
@@ -33,6 +36,10 @@ class UserProvider with ChangeNotifier {
     return _usersStream;
   }
 
+  Future<String> getLuponOfPinuno() async {
+    return firebaseService.getLuponOfPinuno();
+  }
+
   Future<void> acceptAndAddLupon(String email, String lupon) async {
     firebaseService.acceptAndAddLupon(email, lupon);
   }
@@ -45,6 +52,12 @@ class UserProvider with ChangeNotifier {
     _pendingUsersStream = firebaseService.getPendingUsers();
     notifyListeners();
     return _pendingUsersStream;
+  }
+
+  Stream<QuerySnapshot> fetchApplicants() {
+    _applicantsStream = firebaseService.getApplicants();
+    notifyListeners();
+    return _applicantsStream;
   }
 
   Future<bool> isCurrentPinuno() async {

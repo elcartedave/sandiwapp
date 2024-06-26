@@ -77,7 +77,10 @@ class _AdminOrgResidentsState extends State<AdminOrgResidents> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              childAspectRatio: 3 / 4,
+                              childAspectRatio:
+                                  MediaQuery.of(context).size.width /
+                                      MediaQuery.of(context).size.height *
+                                      1.3,
                             ),
                             itemBuilder: (context, index) {
                               MyUser user = entry.value[index];

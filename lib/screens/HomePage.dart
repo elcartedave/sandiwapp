@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
+import 'package:sandiwapp/screens/LogoLoadingPage.dart';
 import 'package:sandiwapp/screens/admin/AdminHomePage.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantHome.dart';
 import 'package:sandiwapp/screens/auth_pages.dart/LogoPage.dart';
 import 'package:sandiwapp/screens/users/UserHomePage.dart';
 import 'package:sandiwapp/screens/users/UserPendingPage.dart';
@@ -29,14 +31,7 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                ),
-              ),
-            );
+            return const LogoLoadingPage();
           } else if (!snapshot.hasData || snapshot.data == null) {
             return const LogoPage();
           }
@@ -48,14 +43,7 @@ class _HomePageState extends State<HomePage> {
                   .isUserAdmin(user!.email!),
               builder: (context, adminSnapshot) {
                 if (adminSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                    backgroundColor: Colors.white,
-                    body: Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    ),
-                  );
+                  return const LogoLoadingPage();
                 } else if (adminSnapshot.data == true) {
                   return const AdminHomePage();
                 } else {
@@ -67,17 +55,27 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, statusSnapshot) {
                         if (statusSnapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Scaffold(
-                            backgroundColor: Colors.white,
-                            body: Center(
-                              child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.black),
-                              ),
-                            ),
-                          );
+                          return const LogoLoadingPage();
                         } else if (statusSnapshot.data == true) {
-                          return const UserHomePage();
+                          return FutureBuilder(
+                              future: context
+                                  .read<UserAuthProvider>()
+                                  .authService
+                                  .isApplicant(user.email!),
+                              builder: (context, appSnapshot) {
+                                if (appSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const LogoLoadingPage();
+                                }
+                                print(appSnapshot.data);
+                                if (appSnapshot.data == true) {
+                                  return const ApplicantHome();
+                                } else if (appSnapshot.data == false) {
+                                  return const UserHomePage();
+                                } else {
+                                  return LogoPage();
+                                }
+                              });
                         } else if (statusSnapshot.data == false) {
                           return const UserPendingPage();
                         } else {

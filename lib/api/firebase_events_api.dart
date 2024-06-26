@@ -11,6 +11,63 @@ class FirebaseEventsAPI {
     return _firestore.collection('events').snapshots();
   }
 
+  Future<String> createEvent(String fee, String photoURL, String place,
+      String title, DateTime dateTime) async {
+    try {
+      DocumentReference docRef = _firestore.collection("events").doc();
+      await docRef.set({
+        'attendees': [],
+        'date': Timestamp.fromDate(dateTime),
+        'fee': fee,
+        'photoUrl': photoURL,
+        'place': place,
+        'title': title,
+        'id': docRef.id
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> editEvent(String fee, String photoURL, String place,
+      String title, DateTime dateTime, String id) async {
+    try {
+      await _firestore.collection('events').doc(id).update({
+        'title': title,
+        'place': place,
+        'date': Timestamp.fromDate(dateTime),
+        'photoUrl': photoURL,
+        'fee': fee
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<List<String>> getIDofAttendees(String id) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection("events")
+          .where('id', isEqualTo: id)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.first.get('attendees');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<String> deleteEvent(String id) async {
+    try {
+      await _firestore.collection("events").doc(id).delete();
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<void> toggleGoing(String eventId, bool going) async {
     try {
       String? userId = firebaseAuthAPI.getUserId();

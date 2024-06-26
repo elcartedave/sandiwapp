@@ -1,4 +1,5 @@
 import 'package:sandiwapp/models/announcementModel.dart';
+import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/formsModel.dart';
 import 'package:sandiwapp/models/messageModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
@@ -338,4 +339,32 @@ List<MyForm> forms = [
   MyForm(url: "url", date: DateTime.now(), title: "Form 1"),
   MyForm(url: "url", date: DateTime.now(), title: "Form 2"),
   MyForm(url: "url", date: DateTime.now(), title: "Form 3"),
+];
+
+final List<Event> events = [
+  Event(
+    date: DateTime.now(),
+    title: "UPSSB SEM ENDER",
+    place: "Pansol, Calamba City, Laguna",
+    fee: "250",
+    photoUrl:
+        "https://static.wixstatic.com/media/a2331f_ec8660a43e8e43328b15a7b834c9b6e9~mv2.jpg/v1/crop/x_0,y_25,w_1000,h_512/fill/w_972,h_494,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/_MG_9145.jpg",
+    attendees: [],
+  ),
+  Event(
+    date: DateTime.now(),
+    title: "Miting De Avance featuring alums brod and sisses night",
+    place: "Makiling Ballroom Hall pero kahit saan naman pwede",
+    fee: "0",
+    photoUrl: null,
+    attendees: [],
+  ),
+  Event(
+    date: DateTime.parse('2021-02-27T14:00:00-08:00'),
+    title: "General Assembly",
+    place: "Zoom Meeting",
+    fee: "0",
+    photoUrl: null,
+    attendees: [],
+  ),
 ];

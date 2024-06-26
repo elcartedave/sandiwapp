@@ -32,8 +32,9 @@ class _OrgOverviewState extends State<OrgOverview> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 crossAxisCount: 2,
-                children: <Widget>[
+                children: [
                   OrgOverviewMenu(
+                      icon: Icons.search,
                       text: "Kasaysayan",
                       onTap: () {
                         Navigator.push(
@@ -42,6 +43,7 @@ class _OrgOverviewState extends State<OrgOverview> {
                                 builder: (context) => Kasaysayan()));
                       }),
                   OrgOverviewMenu(
+                      icon: Icons.book,
                       text: "Konstitusyon",
                       onTap: () {
                         Navigator.push(
@@ -49,8 +51,12 @@ class _OrgOverviewState extends State<OrgOverview> {
                             MaterialPageRoute(
                                 builder: (context) => Konstitusyon()));
                       }),
-                  OrgOverviewMenu(text: "UPSSB Repository", onTap: () {}),
-                  OrgOverviewMenu(text: "Acad Drive", onTap: () {}),
+                  OrgOverviewMenu(
+                      icon: Icons.folder,
+                      text: "UPSSB Repository",
+                      onTap: () {}),
+                  OrgOverviewMenu(
+                      icon: Icons.school, text: "Acad Drive", onTap: () {}),
                 ],
               ),
             ),
