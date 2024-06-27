@@ -4,12 +4,35 @@ import 'package:sandiwapp/api/firebase_task_api.dart';
 
 class TaskProvider with ChangeNotifier {
   FirebaseTaskAPI firebaseService = FirebaseTaskAPI();
-  Stream<QuerySnapshot> getUserTask() {
-    return firebaseService.getUserTask();
+  late Stream<QuerySnapshot> _taskStream;
+  Stream<QuerySnapshot> get tasks => _taskStream;
+
+  TaskProvider() {
+    print("tasks refreshed");
+    fetchTasks();
+  }
+
+  Stream<QuerySnapshot> fetchTasks() {
+    _taskStream = firebaseService.getUserTask();
+    notifyListeners();
+    return _taskStream;
+  }
+
+  Stream<QuerySnapshot> fetchUserTasks(String email) {
+    return firebaseService.getSpecificUserTask(email);
   }
 
   Future<void> toggleTask(String id, bool taskDone) async {
     await firebaseService.toggleTask(id, taskDone);
     notifyListeners();
+  }
+
+  Future<String> createTask(
+      String recipientEmail, DateTime dueDate, String task) async {
+    return firebaseService.createTask(recipientEmail, dueDate, task);
+  }
+
+  Future<String> deleteTask(String email) async {
+    return firebaseService.deleteTask(email);
   }
 }

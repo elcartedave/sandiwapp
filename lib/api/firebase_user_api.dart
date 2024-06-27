@@ -300,6 +300,46 @@ class FirebaseUserAPI {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getFinMembers() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Residente")
+        .where('lupon', isEqualTo: "Lupon ng Pananalapi")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getEdukMembers() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Residente")
+        .where('lupon', isEqualTo: "Lupon ng Edukasyon at Pananaliksik")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getPubMembers() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Residente")
+        .where('lupon', isEqualTo: "Lupon ng Pamamahayag at Publikasyon")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getMemMembers() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Residente")
+        .where('lupon', isEqualTo: "Lupon ng Kasapian")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getExteMembers() {
+    return db
+        .collection('users')
+        .where('position', isEqualTo: "Residente")
+        .where('lupon', isEqualTo: "Lupon ng Ugnayang Panlabas")
+        .snapshots();
+  }
+
   Stream<DocumentSnapshot> getCurrentUser() {
     // obtain a stream of the currently logged in user
     print("firebase user id: ${firebaseService.getUserId()!}");

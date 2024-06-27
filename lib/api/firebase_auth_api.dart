@@ -17,6 +17,7 @@ class FirebaseAuthAPI {
 
   String? getUserEmail() {
     //returns the current user email
+    print("User email: ${auth.currentUser!.email}");
     return auth.currentUser!.email;
   }
 

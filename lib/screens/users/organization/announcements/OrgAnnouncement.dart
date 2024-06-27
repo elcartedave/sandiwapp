@@ -25,9 +25,9 @@ class _OrgAnnouncementState extends State<OrgAnnouncement> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> announcementsStream =
-        context.read<AnnouncementProvider>().genAnnouncements;
+        context.watch<AnnouncementProvider>().genAnnouncements;
     Future<bool> isCurrentPinuno =
-        context.read<UserProvider>().isCurrentPinuno();
+        context.watch<UserProvider>().isCurrentPinuno();
     return Container(
       padding: const EdgeInsets.fromLTRB(16.0, 16, 0, 16),
       child: Column(

@@ -20,7 +20,7 @@ class _ViewPaymentsPageState extends State<ViewPaymentsPage> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _paymentsStream =
-        context.read<PaymentProvider>().payments;
+        context.watch<PaymentProvider>().payments;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

@@ -9,17 +9,32 @@ class UserProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _usersStream;
   late Stream<QuerySnapshot> _pendingUsersStream;
   late Stream<QuerySnapshot> _applicantsStream;
+  late Stream<QuerySnapshot> _eduksStream;
+  late Stream<QuerySnapshot> _finsStream;
+  late Stream<QuerySnapshot> _pubsStream;
+  late Stream<QuerySnapshot> _extesStream;
+  late Stream<QuerySnapshot> _memsStream;
   late MyUser _currentUser;
 
   Stream<QuerySnapshot> get users => _usersStream;
   Stream<QuerySnapshot> get pendingUsers => _pendingUsersStream;
   Stream<QuerySnapshot> get applicants => _applicantsStream;
+  Stream<QuerySnapshot> get eduks => _eduksStream;
+  Stream<QuerySnapshot> get fins => _finsStream;
+  Stream<QuerySnapshot> get pubs => _pubsStream;
+  Stream<QuerySnapshot> get extes => _extesStream;
+  Stream<QuerySnapshot> get mems => _memsStream;
   MyUser get currentUser => _currentUser;
 
   UserProvider() {
     fetchUsers();
     fetchPendingUsers();
     fetchApplicants();
+    fetchEduks();
+    fetchFins();
+    fetchPubs();
+    fetchMems();
+    fetchExtes();
   }
 
   Stream<DocumentSnapshot> fetchSpecificUser(String id) {
@@ -58,6 +73,36 @@ class UserProvider with ChangeNotifier {
     _applicantsStream = firebaseService.getApplicants();
     notifyListeners();
     return _applicantsStream;
+  }
+
+  Stream<QuerySnapshot> fetchEduks() {
+    _eduksStream = firebaseService.getEdukMembers();
+    notifyListeners();
+    return _eduksStream;
+  }
+
+  Stream<QuerySnapshot> fetchFins() {
+    _finsStream = firebaseService.getFinMembers();
+    notifyListeners();
+    return _finsStream;
+  }
+
+  Stream<QuerySnapshot> fetchPubs() {
+    _pubsStream = firebaseService.getPubMembers();
+    notifyListeners();
+    return _pubsStream;
+  }
+
+  Stream<QuerySnapshot> fetchExtes() {
+    _extesStream = firebaseService.getExteMembers();
+    notifyListeners();
+    return _extesStream;
+  }
+
+  Stream<QuerySnapshot> fetchMems() {
+    _memsStream = firebaseService.getMemMembers();
+    notifyListeners();
+    return _memsStream;
   }
 
   Future<bool> isCurrentPinuno() async {

@@ -9,8 +9,11 @@ import 'package:sandiwapp/components/messages.dart';
 import 'package:sandiwapp/components/sendMessage.dart';
 import 'package:sandiwapp/components/taskManager.dart';
 import 'package:sandiwapp/models/userModel.dart';
+import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/execs/LuponMembers.dart';
+
 import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
 import 'package:sandiwapp/screens/users/dashboard/CommiteeAnnouncement.dart';
 import 'package:sandiwapp/screens/users/dashboard/PaymentPage.dart';
@@ -27,6 +30,7 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
         context.watch<UserProvider>().fetchCurrentUser();
+    Stream<QuerySnapshot> _tasks = context.watch<TaskProvider>().tasks;
     return StreamBuilder(
         stream: _userStream,
         builder: (context, snapshot) {
@@ -135,6 +139,7 @@ class _UserDashboardState extends State<UserDashboard> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    ///////////////////////////Unique Pinuno features///////////////////////////
                     if (user.position!.contains("Pinuno") &&
                         user.lupon!.contains("Pananalapi"))
                       Column(
@@ -195,15 +200,47 @@ class _UserDashboardState extends State<UserDashboard> {
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
+                            ///////////////Exclusive to Head Only///////////////////////////////
                             if (user.position!.contains("Pinuno"))
                               Row(
                                 children: [
                                   MyDottedBorder(
                                     text: "Mga Kasapi ng Lupon",
                                     icon: Icon(Icons.people),
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LuponMembers(
+                                                    lupon: user.lupon!,
+                                                  )));
+                                    },
                                   ),
                                   const SizedBox(width: 15)
+                                ],
+                              ),
+                            //////////////////unique lupon members' features//////////////////////////////////
+                            if (user.lupon!.contains("Edukasyon"))
+                              Row(
+                                children: [
+                                  MyDottedBorder(
+                                    text: "Bulacan/Monthly Statements",
+                                    icon: Icon(Icons.message),
+                                    onTap: () {},
+                                  ),
+                                  const SizedBox(width: 15),
+                                ],
+                              ),
+                            if (user.lupon!.contains("Publikasyon"))
+                              Row(
+                                children: [
+                                  MyDottedBorder(
+                                    text: "Important Links",
+                                    icon: Icon(Icons.link),
+                                    onTap: () {},
+                                  ),
+                                  const SizedBox(width: 15),
                                 ],
                               ),
                             MyDottedBorder(
@@ -226,12 +263,10 @@ class _UserDashboardState extends State<UserDashboard> {
                               text: "   Task Assignments    ",
                               icon: Icon(Icons.assignment),
                               onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return TaskManager();
-                                  },
-                                );
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TaskManager()));
                               },
                             ),
                             const SizedBox(width: 15),

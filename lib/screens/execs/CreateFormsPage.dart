@@ -5,7 +5,6 @@ import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
-import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
 
 class CreateFormsPage extends StatefulWidget {
@@ -183,7 +182,7 @@ class _CreateFormsPageState extends State<CreateFormsPage> {
                                     eventDateTime, _urlController.text);
                             if (message == "") {
                               showCustomSnackBar(
-                                  context, "Event Successfully Created!", 85);
+                                  context, "Form Successfully Created!", 85);
                               Navigator.of(context).pop();
                             } else {
                               showCustomSnackBar(context, message, 85);

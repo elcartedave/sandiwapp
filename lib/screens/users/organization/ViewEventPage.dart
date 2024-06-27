@@ -1,16 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
-import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/showEventsDialog.dart';
 import 'package:sandiwapp/components/styles.dart';
-import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
@@ -175,8 +171,15 @@ class _ViewEventPageState extends State<ViewEventPage> {
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(children: [
-          SingleChildScrollView(
-            child: Container(
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                opacity: 0.5,
+                image: AssetImage("assets/images/bg2.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   ClipRRect(

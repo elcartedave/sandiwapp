@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/models/taskModel.dart';
 import 'package:sandiwapp/providers/task_provider.dart';
 
@@ -15,7 +17,8 @@ class TaskManager extends StatefulWidget {
 
 class _TaskManagerState extends State<TaskManager> {
   late List<bool> tempStatusList;
-  late List<Task> tasks;
+  late List<MyTask> tasks;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -26,107 +29,136 @@ class _TaskManagerState extends State<TaskManager> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _tasksStream =
-        context.read<TaskProvider>().getUserTask();
-    return AlertDialog(
+        context.watch<TaskProvider>().fetchTasks();
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Text(
-        "Mga Nakatakdang Gawain",
-        style: GoogleFonts.patrickHand(color: Colors.black, fontSize: 30),
-        textAlign: TextAlign.left,
-      ),
-      content: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                "Lagyan ng tsek ang mga gawaing tapos na",
-                style: GoogleFonts.patrickHand(fontSize: 15),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                height: 300,
-                child: StreamBuilder(
-                    stream: _tasksStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                          color: Colors.black,
-                        ));
-                      }
-                      if (snapshot.hasError) {
-                        return Center(child: Text("Error: ${snapshot.error}"));
-                      }
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Center(child: Text("No Tasks Yet!"));
-                      }
-
-                      tasks = snapshot.data!.docs.map((doc) {
-                        var data = doc.data() as Map<String, dynamic>;
-                        return Task.fromJson(data);
-                      }).toList();
-
-                      // Initialize tempStatusList once tasks are loaded
-                      if (tempStatusList.isEmpty) {
-                        tempStatusList =
-                            tasks.map((task) => task.status).toList();
-                      }
-
-                      return ListView.builder(
-                          itemCount: tasks.length,
-                          itemBuilder: (context, index) {
-                            return CheckboxListTile(
-                              activeColor: Colors.black,
-                              title: Text(
-                                tasks[index].task,
-                                style: GoogleFonts.patrickHand(fontSize: 20),
-                              ),
-                              subtitle: Text(
-                                "Due: ${tasks[index].dueDate}",
-                                style: GoogleFonts.patrickHand(fontSize: 15),
-                              ),
-                              value: tempStatusList[index],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  tempStatusList[index] = value!;
-                                });
-                              },
-                            );
-                          });
-                    }),
-              ),
-            ],
-          ),
+      appBar: AppBar(
+        title: Text(
+          "Mga Nakatakdang Gawain",
+          style: GoogleFonts.patrickHand(color: Colors.black, fontSize: 24),
         ),
+        backgroundColor: Colors.white,
       ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            BlackButton(
-                text: "I-Save",
-                onTap: () async {
-                  // Update tasks in Firestore
-                  for (int i = 0; i < tasks.length; i++) {
-                    tasks[i].status = tempStatusList[i];
-                    await context
-                        .read<TaskProvider>()
-                        .toggleTask(tasks[i].id!, tasks[i].status);
-                    print(
-                        'Updated task ${tasks[i].id} with status ${tasks[i].status}');
-                  }
-                  Navigator.of(context).pop(); // Close the dialog after saving
-                }),
-            const SizedBox(width: 10),
-            WhiteButton(
-              text: "Cancel",
-              onTap: () {
-                Navigator.of(context).pop();
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              "Lagyan ng tsek ang mga gawaing tapos na",
+              style: GoogleFonts.inter(fontSize: 16),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: StreamBuilder(
+              stream: _tasksStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {}
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No Tasks Yet!"));
+                }
+
+                tasks = snapshot.data!.docs.map((doc) {
+                  var data = doc.data() as Map<String, dynamic>;
+                  return MyTask.fromJson(data);
+                }).toList();
+
+                // Initialize tempStatusList once tasks are loaded
+                if (tempStatusList.isEmpty) {
+                  tempStatusList = tasks.map((task) => task.status).toList();
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: Colors.white,
+                      elevation: 3,
+                      child: CheckboxListTile(
+                        activeColor: Colors.black,
+                        title: Text(
+                          tasks[index].task,
+                          style: GoogleFonts.patrickHand(fontSize: 22),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Date Assigned: ${dateFormatter(tasks[index].date)}",
+                              style: GoogleFonts.patrickHand(fontSize: 15),
+                            ),
+                            Text(
+                              "Due Date: ${dateFormatter(tasks[index].dueDate)}",
+                              style: GoogleFonts.patrickHand(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: tempStatusList[index],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            tempStatusList[index] = value!;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                );
               },
             ),
-          ],
-        )
-      ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : BlackButton(
+                          text: "I-Save",
+                          onTap: () async {
+                            // Update tasks in Firestore
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            for (int i = 0; i < tasks.length; i++) {
+                              tasks[i].status = tempStatusList[i];
+                              await context
+                                  .read<TaskProvider>()
+                                  .toggleTask(tasks[i].id!, tasks[i].status);
+                              print("${tasks[i].id} - ${tasks[i].status}");
+                            }
+                            showCustomSnackBar(context, "Tasks Updated", 85);
+                            Navigator.of(context).pop(); //
+                          },
+                        ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: WhiteButton(
+                    text: "Cancel",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
