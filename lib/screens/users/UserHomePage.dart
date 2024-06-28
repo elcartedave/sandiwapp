@@ -5,6 +5,7 @@ import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/navbar.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/screens/users/UserProfilePage.dart';
+import 'package:sandiwapp/screens/users/dashboard/EventsCalendar.dart';
 import 'package:sandiwapp/screens/users/dashboard/UserDashboard.dart';
 import 'package:sandiwapp/screens/users/organization/OrgDashboard.dart';
 
@@ -49,7 +50,10 @@ class _UserHomePageState extends State<UserHomePage> {
         /////////////////////////////HOME PAGE/////////////////////////
         OrgDashboard(),
         /////////////////////////////PROFILE PAGE/////////////////////////
-        UserProfilePage(),
+        EventsCalendar(
+          isPinuno: false,
+          lupon: 'Lupon ng Pananalapi',
+        ),
       ][_currentIndex],
     );
   }

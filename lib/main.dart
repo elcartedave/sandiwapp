@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sandiwapp/providers/activity_provider.dart';
 import 'package:sandiwapp/providers/announcement_provider.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
@@ -29,6 +30,7 @@ void main() async {
       ChangeNotifierProvider(create: ((context) => EventProvider())),
       ChangeNotifierProvider(create: ((context) => FormsProvider())),
       ChangeNotifierProvider(create: ((context) => PaymentProvider())),
+      ChangeNotifierProvider(create: ((context) => ActivityProvider())),
     ],
     child: const RootWidget(),
   ));

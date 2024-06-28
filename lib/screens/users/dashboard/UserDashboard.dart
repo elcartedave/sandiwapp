@@ -16,6 +16,7 @@ import 'package:sandiwapp/screens/execs/LuponMembers.dart';
 
 import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
 import 'package:sandiwapp/screens/users/dashboard/CommiteeAnnouncement.dart';
+import 'package:sandiwapp/screens/users/dashboard/EventsCalendar.dart';
 import 'package:sandiwapp/screens/users/dashboard/PaymentPage.dart';
 
 class UserDashboard extends StatefulWidget {
@@ -243,6 +244,27 @@ class _UserDashboardState extends State<UserDashboard> {
                                   const SizedBox(width: 15),
                                 ],
                               ),
+                            if (user.lupon!.contains("Pananalapi"))
+                              Row(
+                                children: [
+                                  MyDottedBorder(
+                                    text: "Events' Calendar",
+                                    icon: Icon(Icons.calendar_today),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EventsCalendar(
+                                                    isPinuno: true,
+                                                    lupon: user.lupon!,
+                                                  )));
+                                    },
+                                  ),
+                                  const SizedBox(width: 15),
+                                ],
+                              ),
+                            ///////////Exclusive to Pinuno Only//////////////
                             MyDottedBorder(
                               text: "Committee Announcements",
                               icon: Icon(Icons.announcement),

@@ -33,3 +33,7 @@ String? tagalogNg(String date) {
     return "Linggo";
   }
 }
+
+String hourFormatter(DateTime date) {
+  return DateFormat('h:mm a').format(date);
+}
