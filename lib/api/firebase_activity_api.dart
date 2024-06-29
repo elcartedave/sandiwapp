@@ -21,6 +21,24 @@ class FirebaseActivityAPI {
     }
   }
 
+  Future<void> deletePastActivities() async {
+    try {
+      DateTime now = DateTime.now();
+      DateTime startOfToday = DateTime(now.year, now.month, now.day);
+      QuerySnapshot querySnapshot = await _firestore
+          .collection("activities")
+          .where('date', isLessThan: Timestamp.fromDate(startOfToday))
+          .get();
+      // Loop through the documents and delete each one
+      for (DocumentSnapshot doc in querySnapshot.docs) {
+        await doc.reference.delete();
+      }
+      print("Past activities deleted!");
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Stream<QuerySnapshot> getActivities(String lupon) {
     return _firestore
         .collection('activities')

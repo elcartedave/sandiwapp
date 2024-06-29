@@ -50,10 +50,7 @@ class _UserHomePageState extends State<UserHomePage> {
         /////////////////////////////HOME PAGE/////////////////////////
         OrgDashboard(),
         /////////////////////////////PROFILE PAGE/////////////////////////
-        EventsCalendar(
-          isPinuno: false,
-          lupon: 'Lupon ng Pananalapi',
-        ),
+        UserProfilePage(),
       ][_currentIndex],
     );
   }

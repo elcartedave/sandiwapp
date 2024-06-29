@@ -1,4 +1,7 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
@@ -10,9 +13,11 @@ import 'package:sandiwapp/models/activityModel.dart';
 import 'package:sandiwapp/models/calendarEvent.dart';
 import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/formsModel.dart';
+import 'package:sandiwapp/models/taskModel.dart';
 import 'package:sandiwapp/providers/activity_provider.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
+import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/screens/users/organization/ViewEventPage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,6 +47,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
   late Stream<QuerySnapshot> _activityStream;
   late Stream<QuerySnapshot> _eventsStream;
   late Stream<QuerySnapshot> _formsStream;
+  late Stream<QuerySnapshot> _tasksStream;
 
   @override
   void initState() {
@@ -52,6 +58,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
         context.read<ActivityProvider>().fetchActivities(widget.lupon);
     _eventsStream = context.read<EventProvider>().events;
     _formsStream = context.read<FormsProvider>().forms;
+    _tasksStream = context.read<TaskProvider>().fetchTasks();
     _initializeEvents();
   }
 
@@ -59,6 +66,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
     QuerySnapshot activitySnapshot = await _activityStream.first;
     QuerySnapshot eventSnapshot = await _eventsStream.first;
     QuerySnapshot formSnapshot = await _formsStream.first;
+    QuerySnapshot tasksSnapshot = await _tasksStream.first;
 
     List<Activity> activities = activitySnapshot.docs.map((doc) {
       return Activity.fromJson(doc.data() as Map<String, dynamic>);
@@ -72,6 +80,10 @@ class _EventsCalendarState extends State<EventsCalendar> {
       return MyForm.fromJson(doc.data() as Map<String, dynamic>);
     }).toList();
 
+    List<MyTask> myTasks = tasksSnapshot.docs.map((doc) {
+      return MyTask.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
+
     setState(() {
       for (var activity in activities) {
         DateTime date = _normalizeDate(activity.date);
@@ -79,6 +91,18 @@ class _EventsCalendarState extends State<EventsCalendar> {
           title: activity.title,
           date: activity.date,
           content: activity.content,
+        );
+        if (_events[date] == null) _events[date] = [];
+        _events[date]!.add(calendarEvent);
+      }
+
+      for (var task in myTasks) {
+        DateTime date = _normalizeDate(task.dueDate);
+        CalendarEvent calendarEvent = CalendarEvent(
+          title: task.task,
+          date: task.dueDate,
+          content: dateFormatter(task.dueDate),
+          task: task,
         );
         if (_events[date] == null) _events[date] = [];
         _events[date]!.add(calendarEvent);
@@ -163,9 +187,9 @@ class _EventsCalendarState extends State<EventsCalendar> {
         builder: (context, setState) => AlertDialog(
           backgroundColor: Colors.white,
           scrollable: true,
-          title: Text("Ilagay ang Activity"),
+          title: Text("Task for ${petsa(_selectedDay!)}"),
           content: Padding(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
             child: Form(
               key: _formKey,
               child: Column(
@@ -287,132 +311,193 @@ class _EventsCalendarState extends State<EventsCalendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
-        shape: CircleBorder(),
-        onPressed: () => _showAddActivityDialog(context),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: !widget.isPinuno
+          ? null
+          : FloatingActionButton(
+              backgroundColor: Colors.black,
+              shape: CircleBorder(),
+              onPressed: () => _showAddActivityDialog(context),
+              child: const Icon(Icons.add, color: Colors.white),
+            ),
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         backgroundColor: Colors.white,
         title: PatrickHand(text: "Talaan ng Events ng Lupon", fontSize: 24),
       ),
-      body: Column(
-        children: [
-          TableCalendar(
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-            ),
-            availableGestures: AvailableGestures.all,
-            calendarStyle: const CalendarStyle(
-              outsideDaysVisible: false,
-              selectedDecoration: BoxDecoration(
-                color: Colors.black,
-                shape: BoxShape.circle,
-              ),
-              todayDecoration: BoxDecoration(
-                color: Color.fromARGB(83, 0, 0, 0),
-                shape: BoxShape.circle,
-              ),
-            ),
-            onDaySelected: _onDaySelected,
-            focusedDay: _focusedDay,
-            firstDay: DateTime.now(),
-            selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-            eventLoader: _getActivitiesForDay,
-            lastDay: DateTime(2101),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            opacity: 0.5,
+            image: AssetImage("assets/images/bg1.png"),
+            fit: BoxFit.fill,
           ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: StreamBuilder(
-              stream: _activityStream,
-              builder: (context, activitySnapshot) {
-                if (activitySnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (activitySnapshot.hasError) {
-                  return Center(
-                      child: Text("Error: ${activitySnapshot.error}"));
-                }
+        ),
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            TableCalendar(
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
+              availableGestures: AvailableGestures.all,
+              calendarStyle: const CalendarStyle(
+                outsideDaysVisible: false,
+                selectedDecoration: BoxDecoration(
+                  color: Colors.black,
+                  shape: BoxShape.circle,
+                ),
+                todayDecoration: BoxDecoration(
+                  color: Color.fromARGB(83, 0, 0, 0),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              onDaySelected: _onDaySelected,
+              focusedDay: _focusedDay,
+              firstDay: DateTime.now(),
+              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+              eventLoader: _getActivitiesForDay,
+              lastDay: DateTime(2101),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                "Mga Ganap sa ${petsa(_selectedDay!)}",
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Expanded(
+              child: StreamBuilder(
+                stream: _activityStream,
+                builder: (context, activitySnapshot) {
+                  if (activitySnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (activitySnapshot.hasError) {
+                    return Center(
+                        child: Text("Error: ${activitySnapshot.error}"));
+                  }
 
-                return StreamBuilder(
-                  stream: _eventsStream,
-                  builder: (context, eventSnapshot) {
-                    if (eventSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (eventSnapshot.hasError) {
-                      return Center(
-                          child: Text("Error: ${eventSnapshot.error}"));
-                    }
+                  return StreamBuilder(
+                    stream: _eventsStream,
+                    builder: (context, eventSnapshot) {
+                      if (eventSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (eventSnapshot.hasError) {
+                        return Center(
+                            child: Text("Error: ${eventSnapshot.error}"));
+                      }
 
-                    List<CalendarEvent> activitiesForDay =
-                        _getActivitiesForDay(_selectedDay!);
+                      return StreamBuilder(
+                          stream: _tasksStream,
+                          builder: (context, taskSnapshot) {
+                            if (taskSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (taskSnapshot.hasError) {
+                              return Center(
+                                  child: Text("Error: ${taskSnapshot.error}"));
+                            }
+                            List<CalendarEvent> activitiesForDay =
+                                _getActivitiesForDay(_selectedDay!);
 
-                    return activitiesForDay.isEmpty
-                        ? Center(child: Text("Walang ganap sa araw na ito"))
-                        : ListView.builder(
-                            itemCount: activitiesForDay.length,
-                            itemBuilder: (context, index) {
-                              CalendarEvent calendarEvent =
-                                  activitiesForDay[index];
+                            return activitiesForDay.isEmpty
+                                ? Center(
+                                    child: PatrickHand(
+                                        text: "Walang ganap sa araw na ito",
+                                        fontSize: 14))
+                                : ListView.builder(
+                                    itemCount: activitiesForDay.length,
+                                    itemBuilder: (context, index) {
+                                      CalendarEvent calendarEvent =
+                                          activitiesForDay[index];
 
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: ListTile(
-                                  leading: Icon(Icons.calendar_month),
-                                  onTap: () {
-                                    if (calendarEvent.event != null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ViewEventPage(
-                                            isPast: false,
-                                            event: calendarEvent.event!,
-                                            isPinuno: widget.isPinuno,
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: ListTile(
+                                          leading: Text(hourFormatter(
+                                              calendarEvent.date)),
+                                          onTap: () {
+                                            if (calendarEvent.event != null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ViewEventPage(
+                                                    isPast: false,
+                                                    event: calendarEvent.event!,
+                                                    isPinuno: widget.isPinuno,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            if (calendarEvent.form != null) {
+                                              launchUrl(
+                                                  Uri.parse(
+                                                      calendarEvent.form!.url),
+                                                  mode: LaunchMode
+                                                      .platformDefault);
+                                            }
+                                          },
+                                          title: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  calendarEvent.event != null
+                                                      ? "(EVENT) ${calendarEvent.title}"
+                                                      : calendarEvent.form !=
+                                                              null
+                                                          ? "(FORM) ${calendarEvent.title}"
+                                                          : calendarEvent
+                                                                      .task !=
+                                                                  null
+                                                              ? "(ASSIGNED TASK) ${calendarEvent.title}"
+                                                              : "(LUPON ACTIVITY) ${calendarEvent.title}",
+                                                  style:
+                                                      GoogleFonts.patrickHand(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                              PatrickHand(
+                                                  text: calendarEvent.content!,
+                                                  fontSize: 12)
+                                            ],
                                           ),
+                                          trailing: calendarEvent.event != null
+                                              ? Icon(Icons.meeting_room)
+                                              : calendarEvent.form != null
+                                                  ? Icon(Icons.text_snippet)
+                                                  : calendarEvent.task != null
+                                                      ? Icon(
+                                                          Icons.checklist_sharp)
+                                                      : Icon(
+                                                          Icons.calendar_month),
                                         ),
                                       );
-                                    }
-                                    if (calendarEvent.form != null) {
-                                      launchUrl(
-                                          Uri.parse(calendarEvent.form!.url),
-                                          mode: LaunchMode.platformDefault);
-                                    }
-                                  },
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      PatrickHandSC(
-                                          text: calendarEvent.title,
-                                          fontSize: 16),
-                                      PatrickHand(
-                                          text: calendarEvent.content!,
-                                          fontSize: 12)
-                                    ],
-                                  ),
-                                  trailing:
-                                      Text(hourFormatter(calendarEvent.date)),
-                                ),
-                              );
-                            },
-                          );
-                  },
-                );
-              },
+                                    },
+                                  );
+                          });
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

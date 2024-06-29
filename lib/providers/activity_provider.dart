@@ -13,8 +13,10 @@ class ActivityProvider with ChangeNotifier {
 
   ActivityProvider() {
     fetchAllActivities();
+    deletePastActivities();
   }
   Stream<QuerySnapshot> fetchActivities(String lupon) {
+    deletePastActivities();
     return firebaseService.getActivities(lupon);
   }
 
@@ -26,5 +28,9 @@ class ActivityProvider with ChangeNotifier {
 
   Future<String> createActivity(Activity activity) async {
     return firebaseService.createActivity(activity);
+  }
+
+  Future<void> deletePastActivities() async {
+    await firebaseService.deletePastActivities();
   }
 }

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sandiwapp/api/firebase_user_api.dart';
+import 'package:sandiwapp/components/uploadImage.dart';
 import 'package:sandiwapp/models/userModel.dart';
 
 class UserProvider with ChangeNotifier {
@@ -49,6 +52,15 @@ class UserProvider with ChangeNotifier {
     _usersStream = firebaseService.getAllUsers();
     notifyListeners();
     return _usersStream;
+  }
+
+  Future<String> addPhoto(File image, String photoUrl) async {
+    String photoURL = photoUrl;
+    if (photoURL != "") {
+      await deleteFileFromUrl(photoURL);
+    }
+    photoURL = await uploadImage(image, 'residents');
+    return firebaseService.uploadImage(photoURL);
   }
 
   Future<String> getLuponOfPinuno() async {
@@ -123,5 +135,9 @@ class UserProvider with ChangeNotifier {
   Future<void> toggleAcknowledged(String email, bool acknowledged) async {
     await firebaseService.toggleAcknowledged(email, acknowledged);
     notifyListeners();
+  }
+
+  Future<String> updateBalance(String id, String newAmount) async {
+    return firebaseService.updateBalance(id, newAmount);
   }
 }

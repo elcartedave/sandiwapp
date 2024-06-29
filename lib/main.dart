@@ -53,6 +53,12 @@ class RootWidget extends StatelessWidget {
       theme: ThemeData(
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xffEEEEEE)),
         useMaterial3: true,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black87, // Color of the cursor
+          selectionColor:
+              Colors.grey.withOpacity(0.5), // Color of the selection
+          selectionHandleColor: Colors.black, // Color of the selection handle
+        ),
       ),
     );
   }

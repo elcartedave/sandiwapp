@@ -27,6 +27,7 @@ class _LuponMembersState extends State<LuponMembers> {
     } else if (widget.lupon.contains("Pamamahayag")) {
       _membersStream = context.watch<UserProvider>().pubs;
     } else if (widget.lupon.contains("Pananalapi")) {
+      print(true);
       _membersStream = context.watch<UserProvider>().fins;
     } else if (widget.lupon.contains("Kasapian")) {
       _membersStream = context.watch<UserProvider>().mems;

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sandiwapp/api/firebase_auth_api.dart';
+import 'package:sandiwapp/api/firebase_message_api.dart';
 
 class FirebaseUserAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
   static final firebaseService = FirebaseAuthAPI();
+  static final FirebaseMessageApi _firebaseMessageApi = FirebaseMessageApi();
 
   Stream<QuerySnapshot> getAllUsers() {
     // obtain a stream of all users
@@ -33,6 +35,18 @@ class FirebaseUserAPI {
     } catch (e) {
       print('Error fetching email: $e');
       return '';
+    }
+  }
+
+  Future<String> uploadImage(String photoURL) async {
+    try {
+      String id = firebaseService.getUserId()!;
+      await db.collection('users').doc(id).update({
+        'photoUrl': photoURL,
+      });
+      return "";
+    } catch (e) {
+      return e.toString();
     }
   }
 
@@ -303,7 +317,12 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getFinMembers() {
     return db
         .collection('users')
-        .where('position', isEqualTo: "Residente")
+        .where('position', whereIn: [
+          "Residente",
+          "Pangkalahatang Kalihim",
+          "Ikalawang Tagapangulo",
+          "Tagapangulo"
+        ])
         .where('lupon', isEqualTo: "Lupon ng Pananalapi")
         .snapshots();
   }
@@ -357,6 +376,19 @@ class FirebaseUserAPI {
       return "Successfully toggled!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
+    }
+  }
+
+  Future<String> updateBalance(String id, String newBalance) async {
+    try {
+      await db.collection('users').doc(id).update({'balance': newBalance});
+      await _firebaseMessageApi.notify(
+          id,
+          "Ikaw ay may bagong balanse na Php $newBalance. Pumunta lamang sa 'Bayaran' section upang masettle ito.",
+          "Lupon ng Pananalapi");
+      return '';
+    } catch (e) {
+      return e.toString();
     }
   }
 }

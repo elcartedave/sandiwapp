@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/scrollDownAnimation.dart';
+import 'package:sandiwapp/components/texts.dart';
+import 'package:sandiwapp/components/uploadImage.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
@@ -15,6 +21,26 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  File? _image;
+  bool _isLoading = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImageAndScroll() async {
+    File? pickedImage = await pickerImage();
+    setState(() {
+      _image = pickedImage;
+    });
+    if (_image != null) {
+      scrollToEnd(_scrollController);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
@@ -47,38 +73,169 @@ class _UserProfilePageState extends State<UserProfilePage> {
               ),
             ),
             padding: EdgeInsets.only(top: 5, bottom: 25, left: 25, right: 25),
-            child: Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Stack(children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(5100)),
-                            child: ClipOval(
-                              child: SizedBox.fromSize(
-                                size: const Size.fromRadius(50), // Image radius
-                                child:
-                                    user.photoUrl == "" || user.photoUrl == null
-                                        ? Icon(
-                                            Icons.account_circle,
-                                            color: Colors.white,
-                                            size: 100,
-                                          )
-                                        : Image.network(
-                                            user.photoUrl!,
-                                            width: 100,
-                                            fit: BoxFit.contain,
-                                          ),
-                              ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Stack(children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(5100)),
+                          child: ClipOval(
+                            child: SizedBox.fromSize(
+                              size: const Size.fromRadius(50), // Image radius
+                              child:
+                                  user.photoUrl == "" || user.photoUrl == null
+                                      ? Icon(
+                                          Icons.account_circle,
+                                          color: Colors.white,
+                                          size: 100,
+                                        )
+                                      : Image.network(
+                                          user.photoUrl!,
+                                          width: 100,
+                                          fit: BoxFit.contain,
+                                        ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 7,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 7,
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return AlertDialog(
+                                            backgroundColor: Colors.white,
+                                            scrollable: true,
+                                            title: PatrickHand(
+                                              text: "Update Profile Picture",
+                                              fontSize: 24,
+                                            ),
+                                            content: Column(
+                                              children: [
+                                                WhiteButton(
+                                                  text: "Add Photo",
+                                                  onTap: () async {
+                                                    File? pickedImage =
+                                                        await pickerImage();
+                                                    setState(() {
+                                                      _image = pickedImage;
+                                                    });
+                                                  },
+                                                ),
+                                                const SizedBox(height: 15),
+                                                if (user.photoUrl! != "" &&
+                                                    _image == null)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20.0),
+                                                    child: Image.network(
+                                                      user.photoUrl!,
+                                                      height: 200,
+                                                      width: 200,
+                                                    ),
+                                                  ),
+                                                if (_image != null)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20.0),
+                                                    child: Image.file(
+                                                      _image!,
+                                                      height: 200,
+                                                      width: 200,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            actions: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: _isLoading
+                                                        ? const Center(
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          )
+                                                        : _isLoading
+                                                            ? const Center(
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              )
+                                                            : BlackButton(
+                                                                text:
+                                                                    "I-Update",
+                                                                onTap:
+                                                                    () async {
+                                                                  if (_image ==
+                                                                      null) {
+                                                                    showCustomSnackBar(
+                                                                        context,
+                                                                        "No new image uploaded!",
+                                                                        85);
+                                                                  } else {
+                                                                    setState(
+                                                                        () {
+                                                                      _isLoading =
+                                                                          true;
+                                                                    });
+                                                                    String message = await context
+                                                                        .read<
+                                                                            UserProvider>()
+                                                                        .addPhoto(
+                                                                            _image!,
+                                                                            user.photoUrl!);
+                                                                    if (message ==
+                                                                        "") {
+                                                                      showCustomSnackBar(
+                                                                          context,
+                                                                          "Profile updated successfully",
+                                                                          85);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    } else {
+                                                                      showCustomSnackBar(
+                                                                          context,
+                                                                          message,
+                                                                          85);
+                                                                    }
+                                                                  }
+                                                                },
+                                                              ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Expanded(
+                                                    child: Center(
+                                                      child: WhiteButton(
+                                                        text: "Bumalik",
+                                                        onTap: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ));
+                            },
                             child: Container(
                               width: 30,
                               height: 30,
@@ -93,99 +250,98 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               ),
                             ),
                           ),
-                        ]),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user.name,
-                                style: GoogleFonts.inter(
-                                    color: Colors.white, fontSize: 28),
-                              ),
-                              Text(
-                                user.position!,
-                                style: GoogleFonts.judson(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                              Text(
-                                user.lupon!,
-                                style: GoogleFonts.judson(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        ),
+                      ]),
+                      const SizedBox(width: 10),
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildInfoRow("Nickname:", user.nickname),
-                            buildInfoRow("Email:", user.email),
-                            buildInfoRow("Birthday:", user.birthday),
-                            buildInfoRow("Age:", user.age),
-                            buildInfoRow("Contact Number:", user.contactno),
-                            buildInfoRow(
-                                "College Address:", user.collegeAddress),
-                            buildInfoRow("Home Address:", user.homeAddress),
-                            buildInfoRow("Sponsor:", user.sponsor),
-                            buildInfoRow("Batch:", user.batch),
+                            Text(
+                              user.name,
+                              style: GoogleFonts.inter(
+                                  color: Colors.white, fontSize: 28),
+                            ),
+                            Text(
+                              user.position!,
+                              style: GoogleFonts.judson(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              user.lupon!,
+                              style: GoogleFonts.judson(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontStyle: FontStyle.italic),
+                            ),
                           ],
                         ),
-                      ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
-                    const SizedBox(height: 20),
-                    Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ListTile(
-                            leading: Icon(Icons.info),
-                            title: Text(
-                              "About",
-                              style: GoogleFonts.patrickHandSc(fontSize: 24),
-                            ),
-                            onTap: () {
-                              // Handle About tap
-                            },
-                            trailing: Icon(Icons.navigate_next),
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.logout),
-                            title: Text(
-                              "Log Out",
-                              style: GoogleFonts.patrickHandSc(fontSize: 24),
-                            ),
-                            onTap: () async {
-                              await context
-                                  .read<UserAuthProvider>()
-                                  .authService
-                                  .signOut();
-                            },
-                            trailing: Icon(Icons.navigate_next),
-                          ),
+                          buildInfoRow("Nickname:", user.nickname),
+                          buildInfoRow("Email:", user.email),
+                          buildInfoRow("Birthday:", user.birthday),
+                          buildInfoRow("Age:", user.age),
+                          buildInfoRow("Contact Number:", user.contactno),
+                          buildInfoRow("College Address:", user.collegeAddress),
+                          buildInfoRow("Home Address:", user.homeAddress),
+                          buildInfoRow("Sponsor:", user.sponsor),
+                          buildInfoRow("Batch:", user.batch),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20),
+                  Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.info),
+                          title: Text(
+                            "About",
+                            style: GoogleFonts.patrickHandSc(fontSize: 24),
+                          ),
+                          onTap: () {
+                            // Handle About tap
+                          },
+                          trailing: Icon(Icons.navigate_next),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.logout),
+                          title: Text(
+                            "Log Out",
+                            style: GoogleFonts.patrickHandSc(fontSize: 24),
+                          ),
+                          onTap: () async {
+                            await context
+                                .read<UserAuthProvider>()
+                                .authService
+                                .signOut();
+                          },
+                          trailing: Icon(Icons.navigate_next),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           );

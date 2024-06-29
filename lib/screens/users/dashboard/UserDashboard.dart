@@ -13,6 +13,7 @@ import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/execs/LuponMembers.dart';
+import 'package:sandiwapp/screens/execs/ViewAssignBalance.dart';
 
 import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
 import 'package:sandiwapp/screens/users/dashboard/CommiteeAnnouncement.dart';
@@ -147,7 +148,13 @@ class _UserDashboardState extends State<UserDashboard> {
                         children: [
                           WhiteButton(
                             text: "Mag-assign ng Balanse",
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ViewAssignBalancePage()));
+                            },
                           ),
                           const SizedBox(height: 10),
                           WhiteButton(
@@ -190,6 +197,40 @@ class _UserDashboardState extends State<UserDashboard> {
                           const SizedBox(height: 15),
                         ],
                       ),
+                    ///////////////For users in general///////////////
+                    Column(
+                      children: [
+                        WhiteButton(
+                          text: "Sandiwa Calendar",
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EventsCalendar(
+                                          isPinuno:
+                                              user.position!.contains("Pinuno"),
+                                          lupon: user.lupon!,
+                                        )));
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        WhiteButton(
+                          text: "Task Assignments",
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TaskManager()));
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                      ],
+                    ),
+                    ////////////LUPON////////////////
                     Text(
                       'Ang Aking Lupon:',
                       style: GoogleFonts.patrickHand(fontSize: 20),
@@ -244,27 +285,8 @@ class _UserDashboardState extends State<UserDashboard> {
                                   const SizedBox(width: 15),
                                 ],
                               ),
-                            if (user.lupon!.contains("Pananalapi"))
-                              Row(
-                                children: [
-                                  MyDottedBorder(
-                                    text: "Events' Calendar",
-                                    icon: Icon(Icons.calendar_today),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EventsCalendar(
-                                                    isPinuno: true,
-                                                    lupon: user.lupon!,
-                                                  )));
-                                    },
-                                  ),
-                                  const SizedBox(width: 15),
-                                ],
-                              ),
-                            ///////////Exclusive to Pinuno Only//////////////
+
+                            ///////////Exclusive to Lupon Only//////////////
                             MyDottedBorder(
                               text: "Committee Announcements",
                               icon: Icon(Icons.announcement),
@@ -278,17 +300,6 @@ class _UserDashboardState extends State<UserDashboard> {
                                                 .contains("Pinuno"),
                                           )), //pupunta sa sign in page
                                 );
-                              },
-                            ),
-                            const SizedBox(width: 15),
-                            MyDottedBorder(
-                              text: "   Task Assignments    ",
-                              icon: Icon(Icons.assignment),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => TaskManager()));
                               },
                             ),
                             const SizedBox(width: 15),

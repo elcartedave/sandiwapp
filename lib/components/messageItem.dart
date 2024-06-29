@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/components/messageEveryone.dart';
 import 'package:sandiwapp/models/messageModel.dart';
 
@@ -15,7 +16,7 @@ class MessageItem extends StatelessWidget {
     print("doesContain:$doesContain");
     return InkWell(
       onTap: () {
-        if (doesContain==false) {
+        if (doesContain == false) {
           showDialog(
               context: context,
               builder: (context) {
@@ -37,15 +38,19 @@ class MessageItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        message.sender,
-                        style: GoogleFonts.patrickHand(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Text(
+                          message.sender,
+                          style: GoogleFonts.patrickHand(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      Spacer(),
-                      Text(
-                        "${message.date.year.toString()}-${message.date.month.toString().padLeft(2, '0')}-${message.date.day.toString().padLeft(2, '0')} ${message.date.hour.toString().padLeft(2, '0')}:${message.date.minute.toString().padLeft(2, '0')}",
-                        style: GoogleFonts.patrickHand(fontSize: 18),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          shortDateFormatter(message.date),
+                          style: GoogleFonts.patrickHand(fontSize: 16),
+                        ),
                       )
                     ],
                   ),
