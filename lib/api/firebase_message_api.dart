@@ -8,6 +8,7 @@ class FirebaseMessageApi {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<QuerySnapshot> getUserMessages(String email) {
+    deleteOldMessages();
     return _firestore
         .collection('messages')
         .where('receiver', isEqualTo: email)
@@ -30,6 +31,26 @@ class FirebaseMessageApi {
       return "";
     } catch (e) {
       return ("${e.toString()}");
+    }
+  }
+
+  Future<void> deleteOldMessages() async {
+    try {
+      final DateTime sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
+      final QuerySnapshot querySnapshot = await _firestore
+          .collection('messages')
+          .where('timestamp', isLessThan: Timestamp.fromDate(sevenDaysAgo))
+          .get();
+
+      WriteBatch batch = _firestore.batch();
+
+      for (var doc in querySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      print("Deleted message");
+      return batch.commit();
+    } catch (e) {
+      print(e.toString());
     }
   }
 

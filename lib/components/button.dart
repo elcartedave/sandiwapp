@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sandiwapp/components/styles.dart';
 
 class BlackButton extends StatelessWidget {
@@ -95,6 +94,46 @@ class MyTextButton extends StatelessWidget {
       child: Text(
         text,
         style: blackText,
+      ),
+    );
+  }
+}
+
+class WhiteButtonWithIcon extends StatefulWidget {
+  final Function()? onTap;
+  final IconData iconData;
+  final String text;
+  const WhiteButtonWithIcon(
+      {required this.iconData, required this.text, this.onTap, super.key});
+
+  @override
+  State<WhiteButtonWithIcon> createState() => _WhiteButtonWithIconState();
+}
+
+class _WhiteButtonWithIconState extends State<WhiteButtonWithIcon> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        height: 50,
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: Colors.black),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10)),
+        child: Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(widget.iconData),
+            const SizedBox(width: 10),
+            Text(
+              widget.text,
+              style: blackText,
+            ),
+          ],
+        )),
       ),
     );
   }

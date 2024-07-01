@@ -21,6 +21,7 @@ class OrgForms extends StatefulWidget {
 }
 
 class _OrgFormsState extends State<OrgForms> {
+  bool isPinuno = false;
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _formsStream = context.watch<FormsProvider>().forms;
@@ -38,6 +39,7 @@ class _OrgFormsState extends State<OrgForms> {
                   future: isCurrentPinuno,
                   builder: (context, pinunoSnapshot) {
                     if (pinunoSnapshot.data == true) {
+                      isPinuno = true;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -123,10 +125,11 @@ class _OrgFormsState extends State<OrgForms> {
                                     mode: LaunchMode.platformDefault);
                               },
                               onLongPress: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        ShowFormsDialog(form: form));
+                                if (isPinuno)
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          ShowFormsDialog(form: form));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -191,10 +194,11 @@ class _OrgFormsState extends State<OrgForms> {
                                     mode: LaunchMode.platformDefault);
                               },
                               onLongPress: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        ShowFormsDialog(form: form));
+                                if (isPinuno)
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          ShowFormsDialog(form: form));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),

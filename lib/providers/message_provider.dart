@@ -18,4 +18,8 @@ class MessageProvider with ChangeNotifier {
       String senderEmail, String content, String name) async {
     return _firebaseMessageApi.messageEveryone(senderEmail, content, name);
   }
+
+  Future<void> deleteOldMessages() async {
+    await _firebaseMessageApi.deleteOldMessages();
+  }
 }

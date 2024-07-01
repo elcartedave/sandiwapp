@@ -391,4 +391,21 @@ class FirebaseUserAPI {
       return e.toString();
     }
   }
+
+  Future<String> updateMerit(String id, String merit, String amount) async {
+    try {
+      if (merit == "Merit") {
+        await db.collection('users').doc(id).update({'merit': amount});
+        await _firebaseMessageApi.notify(
+            id, "Ang iyong merit ay naupdate", "Notification");
+      } else {
+        await db.collection('users').doc(id).update({'demerit': amount});
+        await _firebaseMessageApi.notify(
+            id, "Ang iyong demerit ay naupdate", "Notification");
+      }
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }

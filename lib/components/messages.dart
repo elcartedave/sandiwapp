@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/messageItem.dart';
-import 'package:sandiwapp/models/announcementModel.dart';
 import 'package:sandiwapp/models/messageModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/message_provider.dart';

@@ -6,6 +6,7 @@ import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
 import 'package:sandiwapp/providers/message_provider.dart';
 import 'package:sandiwapp/providers/payment_provider.dart';
+import 'package:sandiwapp/providers/statement_provider.dart';
 import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/HomePage.dart';
@@ -31,6 +32,7 @@ void main() async {
       ChangeNotifierProvider(create: ((context) => FormsProvider())),
       ChangeNotifierProvider(create: ((context) => PaymentProvider())),
       ChangeNotifierProvider(create: ((context) => ActivityProvider())),
+      ChangeNotifierProvider(create: ((context) => StatementProvider())),
     ],
     child: const RootWidget(),
   ));

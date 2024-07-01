@@ -11,7 +11,6 @@ import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/components/uploadImage.dart';
 import 'package:sandiwapp/models/eventModel.dart';
-import 'package:sandiwapp/providers/announcement_provider.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 
 class ShowEventDialog extends StatefulWidget {

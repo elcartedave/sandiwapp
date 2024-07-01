@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/screens/users/organization/overview/MemberPage.dart';
 import 'package:sandiwapp/screens/users/organization/overview/UPSSBPage.dart';
 

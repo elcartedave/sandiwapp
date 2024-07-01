@@ -1,19 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
-import 'package:sandiwapp/components/imageBuffer.dart';
-import 'package:sandiwapp/components/scrollDownAnimation.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
-import 'package:sandiwapp/components/uploadImage.dart';
-import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/formsModel.dart';
-import 'package:sandiwapp/providers/announcement_provider.dart';
-import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
 
 class ShowFormsDialog extends StatefulWidget {

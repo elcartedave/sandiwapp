@@ -140,4 +140,8 @@ class UserProvider with ChangeNotifier {
   Future<String> updateBalance(String id, String newAmount) async {
     return firebaseService.updateBalance(id, newAmount);
   }
+
+  Future<String> updateMerit(String id, String merit, String amount) async {
+    return firebaseService.updateMerit(id, merit, amount);
+  }
 }

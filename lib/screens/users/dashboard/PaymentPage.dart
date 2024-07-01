@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/scrollDownAnimation.dart';
-import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/uploadImage.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/payment_provider.dart';

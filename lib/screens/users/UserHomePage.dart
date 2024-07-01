@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/navbar.dart';
-import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/screens/users/UserProfilePage.dart';
-import 'package:sandiwapp/screens/users/dashboard/EventsCalendar.dart';
 import 'package:sandiwapp/screens/users/dashboard/UserDashboard.dart';
 import 'package:sandiwapp/screens/users/organization/OrgDashboard.dart';
 

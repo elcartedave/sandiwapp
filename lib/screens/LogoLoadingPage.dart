@@ -20,7 +20,7 @@ class LogoLoadingPage extends StatelessWidget {
                 width: 350,
               ),
               PatrickHandSC(
-                text: "Nagloloading....",
+                text: "Nagloload....",
                 fontSize: 20,
               )
             ],

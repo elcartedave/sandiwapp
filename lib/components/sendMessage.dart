@@ -6,7 +6,6 @@ import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
-import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/message_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
