@@ -329,7 +329,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
           image: DecorationImage(
             opacity: 0.5,
             image: AssetImage("assets/images/bg1.png"),
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           ),
         ),
         height: MediaQuery.of(context).size.height,

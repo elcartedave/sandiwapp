@@ -134,6 +134,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Color.fromARGB(255, 43, 43, 43),
         title: widget.isPinuno == false
@@ -150,21 +151,23 @@ class _ViewEventPageState extends State<ViewEventPage> {
                     style: GoogleFonts.patrickHand(
                         fontSize: 20, color: Colors.white),
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      showDialog(
-                          context: context,
-                          builder: (context) =>
-                              ShowEventDialog(event: widget.event));
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                  widget.isPast
+                      ? Container()
+                      : GestureDetector(
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    ShowEventDialog(event: widget.event));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                 ],
               ),
       ),

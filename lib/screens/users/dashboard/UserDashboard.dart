@@ -9,13 +9,12 @@ import 'package:sandiwapp/components/messages.dart';
 import 'package:sandiwapp/components/sendMessage.dart';
 import 'package:sandiwapp/components/taskManager.dart';
 import 'package:sandiwapp/models/userModel.dart';
-import 'package:sandiwapp/providers/task_provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/execs/LuponMembers.dart';
 import 'package:sandiwapp/screens/execs/MeritDemeritPage.dart';
+import 'package:sandiwapp/screens/execs/PublicationPage.dart';
 import 'package:sandiwapp/screens/execs/ViewAssignBalance.dart';
-
 import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
 import 'package:sandiwapp/screens/execs/ViewStatement.dart';
 import 'package:sandiwapp/screens/users/dashboard/BulacanStatementPage.dart';
@@ -36,7 +35,6 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
         context.watch<UserProvider>().fetchCurrentUser();
-    Stream<QuerySnapshot> _tasks = context.watch<TaskProvider>().tasks;
     return StreamBuilder(
         stream: _userStream,
         builder: (context, snapshot) {
@@ -164,13 +162,18 @@ class _UserDashboardState extends State<UserDashboard> {
                         ),
                         const SizedBox(height: 10),
                         WhiteButtonWithIcon(
+                          iconData: Icons.track_changes,
+                          text: "Bloodline Tracker",
+                          onTap: () {},
+                        ),
+                        const SizedBox(height: 10),
+                        WhiteButtonWithIcon(
                           iconData: Icons.task,
                           text: "Task Assignments",
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TaskManager()));
+                            showDialog(
+                                context: context,
+                                builder: (context) => TaskManagerDialog());
                           },
                         ),
                         const SizedBox(height: 15),
@@ -259,7 +262,7 @@ class _UserDashboardState extends State<UserDashboard> {
                             text: "Applicant Announcements",
                             onTap: () {},
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     if (user.position!.contains("Kalihim"))
@@ -270,9 +273,10 @@ class _UserDashboardState extends State<UserDashboard> {
                             text: "Attendance Tracker",
                             onTap: () {},
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                         ],
                       ),
+
                     if (!user.position!.contains("Residente") &&
                         !user.position!.contains("Aplikante"))
                       Column(
@@ -347,7 +351,16 @@ class _UserDashboardState extends State<UserDashboard> {
                                   MyDottedBorder(
                                     text: "Important Links",
                                     icon: Icon(Icons.link),
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PublicationPage(
+                                                    isPinuno: user.position!
+                                                        .contains("Pinuno"),
+                                                  )));
+                                    },
                                   ),
                                   const SizedBox(width: 15),
                                 ],
@@ -363,8 +376,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           CommitteeAnnouncement(
-                                            isLuponHead: user.position!
-                                                .contains("Pinuno"),
+                                            user: user,
                                           )), //pupunta sa sign in page
                                 );
                               },

@@ -5,6 +5,7 @@ import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/showMessageDialog.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/users/ResidentsProfilePage.dart';
 
 class SampleCard extends StatefulWidget {
   const SampleCard({required this.user});
@@ -39,6 +40,15 @@ class _SampleCardState extends State<SampleCard> {
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
 
           return InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (context) => ResidentProfilePage(
+                            user: widget.user,
+                          )));
+            },
             onLongPress: () {
               showDialog(
                   context: context,

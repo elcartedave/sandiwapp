@@ -8,7 +8,6 @@ class TaskProvider with ChangeNotifier {
   Stream<QuerySnapshot> get tasks => _taskStream;
 
   TaskProvider() {
-    print("tasks refreshed");
     fetchTasks();
   }
 

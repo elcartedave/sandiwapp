@@ -330,7 +330,12 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getEdukMembers() {
     return db
         .collection('users')
-        .where('position', isEqualTo: "Residente")
+        .where('position', whereIn: [
+          "Residente",
+          "Pangkalahatang Kalihim",
+          "Ikalawang Tagapangulo",
+          "Tagapangulo"
+        ])
         .where('lupon', isEqualTo: "Lupon ng Edukasyon at Pananaliksik")
         .snapshots();
   }
@@ -338,7 +343,12 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getPubMembers() {
     return db
         .collection('users')
-        .where('position', isEqualTo: "Residente")
+        .where('position', whereIn: [
+          "Residente",
+          "Pangkalahatang Kalihim",
+          "Ikalawang Tagapangulo",
+          "Tagapangulo"
+        ])
         .where('lupon', isEqualTo: "Lupon ng Pamamahayag at Publikasyon")
         .snapshots();
   }
@@ -346,7 +356,12 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getMemMembers() {
     return db
         .collection('users')
-        .where('position', isEqualTo: "Residente")
+        .where('position', whereIn: [
+          "Residente",
+          "Pangkalahatang Kalihim",
+          "Ikalawang Tagapangulo",
+          "Tagapangulo"
+        ])
         .where('lupon', isEqualTo: "Lupon ng Kasapian")
         .snapshots();
   }
@@ -354,7 +369,12 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getExteMembers() {
     return db
         .collection('users')
-        .where('position', isEqualTo: "Residente")
+        .where('position', whereIn: [
+          "Residente",
+          "Pangkalahatang Kalihim",
+          "Ikalawang Tagapangulo",
+          "Tagapangulo"
+        ])
         .where('lupon', isEqualTo: "Lupon ng Ugnayang Panlabas")
         .snapshots();
   }

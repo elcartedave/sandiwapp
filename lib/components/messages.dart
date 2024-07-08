@@ -95,16 +95,18 @@ class _MyMessagesState extends State<MyMessages> {
                   }).toList();
                   messages.sort((a, b) => b.date.compareTo(a.date));
 
-                  return ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      bool? doesContain =
-                          messages[index].sender.contains("Notification");
-                      return MessageItem(
-                        message: messages[index],
-                        doesContain: doesContain,
-                      );
-                    },
+                  return Scrollbar(
+                    child: ListView.builder(
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        bool? doesContain =
+                            messages[index].sender.contains("Notification");
+                        return MessageItem(
+                          message: messages[index],
+                          doesContain: doesContain,
+                        );
+                      },
+                    ),
                   );
                 }),
           );

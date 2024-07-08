@@ -57,9 +57,9 @@ class AnnouncementProvider with ChangeNotifier {
   }
 
   Stream<QuerySnapshot> fetchPubAnnouncements() {
-    _genAnnouncementsStream = firebaseService.getGeneralAnnouncements();
+    _pubAnnouncementsStream = firebaseService.getPubAnnouncements();
     notifyListeners();
-    return _genAnnouncementsStream;
+    return _pubAnnouncementsStream;
   }
 
   Stream<QuerySnapshot> fetchMemAnnouncements() {

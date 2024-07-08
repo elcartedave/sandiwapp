@@ -36,6 +36,24 @@ class _SignUpState extends State<SignUp> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.black, // Selected date background color
+              onPrimary: Colors.white, // Selected date text color
+              onSurface: Colors.black, // Default text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {

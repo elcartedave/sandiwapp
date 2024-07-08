@@ -25,16 +25,19 @@ class _ShowFormsDialogState extends State<ShowFormsDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: Icon(Icons.edit),
-            title: PatrickHand(text: "Edit", fontSize: 20),
-            onTap: () async {
-              await showDialog(
-                  context: context,
-                  builder: (context) => ShowEditFormDialog(form: widget.form));
-              Navigator.of(context).pop();
-            },
-          ),
+          widget.form.date.isBefore(DateTime.now())
+              ? Container()
+              : ListTile(
+                  leading: Icon(Icons.edit),
+                  title: PatrickHand(text: "Edit", fontSize: 20),
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) =>
+                            ShowEditFormDialog(form: widget.form));
+                    Navigator.of(context).pop();
+                  },
+                ),
           ListTile(
             leading: Icon(Icons.delete),
             title: PatrickHand(text: "Delete", fontSize: 20),
@@ -157,6 +160,24 @@ class _ShowEditFormDialogState extends State<ShowEditFormDialog> {
       initialDate: _selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.black, // Selected date background color
+              onPrimary: Colors.white, // Selected date text color
+              onSurface: Colors.black, // Default text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedDate != null && pickedDate != _selectedDate)
       setState(() {
@@ -168,6 +189,41 @@ class _ShowEditFormDialogState extends State<ShowEditFormDialog> {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: _selectedTime!,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.black, // Selected time background color
+              onPrimary: Colors.white, // Selected time text color
+              onSurface: Colors.black, // Default text color
+            ),
+            timePickerTheme: TimePickerThemeData(
+              dialBackgroundColor: Colors.white, // Dial background color
+              dialHandColor: Colors.black, // Dial hand color
+              hourMinuteColor: WidgetStateColor.resolveWith((states) => states
+                      .contains(WidgetState.selected)
+                  ? Colors.black // Selected hour/minute background color
+                  : Colors.white), // Unselected hour/minute background color
+              hourMinuteTextColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.white // Selected hour/minute text color
+                      : Colors.black), // Unselected hour/minute text color
+              dayPeriodTextColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.white // Selected AM/PM text color
+                      : Colors.black), // Unselected AM/PM text color
+              dayPeriodColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.black // Selected AM/PM background color
+                      : Colors.white), // Unselected AM/PM background color
+              helpTextStyle: TextStyle(color: Colors.black), // Help text color
+              entryModeIconColor: Colors.black, // Entry mode icon color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedTime != null && pickedTime != _selectedTime)
       setState(() {

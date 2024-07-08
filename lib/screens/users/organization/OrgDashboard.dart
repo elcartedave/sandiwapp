@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sandiwapp/components/orgNavigator.dart';
+import 'package:sandiwapp/screens/users/organization/OrgPosts.dart';
 import 'package:sandiwapp/screens/users/organization/announcements/OrgAnnouncement.dart';
 import 'package:sandiwapp/screens/users/organization/OrgEvents.dart';
 import 'package:sandiwapp/screens/users/organization/OrgForms.dart';
@@ -46,9 +47,18 @@ class _OrgDashboardState extends State<OrgDashboard> {
   }
 
   void _scrollToSelectedButton(int index) {
-    double offset = (index * 120.0) -
-        (_scrollController.position.viewportDimension / 2) +
-        60.0;
+    double buttonWidth = 130.0; // 120.0 width + 10.0 padding
+    double offset = index * buttonWidth -
+        (_scrollController.position.viewportDimension - buttonWidth) / 2;
+
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (offset > _scrollController.position.maxScrollExtent) {
+      offset = _scrollController.position.maxScrollExtent;
+    }
+
     _scrollController.animateTo(offset,
         duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
@@ -64,6 +74,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
       case 3:
         return "Forms";
       case 4:
+        return "Posts";
+      case 5:
         return "Residents";
       default:
         return "Overview";
@@ -81,6 +93,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
       case "Forms":
         return 3;
       case "Residents":
+        return 5;
+      case "Posts":
         return 4;
       default:
         return 0;
@@ -131,8 +145,14 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 ),
                 const SizedBox(width: 10),
                 OrgNavigator(
-                  label: "Residents",
+                  label: "Posts",
                   onTap: () => _onItemTapped(4),
+                  clicked: clicked,
+                ),
+                const SizedBox(width: 10),
+                OrgNavigator(
+                  label: "Residents",
+                  onTap: () => _onItemTapped(5),
                   clicked: clicked,
                 ),
               ],
@@ -154,6 +174,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 OrgAnnouncement(),
                 OrgEvents(),
                 OrgForms(),
+                OrgPosts(),
                 OrgResidents(),
               ],
             ),

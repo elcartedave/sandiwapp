@@ -36,6 +36,24 @@ class _CreateTaskState extends State<CreateTask> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.black, // Selected date background color
+              onPrimary: Colors.white, // Selected date text color
+              onSurface: Colors.black, // Default text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     setState(() {
       _selectedDate = pickedDate;
@@ -46,6 +64,41 @@ class _CreateTaskState extends State<CreateTask> {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.black, // Selected time background color
+              onPrimary: Colors.white, // Selected time text color
+              onSurface: Colors.black, // Default text color
+            ),
+            timePickerTheme: TimePickerThemeData(
+              dialBackgroundColor: Colors.white, // Dial background color
+              dialHandColor: Colors.black, // Dial hand color
+              hourMinuteColor: WidgetStateColor.resolveWith((states) => states
+                      .contains(WidgetState.selected)
+                  ? Colors.black // Selected hour/minute background color
+                  : Colors.white), // Unselected hour/minute background color
+              hourMinuteTextColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.white // Selected hour/minute text color
+                      : Colors.black), // Unselected hour/minute text color
+              dayPeriodTextColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.white // Selected AM/PM text color
+                      : Colors.black), // Unselected AM/PM text color
+              dayPeriodColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? Colors.black // Selected AM/PM background color
+                      : Colors.white), // Unselected AM/PM background color
+              helpTextStyle: TextStyle(color: Colors.black), // Help text color
+              entryModeIconColor: Colors.black, // Entry mode icon color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
     );
     setState(() {
       _selectedTime = pickedTime;
