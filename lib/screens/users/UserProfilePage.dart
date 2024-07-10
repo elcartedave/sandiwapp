@@ -14,7 +14,8 @@ import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 
 class UserProfilePage extends StatefulWidget {
-  const UserProfilePage({super.key});
+  final bool? isApplicant;
+  const UserProfilePage({this.isApplicant, super.key});
 
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
@@ -64,6 +65,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           MyUser user =
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           return Container(
+            height: double.infinity,
             decoration: BoxDecoration(
               color: Colors.black,
               image: DecorationImage(
@@ -72,7 +74,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 fit: BoxFit.cover,
               ),
             ),
-            padding: EdgeInsets.only(top: 5, bottom: 25, left: 25, right: 25),
+            padding: EdgeInsets.only(top: 5, bottom: 0, left: 25, right: 25),
             child: SingleChildScrollView(
               controller: _scrollController,
               child: Column(
@@ -269,13 +271,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   fontSize: 13,
                                   fontStyle: FontStyle.italic),
                             ),
-                            Text(
-                              user.lupon!,
-                              style: GoogleFonts.judson(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontStyle: FontStyle.italic),
-                            ),
+                            user.position!.contains("Aplikante") ||
+                                    user.position!.contains("Pinuno")
+                                ? Container()
+                                : Text(
+                                    user.lupon!,
+                                    style: GoogleFonts.judson(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontStyle: FontStyle.italic),
+                                  ),
                           ],
                         ),
                       )
@@ -331,6 +336,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             style: GoogleFonts.patrickHandSc(fontSize: 24),
                           ),
                           onTap: () async {
+                            if (widget.isApplicant != null) {
+                              Navigator.pop(context);
+                            }
                             await context
                                 .read<UserAuthProvider>()
                                 .authService

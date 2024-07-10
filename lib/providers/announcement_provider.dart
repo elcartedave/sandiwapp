@@ -21,6 +21,9 @@ class AnnouncementProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _memAnnouncementsStream;
   Stream<QuerySnapshot> get memAnnouncements => _memAnnouncementsStream;
 
+  late Stream<QuerySnapshot> _appAnnouncementsStream;
+  Stream<QuerySnapshot> get appAnnouncements => _appAnnouncementsStream;
+
   FirebaseAnnouncementAPI firebaseService = FirebaseAnnouncementAPI();
 
   AnnouncementProvider() {
@@ -30,6 +33,7 @@ class AnnouncementProvider with ChangeNotifier {
     fetchExteAnnouncements();
     fetchMemAnnouncements();
     fetchPubAnnouncements();
+    fetchAppAnnouncements();
   }
 
   Stream<QuerySnapshot> fetchGenAnnouncements() {
@@ -66,6 +70,12 @@ class AnnouncementProvider with ChangeNotifier {
     _memAnnouncementsStream = firebaseService.getMemAnnouncements();
     notifyListeners();
     return _memAnnouncementsStream;
+  }
+
+  Stream<QuerySnapshot> fetchAppAnnouncements() {
+    _appAnnouncementsStream = firebaseService.getApplicantAnnouncements();
+    notifyListeners();
+    return _appAnnouncementsStream;
   }
 
   Stream<QuerySnapshot> fetchAllAnnouncements() {

@@ -19,7 +19,7 @@ class _CommAnnouncementItemState extends State<CommAnnouncementItem> {
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
             border: Border.all(width: 2, color: Colors.black),
-            color: Colors.transparent,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [

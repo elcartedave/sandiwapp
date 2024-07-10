@@ -11,6 +11,7 @@ import 'package:sandiwapp/components/taskManager.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
 import 'package:sandiwapp/screens/execs/LuponMembers.dart';
 import 'package:sandiwapp/screens/execs/MeritDemeritPage.dart';
 import 'package:sandiwapp/screens/execs/PublicationPage.dart';
@@ -260,7 +261,14 @@ class _UserDashboardState extends State<UserDashboard> {
                           WhiteButtonWithIcon(
                             iconData: Icons.people_alt,
                             text: "Applicant Announcements",
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ApplicantAnnouncement(
+                                              isPinuno: true)));
+                            },
                           ),
                           const SizedBox(height: 10),
                         ],

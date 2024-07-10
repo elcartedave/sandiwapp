@@ -121,7 +121,6 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           buildDetailRow('Nickname:', widget.user.nickname),
-                          buildDetailRow('Email:', widget.user.email),
                           buildDetailRow('Birthday:', widget.user.birthday),
                           buildDetailRow('Age:', widget.user.age),
                           buildDetailRow(

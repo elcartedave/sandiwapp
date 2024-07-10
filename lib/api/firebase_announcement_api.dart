@@ -61,6 +61,13 @@ class FirebaseAnnouncementAPI {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getApplicantAnnouncements() {
+    return _firestore
+        .collection('announcements')
+        .where('committee', isEqualTo: 'Applicant')
+        .snapshots();
+  }
+
   Stream<QuerySnapshot> getEdukAnnouncements() {
     return _firestore
         .collection('announcements')
