@@ -1,19 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sandiwapp/api/firebase_auth_api.dart';
 import 'package:sandiwapp/models/activityModel.dart';
 
 class FirebaseActivityAPI {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuthAPI _firebaseAuthAPI = FirebaseAuthAPI();
   Future<String> createActivity(Activity activity) async {
     try {
       DocumentReference docRef = _firestore.collection("activities").doc();
-
+      String email = _firebaseAuthAPI.getUserEmail()!;
       // Set the document data with the auto-generated ID
       await docRef.set({
         'id': docRef.id,
         'title': activity.title,
         'content': activity.content,
         'lupon': activity.lupon,
-        'date': Timestamp.fromDate(activity.date)
+        'sender': email,
+        'date': Timestamp.fromDate(activity.date),
       });
       return '';
     } catch (e) {
@@ -43,6 +46,15 @@ class FirebaseActivityAPI {
     return _firestore
         .collection('activities')
         .where('lupon', isEqualTo: lupon)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getApplicantActivities() {
+    String email = _firebaseAuthAPI.getUserEmail()!;
+    return _firestore
+        .collection('activities')
+        .where('lupon', isEqualTo: 'Aplikante')
+        .where('sender', isEqualTo: email)
         .snapshots();
   }
 

@@ -9,6 +9,9 @@ import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/applicants/AllResidentsPage.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantCalendar.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantMessages.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantPosts.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantProfilePge.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantResidents.dart';
 import 'package:sandiwapp/screens/users/UserProfilePage.dart';
@@ -175,15 +178,34 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                           ApplicantGrid(
                               icon: Icons.newspaper,
                               text: "Posts",
-                              onTap: () {}),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ApplicantPostsPage()));
+                              }),
                           ApplicantGrid(
                               icon: Icons.sms,
                               text: "Mga Mensahe",
-                              onTap: () {}),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ApplicantMessages(
+                                              userEmail: user.email,
+                                            )));
+                              }),
                           ApplicantGrid(
                               icon: Icons.calendar_month,
                               text: "Calendar of Events",
-                              onTap: () {}),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ApplicantCalendar()));
+                              }),
                         ],
                       ),
                       const SizedBox(height: 10),

@@ -16,7 +16,8 @@ class ApplicantResidents extends StatefulWidget {
 class _ApplicantResidentsState extends State<ApplicantResidents> {
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> _userStream = context.watch<UserProvider>().users;
+    Stream<QuerySnapshot> _userStream =
+        context.watch<UserProvider>().fetchUsers();
     return Container(
       height: 150,
       child: StreamBuilder(

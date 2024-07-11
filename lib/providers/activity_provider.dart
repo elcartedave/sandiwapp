@@ -13,11 +13,17 @@ class ActivityProvider with ChangeNotifier {
 
   ActivityProvider() {
     fetchAllActivities();
+    fetchApplicantActivities();
     deletePastActivities();
   }
   Stream<QuerySnapshot> fetchActivities(String lupon) {
     deletePastActivities();
     return firebaseService.getActivities(lupon);
+  }
+
+  Stream<QuerySnapshot> fetchApplicantActivities() {
+    deletePastActivities();
+    return firebaseService.getApplicantActivities();
   }
 
   Stream<QuerySnapshot> fetchAllActivities() {
