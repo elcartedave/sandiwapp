@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
@@ -9,17 +8,9 @@ import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/activityModel.dart';
 import 'package:sandiwapp/models/calendarEvent.dart';
-import 'package:sandiwapp/models/eventModel.dart';
-import 'package:sandiwapp/models/formsModel.dart';
-import 'package:sandiwapp/models/taskModel.dart';
 import 'package:sandiwapp/providers/activity_provider.dart';
-import 'package:sandiwapp/providers/event_provider.dart';
-import 'package:sandiwapp/providers/forms_provider.dart';
-import 'package:sandiwapp/providers/task_provider.dart';
-import 'package:sandiwapp/screens/users/organization/ViewEventPage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ApplicantCalendar extends StatefulWidget {
   const ApplicantCalendar({super.key});
@@ -254,7 +245,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         backgroundColor: Colors.white,
-        title: PatrickHand(text: "Talaan ng Events ng Lupon", fontSize: 24),
+        title: PatrickHand(text: "Talaan ng Events ng Aplikante", fontSize: 24),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black,

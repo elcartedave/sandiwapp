@@ -11,10 +11,10 @@ import 'package:sandiwapp/screens/applicants/AllResidentsPage.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantCalendar.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantMessages.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantOrgPage.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantPosts.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantProfilePge.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantResidents.dart';
-import 'package:sandiwapp/screens/users/UserProfilePage.dart';
 
 class ApplicantHome extends StatefulWidget {
   const ApplicantHome({super.key});
@@ -118,8 +118,22 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                               Stack(
                                 alignment: Alignment.topCenter,
                                 children: [
+                                  const SizedBox(height: 10),
+                                  Image.asset(
+                                    'assets/images/sandiwa_cutout.png',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.2,
+                                  ),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ApplicantOrgPage()));
+                                    },
                                     child: Container(
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 14),
@@ -137,14 +151,6 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                                         style: blackText,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Image.asset(
-                                    'assets/images/sandiwa_cutout.png',
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.2,
                                   ),
                                 ],
                               )
