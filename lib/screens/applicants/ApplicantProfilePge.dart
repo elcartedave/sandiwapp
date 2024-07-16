@@ -12,16 +12,28 @@ class ApplicantProfilePage extends StatefulWidget {
 class _ApplicantProfilePageState extends State<ApplicantProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.transparent,
-        title: Text("My Profile",
-            style:
-                GoogleFonts.patrickHandSc(fontSize: 24, color: Colors.white)),
+    return Stack(children: [
+      Positioned.fill(
+        child: Container(color: Colors.black),
       ),
-      body: UserProfilePage(isApplicant: true),
-    );
+      Positioned.fill(
+        child: Image.asset(
+          "assets/images/bg2.png",
+          fit: BoxFit.cover,
+          opacity: AlwaysStoppedAnimation(0.6),
+        ),
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.transparent,
+          title: Text("My Profile",
+              style:
+                  GoogleFonts.patrickHandSc(fontSize: 24, color: Colors.white)),
+        ),
+        body: UserProfilePage(isApplicant: true),
+      ),
+    ]);
   }
 }

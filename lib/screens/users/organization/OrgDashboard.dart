@@ -104,13 +104,6 @@ class _OrgDashboardState extends State<OrgDashboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          opacity: 0.7,
-          image: AssetImage("assets/images/bg1.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
       padding:
           const EdgeInsets.only(left: 16.0, right: 8.0, top: 0.0, bottom: 8.0),
       child: Column(

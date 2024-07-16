@@ -11,23 +11,27 @@ class ApplicantMessageItem extends StatelessWidget {
   final Message message;
   final bool? doesContain;
 
-  const ApplicantMessageItem(
-      {this.doesContain, required this.message, Key? key})
-      : super(key: key);
+  const ApplicantMessageItem({
+    this.doesContain,
+    required this.message,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: context.watch<UserProvider>().fetchUsers(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {}
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        }
         if (snapshot.hasError) {
           return Center(
             child: Text("Error: ${snapshot.error}"),
           );
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center();
+          return SizedBox.shrink();
         }
         List<MyUser> users = snapshot.data!.docs.map((doc) {
           return MyUser.fromJson(doc.data() as Map<String, dynamic>);

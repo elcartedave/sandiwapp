@@ -23,6 +23,14 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
         context.watch<AnnouncementProvider>().appAnnouncements;
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        title: Text(
+          "Mga Anunsyo",
+          style: GoogleFonts.patrickHandSc(fontSize: 32),
+        ),
+      ),
       body: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -35,10 +43,6 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
         ),
         child: Column(
           children: [
-            Text(
-              "Mga Anunsyo",
-              style: GoogleFonts.patrickHandSc(fontSize: 32),
-            ),
             Expanded(
               child: StreamBuilder(
                 stream: _announcementsStream,

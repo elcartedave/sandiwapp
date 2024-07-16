@@ -22,51 +22,56 @@ class _ApplicantPostsPageState extends State<ApplicantPostsPage> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _postsStream = context.watch<LinkProvider>().posts;
-    return Scaffold(
-      appBar: AppBar(
-        title: PatrickHandSC(text: "Mga Posts", fontSize: 32),
-        scrolledUnderElevation: 0,
+    return Stack(children: [
+      Positioned.fill(
+        child: Container(color: Colors.white),
       ),
-      body: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            image: DecorationImage(
-              opacity: 0.4,
-              image: AssetImage("assets/images/whitebg3.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: StreamBuilder(
-              stream: _postsStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No Posts Yet!"));
-                }
-                var posts = snapshot.data!.docs.map((doc) {
-                  return Link.fromJson(doc.data() as Map<String, dynamic>);
-                }).toList();
-
-                posts.sort((a, b) => b.date.compareTo(a.date));
-
-                return Scrollbar(
-                  child: ListView.builder(
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        return buildLinkPreview(posts[index]);
-                      }),
+      Positioned.fill(
+        child: Image.asset(
+          "assets/images/whitebg3.jpg",
+          fit: BoxFit.cover,
+          opacity: AlwaysStoppedAnimation(0.4),
+        ),
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: PatrickHandSC(text: "Mga Posts", fontSize: 32),
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+        ),
+        body: StreamBuilder(
+            stream: _postsStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
                 );
-              })),
-    );
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text("No Posts Yet!"));
+              }
+              var posts = snapshot.data!.docs.map((doc) {
+                return Link.fromJson(doc.data() as Map<String, dynamic>);
+              }).toList();
+
+              posts.sort((a, b) => b.date.compareTo(a.date));
+
+              return Scrollbar(
+                child: ListView.builder(
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      return buildLinkPreview(posts[index]);
+                    }),
+              );
+            }),
+      ),
+    ]);
   }
 
   Widget buildLinkPreview(Link link) {

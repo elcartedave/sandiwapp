@@ -17,6 +17,11 @@ class _UserHomePageState extends State<UserHomePage> {
   late Navbar navbar;
   List<String> appBarText = ["My Dashboard", "UPSSB", "Profile"];
   List<String> navBarText = ["Dashboard", "Organization", "Profile"];
+  List<String> photoURL = [
+    "assets/images/bg.png",
+    "assets/images/bg1.png",
+    "assets/images/bg2.png"
+  ];
   @override
   Widget build(BuildContext context) {
     navbar = Navbar(
@@ -25,29 +30,43 @@ class _UserHomePageState extends State<UserHomePage> {
               _currentIndex = val;
             }),
         _currentIndex);
-    return Scaffold(
-      backgroundColor: _currentIndex == 2 ? Colors.black : Colors.white,
-      appBar: AppBar(
-        backgroundColor: _currentIndex == 2 ? Colors.black : Colors.white,
-        title: Text(
-          appBarText[_currentIndex],
-          style: GoogleFonts.patrickHand(
-              color: _currentIndex == 2 ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w700),
-        ),
-        automaticallyImplyLeading: false,
-        titleSpacing: 20.0,
-        scrolledUnderElevation: 0.0,
+
+    return Stack(children: [
+      Positioned.fill(
+        child:
+            Container(color: _currentIndex == 2 ? Colors.black : Colors.white),
       ),
-      bottomNavigationBar: navbar,
-      body: [
-        /////////////////////////////DASHBOARD PAGE/////////////////////////
-        UserDashboard(),
-        /////////////////////////////HOME PAGE/////////////////////////
-        OrgDashboard(),
-        /////////////////////////////PROFILE PAGE/////////////////////////
-        UserProfilePage(),
-      ][_currentIndex],
-    );
+      Positioned.fill(
+        child: Image.asset(
+          photoURL[_currentIndex],
+          fit: BoxFit.cover,
+          opacity: AlwaysStoppedAnimation(0.6),
+        ),
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(
+            appBarText[_currentIndex],
+            style: GoogleFonts.patrickHand(
+                color: _currentIndex == 2 ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w700),
+          ),
+          automaticallyImplyLeading: false,
+          titleSpacing: 20.0,
+          scrolledUnderElevation: 0.0,
+        ),
+        bottomNavigationBar: navbar,
+        body: [
+          /////////////////////////////DASHBOARD PAGE/////////////////////////
+          UserDashboard(),
+          /////////////////////////////HOME PAGE/////////////////////////
+          OrgDashboard(),
+          /////////////////////////////PROFILE PAGE/////////////////////////
+          UserProfilePage(),
+        ][_currentIndex],
+      ),
+    ]);
   }
 }

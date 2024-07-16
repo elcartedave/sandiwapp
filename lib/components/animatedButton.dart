@@ -57,15 +57,16 @@ class AnimatedButton extends StatelessWidget {
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.playball(fontSize: 24),
+                    style: GoogleFonts.playball(fontSize: 22),
                   ),
                 ),
+          const SizedBox(width: 5),
           order == 1
               ? Expanded(
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.playball(fontSize: 24),
+                    style: GoogleFonts.playball(fontSize: 22),
                   ),
                 )
               : Expanded(

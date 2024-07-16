@@ -24,6 +24,13 @@ class ApplicantHome extends StatefulWidget {
 }
 
 class _ApplicantHomeState extends State<ApplicantHome> {
+  void _navigateToPage(Widget page) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<DocumentSnapshot> _userStream =
@@ -50,10 +57,10 @@ class _ApplicantHomeState extends State<ApplicantHome> {
           return Scaffold(
             backgroundColor: Colors.white,
             body: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 image: DecorationImage(
-                  opacity: 0.4,
+                  opacity: 0.3,
                   image: AssetImage("assets/images/whitebg.jpg"),
                   fit: BoxFit.cover,
                 ),
@@ -173,45 +180,24 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                           ApplicantGrid(
                               icon: Icons.announcement,
                               text: "Announcements",
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ApplicantAnnouncement(
-                                                isPinuno: false)));
-                              }),
+                              onTap: () => _navigateToPage(
+                                  ApplicantAnnouncement(isPinuno: false))),
                           ApplicantGrid(
                               icon: Icons.newspaper,
                               text: "Posts",
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ApplicantPostsPage()));
-                              }),
+                              onTap: () =>
+                                  _navigateToPage(ApplicantPostsPage())),
                           ApplicantGrid(
                               icon: Icons.sms,
                               text: "Mga Mensahe",
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ApplicantMessages(
-                                              userEmail: user.email,
-                                            )));
-                              }),
+                              onTap: () => _navigateToPage(ApplicantMessages(
+                                    userEmail: user.email,
+                                  ))),
                           ApplicantGrid(
                               icon: Icons.calendar_month,
                               text: "Calendar of Events",
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ApplicantCalendar()));
-                              }),
+                              onTap: () =>
+                                  _navigateToPage(ApplicantCalendar())),
                         ],
                       ),
                       const SizedBox(height: 10),

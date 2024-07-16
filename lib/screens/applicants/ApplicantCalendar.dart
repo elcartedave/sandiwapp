@@ -147,6 +147,59 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                   WhiteButton(
                     onTap: () async {
                       final TimeOfDay? pickedTime = await showTimePicker(
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: Colors
+                                    .black, // Selected time background color
+                                onPrimary:
+                                    Colors.white, // Selected time text color
+                                onSurface: Colors.black, // Default text color
+                              ),
+                              timePickerTheme: TimePickerThemeData(
+                                dialBackgroundColor:
+                                    Colors.white, // Dial background color
+                                dialHandColor: Colors.black, // Dial hand color
+                                hourMinuteColor: WidgetStateColor.resolveWith(
+                                    (states) => states
+                                            .contains(WidgetState.selected)
+                                        ? Colors
+                                            .black // Selected hour/minute background color
+                                        : Colors
+                                            .white), // Unselected hour/minute background color
+                                hourMinuteTextColor: WidgetStateColor
+                                    .resolveWith((states) => states
+                                            .contains(WidgetState.selected)
+                                        ? Colors
+                                            .white // Selected hour/minute text color
+                                        : Colors
+                                            .black), // Unselected hour/minute text color
+                                dayPeriodTextColor: WidgetStateColor
+                                    .resolveWith((states) => states
+                                            .contains(WidgetState.selected)
+                                        ? Colors
+                                            .white // Selected AM/PM text color
+                                        : Colors
+                                            .black), // Unselected AM/PM text color
+                                dayPeriodColor: WidgetStateColor.resolveWith(
+                                    (states) => states
+                                            .contains(WidgetState.selected)
+                                        ? Colors
+                                            .black // Selected AM/PM background color
+                                        : Colors
+                                            .white), // Unselected AM/PM background color
+                                helpTextStyle: TextStyle(
+                                    color: Colors.black), // Help text color
+                                entryModeIconColor:
+                                    Colors.black, // Entry mode icon color
+                              ),
+                              dialogBackgroundColor:
+                                  Colors.white, // Background color
+                            ),
+                            child: child!,
+                          );
+                        },
                         context: context,
                         initialTime: TimeOfDay.now(),
                       );
@@ -239,123 +292,135 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        scrolledUnderElevation: 0.0,
-        backgroundColor: Colors.white,
-        title: PatrickHand(text: "Talaan ng Events ng Aplikante", fontSize: 24),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
-        shape: CircleBorder(),
-        onPressed: () => _showAddActivityDialog(context),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            opacity: 0.5,
-            image: AssetImage("assets/images/bg1.png"),
+    return Stack(children: [
+      Positioned.fill(
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            Colors.white.withOpacity(0.5),
+            BlendMode.srcATop,
+          ),
+          child: Image.asset(
+            "assets/images/bg1.png",
             fit: BoxFit.cover,
           ),
         ),
-        height: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            TableCalendar(
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-              ),
-              availableGestures: AvailableGestures.all,
-              calendarStyle: const CalendarStyle(
-                outsideDaysVisible: false,
-                selectedDecoration: BoxDecoration(
-                  color: Colors.black,
-                  shape: BoxShape.circle,
+      ),
+      Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          scrolledUnderElevation: 0.0,
+          backgroundColor: Colors.transparent,
+          title:
+              PatrickHand(text: "Talaan ng Events ng Aplikante", fontSize: 24),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.black,
+          shape: CircleBorder(),
+          onPressed: () => _showAddActivityDialog(context),
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              TableCalendar(
+                headerStyle: const HeaderStyle(
+                  formatButtonVisible: false,
+                  titleCentered: true,
                 ),
-                todayDecoration: BoxDecoration(
-                  color: Color.fromARGB(83, 0, 0, 0),
-                  shape: BoxShape.circle,
+                availableGestures: AvailableGestures.all,
+                calendarStyle: const CalendarStyle(
+                  outsideDaysVisible: false,
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.black,
+                    shape: BoxShape.circle,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: Color.fromARGB(83, 0, 0, 0),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                onDaySelected: _onDaySelected,
+                focusedDay: _focusedDay,
+                firstDay: DateTime.now(),
+                selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+                eventLoader: _getActivitiesForDay,
+                lastDay: DateTime(2101),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  "Mga Ganap sa ${petsa(_selectedDay!)}",
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
-              onDaySelected: _onDaySelected,
-              focusedDay: _focusedDay,
-              firstDay: DateTime.now(),
-              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-              eventLoader: _getActivitiesForDay,
-              lastDay: DateTime(2101),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: Text(
-                "Mga Ganap sa ${petsa(_selectedDay!)}",
-                style: TextStyle(fontSize: 14),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Expanded(
-              child: StreamBuilder(
-                stream: _activityStream,
-                builder: (context, activitySnapshot) {
-                  if (activitySnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (activitySnapshot.hasError) {
-                    return Center(
-                        child: Text("Error: ${activitySnapshot.error}"));
-                  }
+              const SizedBox(height: 5),
+              Expanded(
+                child: StreamBuilder(
+                  stream: _activityStream,
+                  builder: (context, activitySnapshot) {
+                    if (activitySnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ));
+                    }
+                    if (activitySnapshot.hasError) {
+                      return Center(
+                          child: Text("Error: ${activitySnapshot.error}"));
+                    }
 
-                  List<CalendarEvent> activitiesForDay =
-                      _getActivitiesForDay(_selectedDay!);
+                    List<CalendarEvent> activitiesForDay =
+                        _getActivitiesForDay(_selectedDay!);
 
-                  return activitiesForDay.isEmpty
-                      ? Center(
-                          child: PatrickHand(
-                              text: "Walang ganap sa araw na ito",
-                              fontSize: 14))
-                      : ListView.builder(
-                          itemCount: activitiesForDay.length,
-                          itemBuilder: (context, index) {
-                            CalendarEvent calendarEvent =
-                                activitiesForDay[index];
+                    return activitiesForDay.isEmpty
+                        ? Center(
+                            child: PatrickHand(
+                                text: "Walang ganap sa araw na ito",
+                                fontSize: 14))
+                        : ListView.builder(
+                            itemCount: activitiesForDay.length,
+                            itemBuilder: (context, index) {
+                              CalendarEvent calendarEvent =
+                                  activitiesForDay[index];
 
-                            return Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListTile(
-                                leading:
-                                    Text(hourFormatter(calendarEvent.date)),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(calendarEvent.title,
-                                        style: GoogleFonts.patrickHand(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600)),
-                                    PatrickHand(
-                                        text: calendarEvent.content!,
-                                        fontSize: 12)
-                                  ],
+                              return Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 4),
+                                decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                trailing: Icon(Icons.calendar_month),
-                              ),
-                            );
-                          },
-                        );
-                },
+                                child: ListTile(
+                                  leading:
+                                      Text(hourFormatter(calendarEvent.date)),
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(calendarEvent.title,
+                                          style: GoogleFonts.patrickHand(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600)),
+                                      PatrickHand(
+                                          text: calendarEvent.content!,
+                                          fontSize: 12)
+                                    ],
+                                  ),
+                                  trailing: Icon(Icons.calendar_month),
+                                ),
+                              );
+                            },
+                          );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    );
+    ]);
   }
 }

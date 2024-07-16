@@ -22,70 +22,82 @@ class _KasaysayanState extends State<Kasaysayan> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        scrolledUnderElevation: 0.0,
-        backgroundColor: Color(0xFFEEEEEE),
-        title: Text(
-          "Kasaysayan",
-          style: GoogleFonts.patrickHand(fontSize: 24),
+    return Stack(children: [
+      Positioned.fill(
+        child: Container(color: Colors.white),
+      ),
+      Positioned.fill(
+        child: Image.asset(
+          "assets/images/whitebg5.jpg",
+          fit: BoxFit.cover,
+          opacity: AlwaysStoppedAnimation(0.3),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
-            child: ToggleButtons(
-              isSelected: [selectedIndex == 0, selectedIndex == 1],
-              onPressed: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-                _pageController.animateToPage(index,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut);
-              },
-              borderRadius: BorderRadius.circular(20),
-              borderColor: Colors.black,
-              borderWidth: 2,
-              selectedBorderColor: Colors.black,
-              fillColor: Colors.black,
-              selectedColor: Colors.white,
-              color: Colors.black,
-              constraints: BoxConstraints(minHeight: 30.0, minWidth: 100.0),
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4),
-                  child: Text("UPSSB",
-                      style: GoogleFonts.patrickHand(fontSize: 15)),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4),
-                  child: Text("Talaan ng Miyembro",
-                      style: GoogleFonts.patrickHand(fontSize: 15)),
-                ),
-              ],
-            ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          scrolledUnderElevation: 0.0,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            "Kasaysayan",
+            style: GoogleFonts.patrickHand(fontSize: 24),
           ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              children: [
-                UPSSBPage(),
-                MemberPage(),
-              ],
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+              child: ToggleButtons(
+                isSelected: [selectedIndex == 0, selectedIndex == 1],
+                onPressed: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                  _pageController.animateToPage(index,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut);
+                },
+                borderRadius: BorderRadius.circular(20),
+                borderColor: Colors.black,
+                borderWidth: 2,
+                selectedBorderColor: Colors.black,
+                fillColor: Colors.black,
+                selectedColor: Colors.white,
+                color: Colors.black,
+                constraints: BoxConstraints(minHeight: 30.0, minWidth: 100.0),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4.0, horizontal: 4),
+                    child: Text("UPSSB",
+                        style: GoogleFonts.patrickHand(fontSize: 15)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4.0, horizontal: 4),
+                    child: Text("Talaan ng Miyembro",
+                        style: GoogleFonts.patrickHand(fontSize: 15)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                children: [
+                  UPSSBPage(),
+                  MemberPage(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+    ]);
   }
 }

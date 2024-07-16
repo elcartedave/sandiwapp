@@ -2,21 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ApplicantGrid extends StatefulWidget {
-  final Function()? onTap;
+  final VoidCallback onTap;
   final IconData? icon;
   final String text;
-  const ApplicantGrid({required this.text, this.icon, this.onTap, super.key});
+
+  const ApplicantGrid({
+    required this.text,
+    this.icon,
+    required this.onTap,
+    super.key,
+  });
 
   @override
   State<ApplicantGrid> createState() => _ApplicantGridState();
 }
 
 class _ApplicantGridState extends State<ApplicantGrid> {
+  bool isPressed = false;
+
+  void _handleTap() {
+    setState(() {
+      isPressed = true;
+    });
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        isPressed = false;
+      });
+      widget.onTap();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
+      onTapDown: (_) {
+        setState(() {
+          isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          isPressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          isPressed = false;
+        });
+      },
+      onTap: _handleTap,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 50),
+        transform:
+            Matrix4.translationValues(isPressed ? 4 : 0, isPressed ? 4 : 0, 0),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black, width: 1),
@@ -26,7 +64,7 @@ class _ApplicantGridState extends State<ApplicantGrid> {
             BoxShadow(
               color: Colors.black,
               blurRadius: 0,
-              offset: Offset(4, 4), // Shadow position
+              offset: isPressed ? Offset(0, 0) : Offset(4, 4),
             ),
           ],
         ),

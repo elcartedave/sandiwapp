@@ -56,13 +56,6 @@ class _UserDashboardState extends State<UserDashboard> {
           MyUser user =
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                opacity: 0.5,
-                image: AssetImage("assets/images/bg.png"),
-                fit: BoxFit.fill,
-              ),
-            ),
             padding: const EdgeInsets.only(bottom: 16.0),
             child: SingleChildScrollView(
               child: Padding(

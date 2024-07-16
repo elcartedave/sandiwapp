@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sandiwapp/components/animatedButton.dart';
 import 'package:sandiwapp/components/texts.dart';
+import 'package:sandiwapp/screens/applicants/Execs.dart';
+import 'package:sandiwapp/screens/users/organization/overview/Kasaysayan.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Konstitusyon.dart';
 
 class ApplicantOrgPage extends StatefulWidget {
@@ -76,8 +78,27 @@ class _ApplicantOrgPageState extends State<ApplicantOrgPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              PatrickHandSC(
-                  text: "UP Sandiwa Samahang Bulakenyo", fontSize: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      color: Colors.black,
+                      iconSize: 24,
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: PatrickHandSC(
+                        text: "UP Sandiwa Samahang Bulakenyo", fontSize: 32),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
               PatrickHand(
                   text: "Tungo sa Makabuluhang Pagkilos at Paglilingkod",
@@ -89,8 +110,8 @@ class _ApplicantOrgPageState extends State<ApplicantOrgPage> {
                   order: 1,
                   isPressed: _isPressed1,
                   icon: Icons.history_edu,
-                  text: "Kasaysayan, Simbulo, at Preambulo",
-                  onTap: () => _navigateToPage(Konstitusyon(), 1),
+                  text: "Preambulo, Kasaysayan, at mga Miyembro",
+                  onTap: () => _navigateToPage(Kasaysayan(), 1),
                 ),
               ),
               const SizedBox(height: 10),
@@ -122,8 +143,8 @@ class _ApplicantOrgPageState extends State<ApplicantOrgPage> {
                   order: 2,
                   isPressed: _isPressed4,
                   icon: Icons.people,
-                  text: "Talaan ng Batches at Residente",
-                  onTap: () => _navigateToPage(Konstitusyon(), 4),
+                  text: "Lupong Tagapagpaganap",
+                  onTap: () => _navigateToPage(Execs(), 4),
                 ),
               ),
             ],
