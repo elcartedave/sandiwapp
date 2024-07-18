@@ -56,9 +56,7 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<DocumentSnapshot>(
       stream: userStream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LogoLoadingPage();
-        }
+        if (snapshot.connectionState == ConnectionState.waiting) {}
         if (snapshot.hasError) {
           return _buildErrorPage(snapshot.error);
         }
