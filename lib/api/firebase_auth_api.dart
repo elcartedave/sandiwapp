@@ -40,7 +40,7 @@ class FirebaseAuthAPI {
     }
   }
 
-  Future<bool?> userStatus(String email) async {
+  Future<bool> userStatus(String email) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')
@@ -51,12 +51,13 @@ class FirebaseAuthAPI {
         var docData = querySnapshot.docs.first.data() as Map<String, dynamic>;
         return docData['confirmed'];
       }
+      return false;
     } catch (e) {
-      print(e);
+      return false;
     }
   }
 
-  Future<bool?> isApplicant(String email) async {
+  Future<bool> isApplicant(String email) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')
@@ -66,7 +67,7 @@ class FirebaseAuthAPI {
           .get();
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
-      print(e);
+      return false;
     }
   }
 

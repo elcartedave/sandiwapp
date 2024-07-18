@@ -30,7 +30,8 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> resisStream = context.watch<UserProvider>().users;
+    Stream<QuerySnapshot> resisStream =
+        context.watch<UserProvider>().fetchUsers();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -45,7 +46,10 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
           stream: resisStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Colors.black,
+              ));
             }
             if (snapshot.hasError) {
               return Center(child: Text("Error: ${snapshot.error}"));

@@ -304,6 +304,7 @@ class FirebaseUserAPI {
     return db
         .collection("users")
         .where("confirmed", isEqualTo: false)
+        .where("position", isEqualTo: "")
         .snapshots();
   }
 
