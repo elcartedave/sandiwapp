@@ -6,6 +6,7 @@ import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/users/ResidentsProfilePage.dart';
 
 class ConfirmMemberPage extends StatefulWidget {
   const ConfirmMemberPage({super.key});
@@ -103,25 +104,35 @@ class _ConfirmMemberPageState extends State<ConfirmMemberPage> {
                         children: [
                           Flexible(
                             flex: 2,
-                            child: Column(
-                              children: [
-                                pendingMember.photoUrl == null ||
-                                        pendingMember.photoUrl == ""
-                                    ? Image.asset(
-                                        'assets/images/base_image.png',
-                                        height: 100,
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.network(
-                                        pendingMember.photoUrl!,
-                                        height: 100,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                      ),
-                                PatrickHand(
-                                    text: pendingMember.name, fontSize: 20)
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ResidentProfilePage(
+                                                user: pendingMember)));
+                              },
+                              child: Column(
+                                children: [
+                                  pendingMember.photoUrl == null ||
+                                          pendingMember.photoUrl == ""
+                                      ? Image.asset(
+                                          'assets/images/base_image.png',
+                                          height: 100,
+                                          width: double.infinity,
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Image.network(
+                                          pendingMember.photoUrl!,
+                                          height: 100,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                  PatrickHand(
+                                      text: pendingMember.name, fontSize: 20)
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(width: 20),
@@ -264,26 +275,36 @@ class _ConfirmMemberPageState extends State<ConfirmMemberPage> {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
                       padding: EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          applicant.photoUrl == null || applicant.photoUrl == ""
-                              ? Image.asset(
-                                  'assets/images/base_image.png',
-                                  height: 100,
-                                  width: double.infinity,
-                                  fit: BoxFit.fill,
-                                )
-                              : Image.network(
-                                  applicant.photoUrl!,
-                                  height: 100,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                          SizedBox(height: 10),
-                          PatrickHand(text: applicant.name, fontSize: 20),
-                          // Add any specific handling for applicants if needed
-                        ],
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ResidentProfilePage(user: applicant)));
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            applicant.photoUrl == null ||
+                                    applicant.photoUrl == ""
+                                ? Image.asset(
+                                    'assets/images/base_image.png',
+                                    height: 100,
+                                    width: double.infinity,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image.network(
+                                    applicant.photoUrl!,
+                                    height: 100,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                            SizedBox(height: 10),
+                            PatrickHand(text: applicant.name, fontSize: 20),
+                            // Add any specific handling for applicants if needed
+                          ],
+                        ),
                       ),
                     );
                   },

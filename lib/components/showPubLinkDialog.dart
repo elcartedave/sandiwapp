@@ -8,6 +8,7 @@ import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class ShowPubLinkDialog extends StatefulWidget {
   final Link pubLink;
@@ -172,6 +173,7 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
                 controller: _urlController,
                 obscureText: false,
                 hintText: '',
+                isURL: true,
                 maxLines: 5),
             const SizedBox(height: 10),
           ],
@@ -194,18 +196,6 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
                           setState(() {
                             _isLoading = true;
                           });
-
-                          if (!_urlController.text.contains("https") &&
-                              !_urlController.text.contains(".com")) {
-                            showCustomSnackBar(
-                                context,
-                                "Please enter a valid link. Make sure to have 'https://' at the beginning of the link",
-                                80);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            return;
-                          }
 
                           String message = await context
                               .read<LinkProvider>()

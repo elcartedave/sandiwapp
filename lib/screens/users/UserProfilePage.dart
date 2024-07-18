@@ -66,7 +66,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           return Container(
             height: double.infinity,
-            padding: EdgeInsets.only(top: 5, bottom: 0, left: 25, right: 25),
+            padding: EdgeInsets.only(top: 5, bottom: 10, left: 25, right: 25),
             child: SingleChildScrollView(
               controller: _scrollController,
               child: Column(
@@ -91,7 +91,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       : Image.network(
                                           user.photoUrl!,
                                           width: 100,
-                                          fit: BoxFit.contain,
+                                          fit: BoxFit.cover,
                                         ),
                             ),
                           ),
@@ -294,6 +294,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           buildInfoRow("Birthday:", user.birthday),
                           buildInfoRow("Age:", user.age),
                           buildInfoRow("Contact Number:", user.contactno),
+                          buildInfoRow("Degree Program:", user.degprog),
                           buildInfoRow("College Address:", user.collegeAddress),
                           buildInfoRow("Home Address:", user.homeAddress),
                           buildInfoRow("Sponsor:", user.sponsor),

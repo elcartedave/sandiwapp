@@ -11,6 +11,7 @@ import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/users/ResidentsProfilePage.dart';
 
 class ViewEventPage extends StatefulWidget {
   const ViewEventPage(
@@ -405,56 +406,71 @@ class _ViewEventPageState extends State<ViewEventPage> {
   }
 
   Widget buildUserCard(MyUser user) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ResidentProfilePage(user: user)));
+      },
       child: Column(
         children: [
           user.photoUrl == null || user.photoUrl == ""
-              ? Image.asset(
-                  'assets/images/base_image.png',
-                  height: 100,
-                  width: double.infinity,
-                  fit: BoxFit.fill,
+              ? ClipOval(
+                  child: Image.asset(
+                    "assets/icons/avatar.png",
+                    height: 90,
+                    width: 90,
+                    color: Colors.white,
+                    fit: BoxFit.cover,
+                  ),
                 )
-              : Image.network(
-                  user.photoUrl!,
-                  height: 100,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child; // Image is fully loaded
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: SizedBox(
-                          height: 100,
-                          width: double.infinity,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(
-                                  color: Colors.white,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          (loadingProgress.expectedTotalBytes ??
-                                              1)
-                                      : null,
-                                ),
-                                const SizedBox(height: 10),
-                                if (loadingProgress.expectedTotalBytes != null)
-                                  Text(
-                                    '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
-                                    style: const TextStyle(color: Colors.white),
+              : ClipOval(
+                  child: Image.network(
+                    user.photoUrl!,
+                    height: 90,
+                    width: 90,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child; // Image is fully loaded
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: SizedBox(
+                            height: 90,
+                            width: 90,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    color: Colors.white,
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            (loadingProgress
+                                                    .expectedTotalBytes ??
+                                                1)
+                                        : null,
                                   ),
-                              ],
+                                  const SizedBox(height: 10),
+                                  if (loadingProgress.expectedTotalBytes !=
+                                      null)
+                                    Text(
+                                      '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
           Text(user.name,
               style: GoogleFonts.inter(fontSize: 16, color: Colors.white)),

@@ -127,6 +127,8 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                               'College Address:', widget.user.collegeAddress),
                           buildDetailRow(
                               'Home Address:', widget.user.homeAddress),
+                          buildDetailRow(
+                              'Degree Program:', widget.user.degprog),
                           buildDetailRow('Sponsor:', widget.user.sponsor),
                           buildDetailRow('Batch:', widget.user.batch),
                         ],

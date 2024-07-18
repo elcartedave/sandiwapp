@@ -111,7 +111,7 @@ class _ViewTasksState extends State<ViewTasks> {
                               .read<TaskProvider>()
                               .deleteTask(widget.user.email);
 
-                          showCustomSnackBar(context, "Tasks Updated", 85);
+                          showCustomSnackBar(context, "Tasks Updated", 30);
                           Navigator.of(context)
                               .pop(); // Close the dialog after saving
                         }),

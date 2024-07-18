@@ -6,6 +6,7 @@ import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class CreateFormsPage extends StatefulWidget {
   const CreateFormsPage({super.key});
@@ -146,6 +147,7 @@ class _CreateFormsPageState extends State<CreateFormsPage> {
                           controller: _urlController,
                           obscureText: false,
                           hintText: '',
+                          isURL: true,
                         ),
                         const SizedBox(height: 15),
                         Container(
@@ -210,18 +212,6 @@ class _CreateFormsPageState extends State<CreateFormsPage> {
                               showCustomSnackBar(
                                   context,
                                   "Date and time cannot be earlier than now!",
-                                  80);
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              return;
-                            }
-
-                            if (!_urlController.text.contains("https") &&
-                                !_urlController.text.contains(".com")) {
-                              showCustomSnackBar(
-                                  context,
-                                  "Please enter a valid link. Make sure to have 'https://' at the beginning of the link",
                                   80);
                               setState(() {
                                 _isLoading = false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class MyTextField2 extends StatelessWidget {
   //HINGIAN NG INPUT SA USER
@@ -9,6 +10,10 @@ class MyTextField2 extends StatelessWidget {
   final bool obscureText;
   final int? maxLines;
   final bool? isNumber; //required
+  final bool? isURL;
+  final bool? isEmail;
+  final bool? isPassword;
+  final TextEditingController? password;
 
   const MyTextField2(
       {required this.controller,
@@ -17,6 +22,10 @@ class MyTextField2 extends StatelessWidget {
       this.maxLines,
       required this.obscureText,
       required this.hintText,
+      this.isURL,
+      this.isEmail,
+      this.password,
+      this.isPassword,
       super.key});
 
   @override
@@ -30,6 +39,24 @@ class MyTextField2 extends StatelessWidget {
           if (isNumber != null) {
             if (double.tryParse(value) == null) {
               return "Please enter a number!";
+            }
+          }
+          if (isURL != null && isURL == true) {
+            if (!Validator.url(value)) {
+              return "Please enter a valid link!";
+            }
+          }
+          if (isEmail != null && isEmail == true) {
+            if (!Validator.email(value)) {
+              return "Please enter a valid email!";
+            }
+          }
+          if (isPassword != null && value.length < 6) {
+            return "Password is less than 6 characters!";
+          }
+          if (password != null) {
+            if (password!.text != value) {
+              return "Doesn't Match!";
             }
           }
         },

@@ -28,12 +28,20 @@ class LinkProvider with ChangeNotifier {
     return _postsStream;
   }
 
+  Stream<DocumentSnapshot> fetchCommittee(String lupon) {
+    return firebaseLinkAPI.getLuponTracker(lupon);
+  }
+
   Future<String> createPubLink(String title, String url) async {
     return firebaseLinkAPI.createPubLink(title, url);
   }
 
   Future<String> createPost(String title, String caption, String url) async {
     return firebaseLinkAPI.createPost(title, caption, url);
+  }
+
+  Future<String> createTracker(String url, String lupon) async {
+    return firebaseLinkAPI.createTracker(url, lupon);
   }
 
   Future<String> deleteLink(String id) async {

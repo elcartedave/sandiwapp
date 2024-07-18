@@ -26,6 +26,21 @@ class FirebaseLinkAPI {
         .snapshots();
   }
 
+  Stream<DocumentSnapshot> getLuponTracker(String lupon) {
+    return _firestore
+        .collection('links')
+        .where('category', isEqualTo: lupon)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first;
+      } else {
+        throw Exception("No documents found");
+      }
+    });
+  }
+
   Future<String> createPost(String title, String caption, String url) async {
     try {
       DocumentReference docRef = _firestore.collection("links").doc();
@@ -36,6 +51,23 @@ class FirebaseLinkAPI {
         'caption': caption,
         'date': Timestamp.fromDate(DateTime.now()),
         'category': "post"
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> createTracker(String url, String lupon) async {
+    try {
+      DocumentReference docRef = _firestore.collection("links").doc();
+      await docRef.set({
+        'id': docRef.id,
+        'title': "Tracker",
+        'url': url,
+        'caption': '',
+        'date': Timestamp.fromDate(DateTime.now()),
+        'category': lupon,
       });
       return '';
     } catch (e) {

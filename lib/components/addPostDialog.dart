@@ -7,6 +7,7 @@ import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});
@@ -53,6 +54,7 @@ class _AddPostState extends State<AddPost> {
               controller: _urlController,
               obscureText: false,
               hintText: '',
+              isURL: true,
             ),
             const SizedBox(height: 10),
           ],
@@ -75,18 +77,6 @@ class _AddPostState extends State<AddPost> {
                           setState(() {
                             _isLoading = true;
                           });
-
-                          if (!_urlController.text.contains("https") &&
-                              !_urlController.text.contains(".com")) {
-                            showCustomSnackBar(
-                                context,
-                                "Please enter a valid link. Make sure to have 'https://' at the beginning of the link",
-                                80);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            return;
-                          }
 
                           String message = await context
                               .read<LinkProvider>()

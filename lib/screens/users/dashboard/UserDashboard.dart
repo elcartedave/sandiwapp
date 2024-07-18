@@ -4,11 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/amountBox.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/committeeTracker.dart';
 import 'package:sandiwapp/components/dottedBorder.dart';
 import 'package:sandiwapp/components/messages.dart';
 import 'package:sandiwapp/components/sendMessage.dart';
 import 'package:sandiwapp/components/taskManager.dart';
+import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
+import 'package:sandiwapp/providers/link_provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
@@ -55,6 +58,8 @@ class _UserDashboardState extends State<UserDashboard> {
 
           MyUser user =
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
+          Stream<DocumentSnapshot> _trackerStream =
+              context.watch<LinkProvider>().fetchCommittee(user.lupon!);
           return Container(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: SingleChildScrollView(
@@ -383,10 +388,48 @@ class _UserDashboardState extends State<UserDashboard> {
                               },
                             ),
                             const SizedBox(width: 15),
-                            MyDottedBorder(
-                              text: "   Committee Tracker   ",
-                              icon: Icon(Icons.track_changes),
-                            ),
+                            StreamBuilder(
+                                stream: _trackerStream,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.black,
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return MyDottedBorder(
+                                      text: "   Committee Tracker   ",
+                                      icon: Icon(Icons.track_changes),
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CommitteeTracker(
+                                                    lupon: user.lupon!,
+                                                    isPinuno: user.position!
+                                                        .contains("Pinuno")));
+                                      },
+                                    );
+                                  }
+                                  if (!snapshot.hasData ||
+                                      !snapshot.data!.exists) {
+                                    return Center(
+                                        child: Text("No Tracker Yet!"));
+                                  }
+                                  var tracker = Link.fromJson(snapshot.data!
+                                      .data() as Map<String, dynamic>);
+
+                                  return MyDottedBorder(
+                                    text: "   Committee Tracker   ",
+                                    icon: Icon(Icons.track_changes),
+                                    onTap: () {
+                                      launchUrl(Uri.parse(tracker.url));
+                                    },
+                                  );
+                                }),
                           ],
                         ),
                       ),

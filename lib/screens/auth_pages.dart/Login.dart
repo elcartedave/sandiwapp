@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
@@ -43,6 +44,7 @@ class _LogInState extends State<LogIn> {
               MyTextField2(
                   controller: _emailController,
                   obscureText: false,
+                  isEmail: true,
                   hintText: "Enter your email"),
               const SizedBox(height: 8),
               Text(
@@ -71,25 +73,25 @@ class _LogInState extends State<LogIn> {
                       : BlackButton(
                           text: "Log In",
                           onTap: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            String? message = await context
-                                .read<UserAuthProvider>()
-                                .authService
-                                .signIn(_emailController.text,
-                                    _passwordController.text);
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              String? message = await context
+                                  .read<UserAuthProvider>()
+                                  .authService
+                                  .signIn(_emailController.text,
+                                      _passwordController.text);
 
-                            setState(() {
-                              _isLoading = false;
-                              if (message != "" && message!.isNotEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            message))); //shows error message
-                              }
-                              Navigator.pop(context);
-                            });
+                              setState(() {
+                                _isLoading = false;
+                                if (message != "" && message!.isNotEmpty) {
+                                  showCustomSnackBar(context, message, 30);
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              });
+                            }
                           },
                         ),
                   const SizedBox(

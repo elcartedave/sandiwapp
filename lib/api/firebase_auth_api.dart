@@ -97,6 +97,7 @@ class FirebaseAuthAPI {
         'photoUrl': user.photoUrl,
         'acknowledged': user.acknowledged,
         'paymentProofUrl': user.paymentProofUrl,
+        'degprog': user.degprog,
       });
       return "";
     } on FirebaseAuthException catch (e) {
@@ -118,7 +119,9 @@ class FirebaseAuthAPI {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       return "";
     } on FirebaseAuthException catch (e) {
-      return (e.code);
+      return (e.code == "invalid-credential"
+          ? "Incorrect email or password"
+          : e.code);
     } catch (e) {
       return "Sign in error";
     }

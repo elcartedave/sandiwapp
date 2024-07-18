@@ -84,9 +84,11 @@ class _CustomSnackBarWidgetState extends State<CustomSnackBarWidget>
 
   @override
   Widget build(BuildContext context) {
+    // Get the height of the keyboard
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Positioned(
-      bottom:
-          widget.offset, // Adjust this value to position the SnackBar higher
+      bottom: widget.offset + keyboardHeight, // Adjust this value
       left: 0,
       right: 0,
       child: SlideTransition(

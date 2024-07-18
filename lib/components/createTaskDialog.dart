@@ -193,18 +193,18 @@ class _CreateTaskState extends State<CreateTask> {
                                     _taskController.text);
                             if (message == "") {
                               showCustomSnackBar(
-                                  context, "Task Successfully Assigned!", 85);
+                                  context, "Task Successfully Assigned!", 30);
 
                               Navigator.of(context).pop();
                             } else {
-                              showCustomSnackBar(context, message, 85);
+                              showCustomSnackBar(context, message, 30);
                               setState(() {
                                 _isLoading = false;
                               });
                             }
                           } else {
                             showCustomSnackBar(
-                                context, "Please fill all fields", 85);
+                                context, "Please fill all fields", 30);
                             setState(() {
                               _isLoading = false;
                             });

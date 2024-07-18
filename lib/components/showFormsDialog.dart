@@ -7,6 +7,7 @@ import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/formsModel.dart';
 import 'package:sandiwapp/providers/forms_provider.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class ShowFormsDialog extends StatefulWidget {
   final MyForm form;
@@ -256,6 +257,7 @@ class _ShowEditFormDialogState extends State<ShowEditFormDialog> {
                 controller: _urlController,
                 obscureText: false,
                 hintText: '',
+                isURL: true,
                 maxLines: 5),
             const SizedBox(height: 10),
             Container(
@@ -315,18 +317,6 @@ class _ShowEditFormDialogState extends State<ShowEditFormDialog> {
                               showCustomSnackBar(
                                   context,
                                   "Date and time cannot be earlier than now!",
-                                  80);
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              return;
-                            }
-
-                            if (!_urlController.text.contains("https") &&
-                                !_urlController.text.contains(".com")) {
-                              showCustomSnackBar(
-                                  context,
-                                  "Please enter a valid link. Make sure to have 'https://' at the beginning of the link",
                                   80);
                               setState(() {
                                 _isLoading = false;

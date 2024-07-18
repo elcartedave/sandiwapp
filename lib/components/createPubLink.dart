@@ -6,6 +6,7 @@ import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
+import 'package:validator_regex/validator_regex.dart';
 
 class CreatePubLink extends StatefulWidget {
   const CreatePubLink({super.key});
@@ -47,7 +48,10 @@ class _CreatePubLinkState extends State<CreatePubLink> {
                       text: "Enter the url (should start with https://)",
                       fontSize: 16)),
               MyTextField2(
-                  controller: _urlController, obscureText: false, hintText: '')
+                  controller: _urlController,
+                  obscureText: false,
+                  isURL: true,
+                  hintText: '')
             ],
           )),
       actions: [
@@ -64,13 +68,6 @@ class _CreatePubLinkState extends State<CreatePubLink> {
                       text: "Add",
                       onTap: () async {
                         if (_formKey.currentState!.validate()) {
-                          if (!_urlController.text.contains("https://")) {
-                            showCustomSnackBar(
-                                context,
-                                "Please enter a link (should start with https://)",
-                                30);
-                            return;
-                          }
                           setState(() {
                             _isLoading = true;
                           });

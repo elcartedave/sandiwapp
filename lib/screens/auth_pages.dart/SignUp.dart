@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:intl/intl.dart';
+import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
+import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 
@@ -16,6 +19,35 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  String _selectedCity = "Select City/Municipality";
+  final List<String> _cities = [
+    "Angat",
+    "Balagtas",
+    "Baliuag",
+    "Bocaue",
+    "Bulakan",
+    "Bustos",
+    "Calumpit",
+    "Dona Remedios Trinidad",
+    "Guiguinto",
+    "Hagonoy",
+    "Malolos",
+    "Marilao",
+    "Meycauayan",
+    "Norzagaray",
+    "Obando",
+    "Pandi",
+    "Paombong",
+    "Plaridel",
+    "Pulilan",
+    "San Ildefonso",
+    "San Jose del Monte",
+    "San Miguel",
+    "San Rafael",
+    "Santa Maria"
+  ];
+  String _othersInput = "";
+  final _degprogController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
@@ -24,10 +56,11 @@ class _SignUpState extends State<SignUp> {
   final _birthdayController = TextEditingController();
   final _collegeaddressController = TextEditingController();
   final _homeaddressController = TextEditingController();
-  final _contactnumberController = TextEditingController();
   final _ageController = TextEditingController();
   final _sponsorController = TextEditingController();
   final _batchController = TextEditingController();
+  String _phoneNum = '';
+  PhoneNumber number = PhoneNumber(isoCode: 'PH');
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   Future<void> _selectDate(BuildContext context) async {
@@ -159,23 +192,67 @@ class _SignUpState extends State<SignUp> {
                               controller: _ageController,
                               obscureText: false,
                               hintText: "Enter your age",
+                              keyboardType: TextInputType.number,
+                              isNumber: true,
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Contact Number",
-                    style: blackText,
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: InternationalPhoneNumberInput(
+                      onInputChanged: (PhoneNumber number) {
+                        setState(() {
+                          _phoneNum = number.phoneNumber!;
+                        });
+                      },
+                      selectorConfig: SelectorConfig(
+                        selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                      ),
+                      initialValue: number,
+                      ignoreBlank: false,
+                      autoValidateMode: AutovalidateMode.disabled,
+                      selectorTextStyle: TextStyle(color: Colors.black),
+                      textFieldController:
+                          TextEditingController(text: _phoneNum),
+                      formatInput: false,
+                      keyboardType: TextInputType.numberWithOptions(
+                          signed: true, decimal: true),
+                      inputDecoration: InputDecoration(
+                        contentPadding: const EdgeInsets.only(
+                          top: 12,
+                          left: 14,
+                          right: 14,
+                          bottom: 12,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              width: 2, color: Color(0xFF1A1A1A)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2, color: Colors.red),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2, color: Colors.red),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2, color: Colors.black),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        hintText: "Enter your contact number",
+                        hintStyle: GoogleFonts.patrickHand(
+                            color: Color(0xffA1A1A1), fontSize: 15),
+                      ),
+                      textStyle: GoogleFonts.patrickHand(
+                          color: Colors.black, fontSize: 19),
+                    ),
                   ),
-                  const SizedBox(height: 5),
-                  MyTextField2(
-                      controller: _contactnumberController,
-                      obscureText: false,
-                      hintText: "Enter your number"),
-                  const SizedBox(height: 10),
                   Text(
                     "College Address",
                     style: blackText,
@@ -191,13 +268,60 @@ class _SignUpState extends State<SignUp> {
                     style: blackText,
                   ),
                   const SizedBox(height: 5),
-                  MyTextField2(
-                      controller: _homeaddressController,
-                      obscureText: false,
-                      hintText: "Enter your address"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: MyTextField2(
+                            controller: _homeaddressController,
+                            obscureText: false,
+                            hintText: "Enter your barangay"),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            _showCitySelectionDialog(context);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border:
+                                  Border.all(color: Colors.black, width: 2.0),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Center(
+                              child: Text(
+                                _selectedCity.contains("Others") ||
+                                        _selectedCity.contains("Select") ||
+                                        !_cities.contains(_selectedCity)
+                                    ? _selectedCity
+                                    : "$_selectedCity, Bulacan",
+                                maxLines: 2,
+                                style: GoogleFonts.patrickHand(
+                                    color: Colors.black, fontSize: 16.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   Text(
-                    "Sponsor",
+                    "Degree Program",
+                    style: blackText,
+                  ),
+                  const SizedBox(height: 5),
+                  MyTextField2(
+                      controller: _degprogController,
+                      obscureText: false,
+                      hintText:
+                          "Enter degree program (ex. BS Computer Science)"),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Sponsor (Put N/A if applicant)",
                     style: blackText,
                   ),
                   const SizedBox(height: 5),
@@ -207,7 +331,7 @@ class _SignUpState extends State<SignUp> {
                       hintText: "Enter your sponsor"),
                   const SizedBox(height: 10),
                   Text(
-                    "Batch",
+                    "Batch (Put N/A if applicant)",
                     style: blackText,
                   ),
                   const SizedBox(height: 5),
@@ -223,6 +347,7 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 5),
                   MyTextField2(
                       controller: _emailController,
+                      isEmail: true,
                       obscureText: false,
                       hintText: "Enter your email"),
                   const SizedBox(height: 10),
@@ -239,6 +364,7 @@ class _SignUpState extends State<SignUp> {
                             ),
                             const SizedBox(height: 5),
                             MyTextField2(
+                              isPassword: true,
                               controller: _passwordController,
                               obscureText: true,
                               hintText: "Enter password",
@@ -261,6 +387,7 @@ class _SignUpState extends State<SignUp> {
                               controller: _confirmpasswordController,
                               obscureText: true,
                               hintText: "Confirm password",
+                              password: _passwordController,
                             ),
                           ],
                         ),
@@ -279,16 +406,28 @@ class _SignUpState extends State<SignUp> {
                                   setState(() {
                                     _isLoading = true;
                                   });
+                                  if (_selectedCity.contains("Select") ||
+                                      _selectedCity.contains("Others")) {
+                                    showCustomSnackBar(
+                                        context,
+                                        "Please select a city/municipality",
+                                        120);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    return;
+                                  }
                                   _formKey.currentState!.save();
                                   MyUser user = MyUser(
                                     name: _nameController.text,
                                     nickname: _nicknameController.text,
                                     birthday: _birthdayController.text,
                                     age: _ageController.text,
-                                    contactno: _contactnumberController.text,
+                                    contactno: _phoneNum,
                                     collegeAddress:
                                         _collegeaddressController.text,
-                                    homeAddress: _homeaddressController.text,
+                                    homeAddress:
+                                        "${_homeaddressController.text}, $_selectedCity${_cities.contains(_selectedCity) ? ", Bulacan" : ""}",
                                     email: _emailController.text,
                                     password: _passwordController.text,
                                     sponsor: _sponsorController.text,
@@ -303,6 +442,7 @@ class _SignUpState extends State<SignUp> {
                                     lupon: "",
                                     paymentProofUrl: "",
                                     acknowledged: false,
+                                    degprog: _degprogController.text,
                                   );
                                   String? message = await context
                                       .read<UserAuthProvider>()
@@ -311,15 +451,12 @@ class _SignUpState extends State<SignUp> {
                                   setState(() {
                                     _isLoading = false;
                                     if (message != "" && message!.isNotEmpty) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  message))); //shows error message
+                                      showCustomSnackBar(context, message, 80);
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  "Sign up success! Wait for the admin approval")));
+                                      showCustomSnackBar(
+                                          context,
+                                          "Sign up success! Wait for the admin approval",
+                                          30);
 
                                       Navigator.pop(context);
                                     }
@@ -327,7 +464,9 @@ class _SignUpState extends State<SignUp> {
                                 }
                               },
                             )
-                          : const Center(child: CircularProgressIndicator()),
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.black)),
                       const SizedBox(height: 10),
                       MyTextButton(
                         text: "Go Back",
@@ -341,6 +480,138 @@ class _SignUpState extends State<SignUp> {
               )),
         ),
       )),
+    );
+  }
+
+  void _showCitySelectionDialog(BuildContext context) {
+    String? _selectedRadioValue =
+        !_cities.contains(_selectedCity) ? "Others" : _selectedCity;
+    ScrollController _scrollController = ScrollController();
+    TextEditingController othersController =
+        TextEditingController(text: _othersInput);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const PatrickHandSC(
+              text: "Select City/Municipality", fontSize: 24),
+          content: SingleChildScrollView(
+            controller: _scrollController,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ..._cities.map((city) {
+                      return RadioListTile<String>(
+                        title: Text(city),
+                        value: city,
+                        groupValue: _selectedRadioValue,
+                        activeColor: Colors.black,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedRadioValue = value;
+                            _othersInput = "";
+                          });
+                        },
+                      );
+                    }).toList(),
+                    RadioListTile<String>(
+                      title: Text("Others"),
+                      value: "Others",
+                      activeColor: Colors.black,
+                      groupValue: _selectedRadioValue,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedRadioValue = value;
+                        });
+                        Future.delayed(Duration(milliseconds: 50), () {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: Duration(milliseconds: 100),
+                            curve: Curves.easeInOut,
+                          );
+                        });
+                      },
+                    ),
+                    if (_selectedRadioValue == "Others")
+                      TextField(
+                        controller: othersController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.only(
+                            top: 12,
+                            left: 14,
+                            right: 14,
+                            bottom: 12,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 2, color: Color(0xFF1A1A1A)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2, color: Colors.red),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2, color: Colors.red),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          hintText: "Enter your city/municipality",
+                          hintStyle: GoogleFonts.patrickHand(
+                              color: Color(0xffA1A1A1), fontSize: 15),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _othersInput = value;
+                          });
+                        },
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: BlackButton(
+                    onTap: () {
+                      setState(() {
+                        if (_selectedRadioValue == "Others") {
+                          _selectedCity =
+                              _othersInput.isNotEmpty ? _othersInput : "Others";
+                        } else {
+                          _selectedCity = _selectedRadioValue!;
+                        }
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    text: "OK",
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: WhiteButton(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    text: "Cancel",
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

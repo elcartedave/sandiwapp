@@ -39,7 +39,7 @@ class FirebaseMessageApi {
       final DateTime sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
       final QuerySnapshot querySnapshot = await _firestore
           .collection('messages')
-          .where('timestamp', isLessThan: Timestamp.fromDate(sevenDaysAgo))
+          .where('date', isLessThan: Timestamp.fromDate(sevenDaysAgo))
           .get();
 
       WriteBatch batch = _firestore.batch();

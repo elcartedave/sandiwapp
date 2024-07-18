@@ -23,6 +23,7 @@ class MyUser {
   final String? lupon;
   final String? paymentProofUrl;
   final bool acknowledged;
+  final String degprog;
 
   MyUser({
     this.id,
@@ -47,6 +48,7 @@ class MyUser {
     required this.lupon,
     required this.paymentProofUrl,
     required this.acknowledged,
+    required this.degprog,
   });
   factory MyUser.fromJson(Map<String, dynamic> json) {
     return MyUser(
@@ -72,6 +74,7 @@ class MyUser {
       lupon: json['lupon'],
       paymentProofUrl: json['paymentProofUrl'],
       acknowledged: json['acknowledged'],
+      degprog: json['degprog'],
     );
   }
   static List<MyUser> fromJsonArray(String jsonData) {
@@ -101,6 +104,7 @@ class MyUser {
       'lupon': user.lupon,
       'paymentProofUrl': user.paymentProofUrl,
       'acknowledged': user.acknowledged,
+      'degprog': user.degprog
     };
   }
 }
