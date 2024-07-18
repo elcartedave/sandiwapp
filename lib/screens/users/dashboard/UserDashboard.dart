@@ -105,7 +105,7 @@ class _UserDashboardState extends State<UserDashboard> {
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return SendMessage();
+                                return SendMessage(user: user);
                               },
                             );
                           },

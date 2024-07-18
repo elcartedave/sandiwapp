@@ -10,8 +10,9 @@ class MessageProvider with ChangeNotifier {
   }
 
   Future<String?> sendMessage(
-      String id, String content, String selectedLupon) async {
-    return _firebaseMessageApi.createMessage(id, content, selectedLupon);
+      String id, String content, String selectedLupon, String photoUrl) async {
+    return _firebaseMessageApi.createMessage(
+        id, content, selectedLupon, photoUrl);
   }
 
   Future<String?> messageEveryone(

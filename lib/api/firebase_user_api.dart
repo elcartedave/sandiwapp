@@ -253,6 +253,21 @@ class FirebaseUserAPI {
     }
   }
 
+  Future<String> getPhotoURLFromEmail(String email) async {
+    try {
+      print(email);
+      QuerySnapshot querySnapshot = await db
+          .collection("users")
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      return querySnapshot.docs.first.get('photoUrl');
+    } catch (e) {
+      print(e.toString());
+      return '';
+    }
+  }
+
   Future<void> acceptAndAddLupon(String email, String lupon) async {
     final querySnapshot = await db
         .collection('users')

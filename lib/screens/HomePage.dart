@@ -58,10 +58,10 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {}
         if (snapshot.hasError) {
-          return _buildErrorPage(snapshot.error);
+          return const LogoLoadingPage();
         }
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return _buildErrorPage("User data not available");
+          return const LogoLoadingPage();
         }
 
         MyUser userData =

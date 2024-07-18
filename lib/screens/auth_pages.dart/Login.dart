@@ -82,6 +82,7 @@ class _LogInState extends State<LogIn> {
 
                             setState(() {
                               if (message != "" && message!.isNotEmpty) {
+                                _isLoading = false;
                                 showCustomSnackBar(context, message, 30);
                               } else {
                                 Navigator.pop(context);

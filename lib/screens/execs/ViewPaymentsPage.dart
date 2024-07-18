@@ -24,6 +24,7 @@ class _ViewPaymentsPageState extends State<ViewPaymentsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: PatrickHand(text: "View Proof of Payments", fontSize: 24),
       ),
       body: StreamBuilder(

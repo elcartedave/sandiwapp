@@ -8,6 +8,7 @@ class Message {
   final String content;
   final String receiver;
   final DateTime date;
+  final String? photoUrl;
 
   Message({
     this.id,
@@ -15,6 +16,7 @@ class Message {
     required this.date,
     required this.sender,
     required this.content,
+    this.photoUrl,
   });
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
@@ -23,6 +25,7 @@ class Message {
       date: (json['date'] as Timestamp).toDate(),
       sender: json['sender'],
       content: json['content'],
+      photoUrl: json['photoUrl'],
     );
   }
   static List<Message> fromJsonArray(String jsonData) {

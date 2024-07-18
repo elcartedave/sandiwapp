@@ -16,7 +16,7 @@ class FirebaseMessageApi {
   }
 
   Future<String?> createMessage(
-      String id, String content, selectedLupon) async {
+      String id, content, selectedLupon, photoUrl) async {
     try {
       String receiver =
           await firebaseUserAPI.getEmailOfLuponHead(selectedLupon);
@@ -27,6 +27,7 @@ class FirebaseMessageApi {
         'date': Timestamp.fromDate(DateTime.now()),
         'receiver': receiver,
         'sender': sender,
+        'photoUrl': photoUrl,
       });
       return "";
     } catch (e) {
@@ -65,12 +66,14 @@ class FirebaseMessageApi {
       }
       print("RECEIVER: $receiver");
       String sender = await firebaseUserAPI.getNameFromEmail(senderEmail);
+      String photoUrl = await firebaseUserAPI.getPhotoURLFromEmail(senderEmail);
       print("sender: $sender");
       await _firestore.collection('messages').doc().set({
         'content': content,
         'date': Timestamp.fromDate(DateTime.now()),
         'receiver': receiver,
         'sender': sender,
+        'photoUrl': photoUrl,
       });
       return "";
     } catch (e) {
