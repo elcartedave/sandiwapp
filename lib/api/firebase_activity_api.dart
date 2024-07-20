@@ -42,6 +42,15 @@ class FirebaseActivityAPI {
     }
   }
 
+  Future<String> deleteActivities(String id) async {
+    try {
+      await _firestore.collection("activities").doc(id).delete();
+      return "";
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Stream<QuerySnapshot> getActivities(String lupon) {
     return _firestore
         .collection('activities')

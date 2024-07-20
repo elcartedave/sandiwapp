@@ -12,6 +12,7 @@ class _ExecsState extends State<Execs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: PatrickHandSC(text: "Lupong Tagapagpaganap", fontSize: 24),
       ),

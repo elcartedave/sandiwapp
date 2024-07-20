@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,7 +64,8 @@ class _ApplicantResidentsState extends State<ApplicantResidents> {
                                       color: Colors.black,
                                     ),
                               backgroundImage: users[index].photoUrl != ""
-                                  ? NetworkImage(users[index].photoUrl!)
+                                  ? CachedNetworkImageProvider(
+                                      users[index].photoUrl!)
                                   : null),
                           const SizedBox(height: 5),
                           Text(

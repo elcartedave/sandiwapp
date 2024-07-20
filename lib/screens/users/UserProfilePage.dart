@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/scrollDownAnimation.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/components/uploadImage.dart';
@@ -88,9 +90,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                           color: Colors.white,
                                           size: 100,
                                         )
-                                      : Image.network(
-                                          user.photoUrl!,
+                                      : ImageBuffer(
+                                          photoURL: user.photoUrl!,
                                           width: 100,
+                                          height: 100,
                                           fit: BoxFit.cover,
                                         ),
                             ),
@@ -131,10 +134,40 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             top: 20.0),
-                                                    child: Image.network(
-                                                      user.photoUrl!,
-                                                      height: 200,
-                                                      width: 200,
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.4,
+                                                      child:
+                                                          SingleChildScrollView(
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                        imageUrl:
+                                                            user.photoUrl!,
+                                                        fit: BoxFit.cover,
+                                                        progressIndicatorBuilder:
+                                                            (context, url,
+                                                                    downloadProgress) =>
+                                                                SizedBox(
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  value: downloadProgress
+                                                                      .progress,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )),
                                                     ),
                                                   ),
                                                 if (_image != null)
@@ -142,10 +175,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             top: 20.0),
-                                                    child: Image.file(
-                                                      _image!,
-                                                      height: 200,
-                                                      width: 200,
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.4,
+                                                      child:
+                                                          SingleChildScrollView(
+                                                              child: Image.file(
+                                                                  _image!)),
                                                     ),
                                                   ),
                                               ],
@@ -201,6 +240,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                                                           85);
                                                                       Navigator.pop(
                                                                           context);
+                                                                      setState(
+                                                                          () {
+                                                                        _isLoading =
+                                                                            false;
+                                                                      });
                                                                     } else {
                                                                       showCustomSnackBar(
                                                                           context,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageBuffer extends StatelessWidget {
   final String photoURL;
@@ -14,37 +15,28 @@ class ImageBuffer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(photoURL, fit: fit, height: height, width: width,
-        loadingBuilder: (BuildContext context, Widget child,
-            ImageChunkEvent? loadingProgress) {
-      if (loadingProgress == null) {
-        return child; // Image is fully loaded
-      } else {
-        return SizedBox(
-          height: height,
-          width: width,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  color: Colors.black,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          (loadingProgress.expectedTotalBytes ?? 1)
-                      : null,
-                ),
-                const SizedBox(height: 10),
-                if (loadingProgress.expectedTotalBytes != null)
-                  Text(
-                    '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
-                    style: const TextStyle(color: Colors.black),
-                  ),
-              ],
-            ),
-          ),
-        );
-      }
-    });
+    return CachedNetworkImage(
+      imageUrl: photoURL,
+      fit: fit,
+      height: height,
+      width: width,
+      // progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox(
+      //   height: height - 10,
+      //   width: width - 10,
+      //   child: Center(
+      //     child: Column(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         CircularProgressIndicator(
+      //           color: Colors.black,
+      //           value: downloadProgress.progress,
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      errorWidget: (context, url, error) =>
+          Icon(Icons.error, size: width / 2, color: Colors.black),
+    );
   }
 }

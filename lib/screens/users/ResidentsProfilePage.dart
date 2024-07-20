@@ -1,8 +1,13 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:sandiwapp/components/showMessageDialog.dart';
 import 'package:sandiwapp/models/userModel.dart';
+import 'package:sandiwapp/providers/user_provider.dart';
 
 class ResidentProfilePage extends StatefulWidget {
   final MyUser user;
@@ -15,6 +20,8 @@ class ResidentProfilePage extends StatefulWidget {
 class _ResidentProfilePageState extends State<ResidentProfilePage> {
   @override
   Widget build(BuildContext context) {
+    Stream<DocumentSnapshot> _myStream =
+        context.watch<UserProvider>().fetchCurrentUser();
     return Scaffold(
       // Add Scaffold to provide Material context
       body: Container(
@@ -52,19 +59,57 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-                      alignment: Alignment.topLeft,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 32, horizontal: 16),
+                          alignment: Alignment.topLeft,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 40, horizontal: 16),
+                          alignment: Alignment.topLeft,
+                          child: StreamBuilder(
+                              stream: _myStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {}
+                                if (snapshot.hasError) {
+                                  return Center(
+                                      child: Text("Error: ${snapshot.error}"));
+                                }
+                                if (!snapshot.hasData) {
+                                  return Center(child: Text("No Users"));
+                                }
+                                MyUser user = MyUser.fromJson(snapshot.data!
+                                    .data() as Map<String, dynamic>);
+                                return InkWell(
+                                  onTap: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (context) => ShowMessageDialog(
+                                            senderEmail: user.email,
+                                            user: widget.user));
+                                  },
+                                  child: Icon(
+                                    Icons.message,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              }),
+                        )
+                      ],
                     ),
                     Positioned(
                       top: MediaQuery.of(context).size.height * 0.045,
@@ -93,7 +138,8 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                                 ),
                           backgroundImage: widget.user.photoUrl == ""
                               ? null
-                              : NetworkImage(widget.user.photoUrl!),
+                              : CachedNetworkImageProvider(
+                                  widget.user.photoUrl!),
                         ),
                       ),
                     ),

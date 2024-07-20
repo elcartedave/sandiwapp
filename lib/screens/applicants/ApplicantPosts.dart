@@ -62,12 +62,41 @@ class _ApplicantPostsPageState extends State<ApplicantPostsPage> {
 
               posts.sort((a, b) => b.date.compareTo(a.date));
 
-              return Scrollbar(
-                child: ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      return buildLinkPreview(posts[index]);
-                    }),
+              return SingleChildScrollView(
+                child: Scrollbar(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            neomorphicButton(
+                                "https://www.facebook.com/UPSandiwaSB",
+                                "assets/icons/facebook.png",
+                                30),
+                            neomorphicButton(
+                                "https://www.instagram.com/upsandiwasb?igsh=MmJzOXJkZXVlZ2Fw",
+                                "assets/icons/instagram.png",
+                                50),
+                            neomorphicButton(
+                                "https://www.tiktok.com/@upsandiwasb?_t=8neOX2iJwGW&_r=1",
+                                "assets/icons/tiktok.png",
+                                32),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) {
+                            return buildLinkPreview(posts[index]);
+                          }),
+                    ],
+                  ),
+                ),
               );
             }),
       ),
@@ -195,4 +224,41 @@ class _ApplicantPostsPageState extends State<ApplicantPostsPage> {
       ),
     );
   }
+}
+
+Widget neomorphicButton(String link, String image, double size) {
+  return GestureDetector(
+    onTap: () {
+      launchUrl(Uri.parse(link));
+    },
+    child: Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white, // Base color
+        shape: BoxShape.circle, // Circle shape
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade500, // Dark shadow
+            offset: Offset(5, 5),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+          BoxShadow(
+            color: Colors.white, // Light shadow
+            offset: Offset(-5, -5),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Image.asset(
+          image,
+          height: size,
+          width: size,
+        ),
+      ),
+    ),
+  );
 }

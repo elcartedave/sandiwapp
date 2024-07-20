@@ -218,72 +218,91 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
             ),
           ),
           actions: [
-            _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  )
-                : BlackButton(
-                    text: "Idagdag",
-                    onTap: () async {
-                      if (_formKey.currentState!.validate()) {
-                        if (_selectedTime != null) {
-                          setState(() {
-                            _isLoading = true;
-                          });
+            Row(
+              children: [
+                Expanded(
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : BlackButton(
+                          text: "Idagdag",
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (_selectedTime != null) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                          DateTime eventDateTime = DateTime(
-                            _selectedDay!.year,
-                            _selectedDay!.month,
-                            _selectedDay!.day,
-                            _selectedTime!.hour,
-                            _selectedTime!.minute,
-                          );
+                                DateTime eventDateTime = DateTime(
+                                  _selectedDay!.year,
+                                  _selectedDay!.month,
+                                  _selectedDay!.day,
+                                  _selectedTime!.hour,
+                                  _selectedTime!.minute,
+                                );
 
-                          if (eventDateTime.isBefore(DateTime.now())) {
-                            showCustomSnackBar(
-                                context,
-                                "Date and time cannot be earlier than now!",
-                                80);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            return;
-                          }
+                                if (eventDateTime.isBefore(DateTime.now())) {
+                                  showCustomSnackBar(
+                                      context,
+                                      "Date and time cannot be earlier than now!",
+                                      80);
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
 
-                          final newActivity = Activity(
-                            title: _titleController.text,
-                            content: _contentController.text,
-                            date: eventDateTime,
-                            lupon: "Aplikante",
-                          );
-                          DateTime date = _normalizeDate(newActivity.date);
-                          CalendarEvent calendarEvent = CalendarEvent(
-                            title: newActivity.title,
-                            date: newActivity.date,
-                            content: newActivity.content,
-                          );
-                          if (_events[date] == null) _events[date] = [];
-                          _events[date]!.add(calendarEvent);
-                          String message = await context
-                              .read<ActivityProvider>()
-                              .createActivity(newActivity);
-                          if (message == "") {
-                            showCustomSnackBar(
-                                context, "Activity successfully added!", 85);
-                            Navigator.pop(context);
-                            _refreshData();
-                          } else {
-                            showCustomSnackBar(context, message, 85);
-                          }
-                        } else {
-                          showCustomSnackBar(
-                              context, "Please enter a time!", 85);
-                        }
-                      }
+                                final newActivity = Activity(
+                                  title: _titleController.text,
+                                  content: _contentController.text,
+                                  date: eventDateTime,
+                                  lupon: "Aplikante",
+                                );
+                                DateTime date =
+                                    _normalizeDate(newActivity.date);
+                                CalendarEvent calendarEvent = CalendarEvent(
+                                  title: newActivity.title,
+                                  date: newActivity.date,
+                                  content: newActivity.content,
+                                );
+                                if (_events[date] == null) _events[date] = [];
+                                _events[date]!.add(calendarEvent);
+                                String message = await context
+                                    .read<ActivityProvider>()
+                                    .createActivity(newActivity);
+                                if (message == "") {
+                                  showCustomSnackBar(context,
+                                      "Activity successfully added!", 85);
+                                  Navigator.pop(context);
+                                  _refreshData();
+                                } else {
+                                  showCustomSnackBar(context, message, 85);
+                                }
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              } else {
+                                showCustomSnackBar(
+                                    context, "Please enter a time!", 85);
+                              }
+                            }
+                          },
+                        ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: WhiteButton(
+                    text: "Bumalik",
+                    onTap: () {
+                      Navigator.pop(context);
                     },
-                  )
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),

@@ -1,11 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/components/messageEveryone.dart';
 import 'package:sandiwapp/models/messageModel.dart';
-import 'package:sandiwapp/models/userModel.dart';
-import 'package:sandiwapp/providers/user_provider.dart';
 
 class MessageItem extends StatelessWidget {
   final Message message;
@@ -37,7 +35,7 @@ class MessageItem extends StatelessWidget {
                 radius: 25,
                 backgroundImage:
                     message.photoUrl != null && message.photoUrl != ""
-                        ? NetworkImage(message.photoUrl!)
+                        ? CachedNetworkImageProvider(message.photoUrl!)
                         : null,
                 child: message.sender.contains("Notification") ||
                         message.sender.contains("Lupon")

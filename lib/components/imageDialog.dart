@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
@@ -86,38 +87,24 @@ class _ImageDialogState extends State<ImageDialog> {
             Container(
               height: MediaQuery.of(context).size.height * 0.4,
               child: SingleChildScrollView(
-                child: Image.network(widget.photoURL, fit: BoxFit.cover,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child; // Image is fully loaded
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: Colors.black,
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                            ),
-                            const SizedBox(height: 10),
-                            if (loadingProgress.expectedTotalBytes != null)
-                              Text(
-                                '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                          ],
+                  child: CachedNetworkImage(
+                imageUrl: widget.photoURL,
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    SizedBox(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: Colors.black,
+                          value: downloadProgress.progress,
                         ),
-                      ),
-                    );
-                  }
-                }),
-              ),
+                      ],
+                    ),
+                  ),
+                ),
+              )),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -140,6 +141,11 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
                                                               30);
                                                           Navigator.pop(
                                                               context);
+                                                          setState(() {
+                                                            _isLoading = false;
+                                                          });
+                                                          _balanceController
+                                                              .clear();
                                                         } else {
                                                           showCustomSnackBar(
                                                               context,
@@ -176,8 +182,8 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
                       leading: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: user.photoUrl != "" && user.photoUrl != null
-                            ? Image.network(
-                                user.photoUrl!,
+                            ? ImageBuffer(
+                                photoURL: user.photoUrl!,
                                 height: 80,
                                 fit: BoxFit.contain,
                                 width: 80,
@@ -189,8 +195,21 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
                                 width: 80,
                               ),
                       ),
-                      trailing: Text(
-                        "Balance: P${double.parse(user.balance).toString()}",
+                      trailing: Container(
+                        width: 120,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            user.acknowledged
+                                ? const Icon(Icons.check_circle, size: 15)
+                                : Container(),
+                            const SizedBox(width: 3),
+                            Text(
+                              "Balance: P${double.parse(user.balance).toString()}",
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

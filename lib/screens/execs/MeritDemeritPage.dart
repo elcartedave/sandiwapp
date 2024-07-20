@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -109,8 +110,8 @@ class _MeritDemeritPageState extends State<MeritDemeritPage> {
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: user.photoUrl != "" && user.photoUrl != null
-                        ? Image.network(
-                            user.photoUrl!,
+                        ? ImageBuffer(
+                            photoURL: user.photoUrl!,
                             height: 80,
                             fit: BoxFit.contain,
                             width: 80,

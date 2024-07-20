@@ -11,6 +11,7 @@ class CalendarEvent {
   final Event? event;
   final MyForm? form;
   final MyTask? task;
+  final String? id;
 
   CalendarEvent({
     required this.title,
@@ -20,5 +21,6 @@ class CalendarEvent {
     this.content,
     this.form,
     this.task,
+    this.id,
   });
 }

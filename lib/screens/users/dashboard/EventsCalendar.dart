@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/manageActivity.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/activityModel.dart';
@@ -86,10 +87,10 @@ class _EventsCalendarState extends State<EventsCalendar> {
       for (var activity in activities) {
         DateTime date = _normalizeDate(activity.date);
         CalendarEvent calendarEvent = CalendarEvent(
-          title: activity.title,
-          date: activity.date,
-          content: activity.content,
-        );
+            title: activity.title,
+            date: activity.date,
+            content: activity.content,
+            id: activity.id!);
         if (_events[date] == null) _events[date] = [];
         _events[date]!.add(calendarEvent);
       }
@@ -287,72 +288,91 @@ class _EventsCalendarState extends State<EventsCalendar> {
             ),
           ),
           actions: [
-            _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  )
-                : BlackButton(
-                    text: "Idagdag",
-                    onTap: () async {
-                      if (_formKey.currentState!.validate()) {
-                        if (_selectedTime != null) {
-                          setState(() {
-                            _isLoading = true;
-                          });
+            Row(
+              children: [
+                Expanded(
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : BlackButton(
+                          text: "Idagdag",
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (_selectedTime != null) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                          DateTime eventDateTime = DateTime(
-                            _selectedDay!.year,
-                            _selectedDay!.month,
-                            _selectedDay!.day,
-                            _selectedTime!.hour,
-                            _selectedTime!.minute,
-                          );
+                                DateTime eventDateTime = DateTime(
+                                  _selectedDay!.year,
+                                  _selectedDay!.month,
+                                  _selectedDay!.day,
+                                  _selectedTime!.hour,
+                                  _selectedTime!.minute,
+                                );
 
-                          if (eventDateTime.isBefore(DateTime.now())) {
-                            showCustomSnackBar(
-                                context,
-                                "Date and time cannot be earlier than now!",
-                                80);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            return;
-                          }
+                                if (eventDateTime.isBefore(DateTime.now())) {
+                                  showCustomSnackBar(
+                                      context,
+                                      "Date and time cannot be earlier than now!",
+                                      80);
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
 
-                          final newActivity = Activity(
-                            title: _titleController.text,
-                            content: _contentController.text,
-                            date: eventDateTime,
-                            lupon: widget.lupon,
-                          );
-                          DateTime date = _normalizeDate(newActivity.date);
-                          CalendarEvent calendarEvent = CalendarEvent(
-                            title: newActivity.title,
-                            date: newActivity.date,
-                            content: newActivity.content,
-                          );
-                          if (_events[date] == null) _events[date] = [];
-                          _events[date]!.add(calendarEvent);
-                          String message = await context
-                              .read<ActivityProvider>()
-                              .createActivity(newActivity);
-                          if (message == "") {
-                            showCustomSnackBar(
-                                context, "Activity successfully added!", 85);
-                            Navigator.pop(context);
-                            _refreshData();
-                          } else {
-                            showCustomSnackBar(context, message, 85);
-                          }
-                        } else {
-                          showCustomSnackBar(
-                              context, "Please enter a time!", 85);
-                        }
-                      }
+                                final newActivity = Activity(
+                                  title: _titleController.text,
+                                  content: _contentController.text,
+                                  date: eventDateTime,
+                                  lupon: widget.lupon,
+                                );
+                                DateTime date =
+                                    _normalizeDate(newActivity.date);
+                                CalendarEvent calendarEvent = CalendarEvent(
+                                  title: newActivity.title,
+                                  date: newActivity.date,
+                                  content: newActivity.content,
+                                );
+                                if (_events[date] == null) _events[date] = [];
+                                _events[date]!.add(calendarEvent);
+                                String message = await context
+                                    .read<ActivityProvider>()
+                                    .createActivity(newActivity);
+                                if (message == "") {
+                                  showCustomSnackBar(context,
+                                      "Activity successfully added!", 85);
+                                  Navigator.pop(context);
+                                  _refreshData();
+                                } else {
+                                  showCustomSnackBar(context, message, 85);
+                                }
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              } else {
+                                showCustomSnackBar(
+                                    context, "Please enter a time!", 85);
+                              }
+                            }
+                          },
+                        ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: WhiteButton(
+                    text: "Bumalik",
+                    onTap: () {
+                      Navigator.pop(context);
                     },
-                  )
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
@@ -490,6 +510,22 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                           child: ListTile(
                                             leading: Text(hourFormatter(
                                                 calendarEvent.date)),
+                                            onLongPress: () async {
+                                              if (calendarEvent.event == null &&
+                                                  calendarEvent.form == null &&
+                                                  calendarEvent.task == null) {
+                                                bool? result = await showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        DeleteActivity(
+                                                            id: calendarEvent
+                                                                .id!));
+                                                if (result == true) {
+                                                  _events[calendarEvent.date]!
+                                                      .remove(calendarEvent);
+                                                }
+                                              }
+                                            },
                                             onTap: () {
                                               if (calendarEvent.event != null) {
                                                 Navigator.push(

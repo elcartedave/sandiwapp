@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/deleteStatementDialog.dart';
 import 'package:sandiwapp/components/showStatementDialog.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/statementModel.dart';
@@ -76,6 +77,12 @@ class _BulacanStatementPageState extends State<BulacanStatementPage> {
                     itemBuilder: (context, index) {
                       final draft = drafts[index];
                       return ListTile(
+                        onLongPress: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  DeleteDialog(statement: draft));
+                        },
                         onTap: () {
                           Navigator.push(
                               context,

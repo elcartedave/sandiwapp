@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/showEventsDialog.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/models/eventModel.dart';
@@ -201,8 +202,8 @@ class _ViewEventPageState extends State<ViewEventPage> {
                               )
                             : Opacity(
                                 opacity: 0.8,
-                                child: Image.network(
-                                  widget.event.photoUrl!,
+                                child: ImageBuffer(
+                                  photoURL: widget.event.photoUrl!,
                                   fit: BoxFit.contain,
                                   height: 350,
                                   width: double.infinity,
@@ -426,52 +427,11 @@ class _ViewEventPageState extends State<ViewEventPage> {
                   ),
                 )
               : ClipOval(
-                  child: Image.network(
-                    user.photoUrl!,
-                    height: 90,
-                    width: 90,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child; // Image is fully loaded
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: SizedBox(
-                            height: 90,
-                            width: 90,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            (loadingProgress
-                                                    .expectedTotalBytes ??
-                                                1)
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  if (loadingProgress.expectedTotalBytes !=
-                                      null)
-                                    Text(
-                                      '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
+                  child: ImageBuffer(
+                      photoURL: user.photoUrl!,
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover)),
           Text(user.name,
               style: GoogleFonts.inter(fontSize: 16, color: Colors.white)),
         ],

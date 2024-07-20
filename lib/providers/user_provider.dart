@@ -38,6 +38,7 @@ class UserProvider with ChangeNotifier {
     fetchPubs();
     fetchMems();
     fetchExtes();
+    fetchCurrentUser();
   }
 
   Stream<DocumentSnapshot> fetchSpecificUser(String id) {
