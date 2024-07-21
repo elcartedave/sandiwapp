@@ -71,6 +71,10 @@ class FirebasePaymentAPI {
             .collection("users")
             .doc(userId)
             .update({'balance': newBalance});
+        await _firestore
+            .collection("users")
+            .doc(userId)
+            .update({'acknowledged': false});
         if (newBalance == "0" || newBalance == "0.0") {
           await _firestore
               .collection("users")
@@ -79,7 +83,7 @@ class FirebasePaymentAPI {
         }
         await _firebaseMessageApi.notify(
             userId,
-            "Ang iyong payment na nagkakahalagang Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala ka nang natitirang balanse!" : "Ikaw ay may balanse pang Php ${newBalance}"}",
+            "Ang iyong payment na nagkakahalagang Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala ka nang natitirang balanse!" : "Ikaw ay may balanse pang Php ${newBalance}"}. Paki-acknowledge na lamang ang iyong bagong balanse.",
             "Lupon ng Pananalapi");
 
         await _firebaseMessageApi.notify(

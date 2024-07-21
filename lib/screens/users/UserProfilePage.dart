@@ -367,6 +367,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           trailing: Icon(Icons.navigate_next),
                         ),
                         ListTile(
+                          leading: Icon(Icons.info),
+                          title: Text(
+                            "Election Page",
+                            style: GoogleFonts.patrickHandSc(fontSize: 24),
+                          ),
+                          onTap: () {
+                            // Handle About tap
+                          },
+                          trailing: Icon(Icons.navigate_next),
+                        ),
+                        ListTile(
                           leading: Icon(Icons.logout),
                           title: Text(
                             "Log Out",

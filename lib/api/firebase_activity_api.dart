@@ -18,6 +18,17 @@ class FirebaseActivityAPI {
         'sender': email,
         'date': Timestamp.fromDate(activity.date),
       });
+      if (activity.lupon == "Aplikante") {
+        await docRef.set({
+          'id': docRef.id,
+          'title': activity.title,
+          'content': activity.content,
+          'lupon': "Lupon ng Kasapian",
+          'sender': email,
+          'date': Timestamp.fromDate(activity.date),
+        });
+      }
+
       return '';
     } catch (e) {
       return e.toString();

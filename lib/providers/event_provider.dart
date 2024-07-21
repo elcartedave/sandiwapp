@@ -8,16 +8,26 @@ import 'package:sandiwapp/components/uploadImage.dart';
 class EventProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _eventsStream;
   Stream<QuerySnapshot> get events => _eventsStream;
+
+  late Stream<QuerySnapshot> _appEventsStream;
+  Stream<QuerySnapshot> get appEvents => _appEventsStream;
   FirebaseEventsAPI firebaseService = FirebaseEventsAPI();
 
   EventProvider() {
     fetchEvents();
+    fetchAppEvents();
   }
 
   Stream<QuerySnapshot> fetchEvents() {
     _eventsStream = firebaseService.getAllEvents();
     notifyListeners();
     return _eventsStream;
+  }
+
+  Stream<QuerySnapshot> fetchAppEvents() {
+    _appEventsStream = firebaseService.getAppEvents();
+    notifyListeners();
+    return _appEventsStream;
   }
 
   Future<void> toggleGoing(String eventId, bool going) async {
@@ -33,6 +43,18 @@ class EventProvider with ChangeNotifier {
       photoURL = await uploadImage(image, 'events');
     }
     return firebaseService.createEvent(fee, photoURL, place, title, dateTime);
+  }
+
+  Future<String> createEventForApp(String fee, File? image, String place,
+      String title, DateTime dateTime) async {
+    late String photoURL;
+    if (image == null) {
+      photoURL = "";
+    } else {
+      photoURL = await uploadImage(image, 'events');
+    }
+    return firebaseService.createEventForApp(
+        fee, photoURL, place, title, dateTime);
   }
 
   Future<String> editEvent(String fee, File? image, String place, String title,

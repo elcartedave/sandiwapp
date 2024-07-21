@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/committeeAnnouncementItem.dart';
 import 'package:sandiwapp/components/showDialogs.dart';
 import 'package:sandiwapp/models/announcementModel.dart';
 import 'package:sandiwapp/providers/announcement_provider.dart';
 import 'package:sandiwapp/screens/execs/CreateAnnouncementPage.dart';
+import 'package:sandiwapp/screens/execs/CreateEventPage.dart';
 
 class ApplicantAnnouncement extends StatefulWidget {
   final bool isPinuno;
@@ -41,10 +43,22 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              widget.isPinuno
+                  ? BlackButton(
+                      text: "Gumawa ng Event",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const CreateEventPage(isApplicant: true)));
+                      },
+                    )
+                  : Container(),
+              StreamBuilder(
                 stream: _announcementsStream,
                 builder: (context, announcementSnapshot) {
                   if (announcementSnapshot.connectionState ==
@@ -69,6 +83,8 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
                   announcements.sort((a, b) => b.date.compareTo(a.date));
 
                   return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemCount: announcements.length,
                     itemBuilder: (context, index) {
                       return InkWell(
@@ -88,8 +104,8 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: widget.isPinuno

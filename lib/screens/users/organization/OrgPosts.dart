@@ -141,9 +141,11 @@ class _OrgPostsState extends State<OrgPosts> {
           launchUrl(Uri.parse(url));
         },
         onLongPress: () {
-          showDialog(
-              context: context,
-              builder: (context) => ShowPostDialog(link: link));
+          if (isPinuno) {
+            showDialog(
+                context: context,
+                builder: (context) => ShowPostDialog(link: link));
+          }
         },
         child: AnyLinkPreview.builder(
           link: url,

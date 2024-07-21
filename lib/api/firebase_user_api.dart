@@ -418,9 +418,10 @@ class FirebaseUserAPI {
   Future<String> updateBalance(String id, String newBalance) async {
     try {
       await db.collection('users').doc(id).update({'balance': newBalance});
+      await db.collection("users").doc(id).update({'acknowledged': false});
       await _firebaseMessageApi.notify(
           id,
-          "Ikaw ay may bagong balanse na Php $newBalance. Pumunta lamang sa 'Bayaran' section upang masettle ito.",
+          "Ikaw ay may bagong balanse na Php $newBalance. Paki-acknowledge na lamang ang iyong bagong balanse at pumunta sa 'Bayaran' section upang masettle ito.",
           "Lupon ng Pananalapi");
       return '';
     } catch (e) {

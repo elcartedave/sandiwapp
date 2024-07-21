@@ -8,7 +8,10 @@ import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/activityModel.dart';
 import 'package:sandiwapp/models/calendarEvent.dart';
+import 'package:sandiwapp/models/eventModel.dart';
 import 'package:sandiwapp/providers/activity_provider.dart';
+import 'package:sandiwapp/providers/event_provider.dart';
+import 'package:sandiwapp/screens/users/organization/ViewEventPage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -31,7 +34,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
   bool _isLoading = false;
 
   late Stream<QuerySnapshot> _activityStream;
-
+  late Stream<QuerySnapshot> _eventsStream;
   @override
   void initState() {
     super.initState();
@@ -39,14 +42,20 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
     _events = {};
     _activityStream =
         context.read<ActivityProvider>().fetchApplicantActivities();
+    _eventsStream = context.read<EventProvider>().events;
     _initializeEvents();
   }
 
   void _initializeEvents() async {
     QuerySnapshot activitySnapshot = await _activityStream.first;
+    QuerySnapshot eventSnapshot = await _eventsStream.first;
 
     List<Activity> activities = activitySnapshot.docs.map((doc) {
       return Activity.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
+
+    List<Event> myEvents = eventSnapshot.docs.map((doc) {
+      return Event.fromJson(doc.data() as Map<String, dynamic>);
     }).toList();
 
     setState(() {
@@ -56,6 +65,17 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
           title: activity.title,
           date: activity.date,
           content: activity.content,
+        );
+        if (_events[date] == null) _events[date] = [];
+        _events[date]!.add(calendarEvent);
+      }
+      for (var myEvent in myEvents) {
+        DateTime date = _normalizeDate(myEvent.date);
+        CalendarEvent calendarEvent = CalendarEvent(
+          title: myEvent.title,
+          date: myEvent.date,
+          event: myEvent,
+          content: myEvent.place,
         );
         if (_events[date] == null) _events[date] = [];
         _events[date]!.add(calendarEvent);
@@ -123,6 +143,10 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
               key: _formKey,
               child: Column(
                 children: [
+                  PatrickHand(
+                      text:
+                          "Task should be final as it cannot be deleted nor edited",
+                      fontSize: 16),
                   Container(
                       alignment: Alignment.topLeft,
                       child: PatrickHandSC(text: "Title", fontSize: 20)),
@@ -390,49 +414,85 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                       return Center(
                           child: Text("Error: ${activitySnapshot.error}"));
                     }
+                    return StreamBuilder(
+                        stream: _eventsStream,
+                        builder: (context, eventSnapshot) {
+                          if (eventSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ));
+                          }
+                          if (eventSnapshot.hasError) {
+                            return Center(
+                                child: Text("Error: ${eventSnapshot.error}"));
+                          }
+                          List<CalendarEvent> activitiesForDay =
+                              _getActivitiesForDay(_selectedDay!);
 
-                    List<CalendarEvent> activitiesForDay =
-                        _getActivitiesForDay(_selectedDay!);
+                          return activitiesForDay.isEmpty
+                              ? Center(
+                                  child: PatrickHand(
+                                      text: "Walang ganap sa araw na ito",
+                                      fontSize: 14))
+                              : ListView.builder(
+                                  itemCount: activitiesForDay.length,
+                                  itemBuilder: (context, index) {
+                                    CalendarEvent calendarEvent =
+                                        activitiesForDay[index];
 
-                    return activitiesForDay.isEmpty
-                        ? Center(
-                            child: PatrickHand(
-                                text: "Walang ganap sa araw na ito",
-                                fontSize: 14))
-                        : ListView.builder(
-                            itemCount: activitiesForDay.length,
-                            itemBuilder: (context, index) {
-                              CalendarEvent calendarEvent =
-                                  activitiesForDay[index];
-
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: ListTile(
-                                  leading:
-                                      Text(hourFormatter(calendarEvent.date)),
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(calendarEvent.title,
-                                          style: GoogleFonts.patrickHand(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600)),
-                                      PatrickHand(
-                                          text: calendarEvent.content!,
-                                          fontSize: 12)
-                                    ],
-                                  ),
-                                  trailing: Icon(Icons.calendar_month),
-                                ),
-                              );
-                            },
-                          );
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ListTile(
+                                        onTap: () {
+                                          if (calendarEvent.event != null) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ViewEventPage(
+                                                  isPast: false,
+                                                  event: calendarEvent.event!,
+                                                  isPinuno: false,
+                                                  isApplicant: true,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        leading: Text(
+                                            hourFormatter(calendarEvent.date)),
+                                        title: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                calendarEvent.event != null
+                                                    ? "(EVENT) ${calendarEvent.title}"
+                                                    : calendarEvent.title,
+                                                style: GoogleFonts.patrickHand(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                            PatrickHand(
+                                                text: calendarEvent.content!,
+                                                fontSize: 12)
+                                          ],
+                                        ),
+                                        trailing: calendarEvent.event != null
+                                            ? Icon(Icons.meeting_room)
+                                            : Icon(Icons.calendar_month),
+                                      ),
+                                    );
+                                  },
+                                );
+                        });
                   },
                 ),
               ),

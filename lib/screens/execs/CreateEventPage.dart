@@ -11,7 +11,8 @@ import 'package:sandiwapp/components/uploadImage.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
 
 class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({super.key});
+  final bool? isApplicant;
+  const CreateEventPage({this.isApplicant, super.key});
 
   @override
   State<CreateEventPage> createState() => _CreateEventPageState();
@@ -192,7 +193,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         const SizedBox(height: 15),
                         Container(
                             alignment: Alignment.topLeft,
-                            child: PatrickHandSC(text: "Fee", fontSize: 20)),
+                            child: PatrickHandSC(
+                                text: "Fee (0 if none)", fontSize: 20)),
                         MyTextField2(
                           controller: _feeController,
                           isNumber: true,
@@ -261,15 +263,27 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               });
                               return;
                             }
-
-                            String message = await context
-                                .read<EventProvider>()
-                                .createEvent(
-                                    _feeController.text,
-                                    _image,
-                                    _placeController.text,
-                                    _titleController.text,
-                                    eventDateTime);
+                            late String message;
+                            if (widget.isApplicant != null &&
+                                widget.isApplicant == true) {
+                              message = await context
+                                  .read<EventProvider>()
+                                  .createEventForApp(
+                                      _feeController.text,
+                                      _image,
+                                      _placeController.text,
+                                      _titleController.text,
+                                      eventDateTime);
+                            } else {
+                              message = await context
+                                  .read<EventProvider>()
+                                  .createEvent(
+                                      _feeController.text,
+                                      _image,
+                                      _placeController.text,
+                                      _titleController.text,
+                                      eventDateTime);
+                            }
                             if (message == "") {
                               showCustomSnackBar(
                                   context, "Event Successfully Created!", 85);

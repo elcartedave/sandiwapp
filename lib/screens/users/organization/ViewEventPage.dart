@@ -19,10 +19,12 @@ class ViewEventPage extends StatefulWidget {
       {required this.isPast,
       required this.event,
       required this.isPinuno,
+      this.isApplicant,
       super.key});
   final Event event;
   final bool isPinuno;
   final bool isPast;
+  final bool? isApplicant;
   @override
   State<ViewEventPage> createState() => _ViewEventPageState();
 }
@@ -44,6 +46,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _userStream = context.watch<UserProvider>().users;
+
     selectedButton = [
       Container(
         alignment: Alignment.topRight,
@@ -185,6 +188,9 @@ class _ViewEventPageState extends State<ViewEventPage> {
               ),
             ),
             child: SingleChildScrollView(
+              physics: widget.isApplicant != null
+                  ? NeverScrollableScrollPhysics()
+                  : null,
               child: Column(
                 children: [
                   ClipRRect(
@@ -266,65 +272,77 @@ class _ViewEventPageState extends State<ViewEventPage> {
                               ],
                             ),
                       const SizedBox(height: 20),
-                      menuButton(),
-                      const SizedBox(height: 20),
-                      StreamBuilder(
-                          stream: _userStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Container(
-                                height: 300,
-                                child: Center(
-                                    child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                )),
-                              );
-                            }
-                            if (snapshot.hasError) {
-                              return Center(
-                                  child: Text("Error: ${snapshot.error}"));
-                            }
-                            if (!snapshot.hasData ||
-                                snapshot.data!.docs.isEmpty) {
-                              return Center(
-                                  child: Text(
-                                "No Attendees!",
-                                style: TextStyle(color: Colors.white),
-                              ));
-                            }
-                            List<MyUser> users = snapshot.data!.docs.map((doc) {
-                              return MyUser.fromJson(
-                                  doc.data() as Map<String, dynamic>);
-                            }).toList();
+                      widget.isApplicant != null
+                          ? Container(
+                              height: 350,
+                            )
+                          : Column(
+                              children: [
+                                menuButton(),
+                                const SizedBox(height: 20),
+                                StreamBuilder(
+                                    stream: _userStream,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Container(
+                                          height: 300,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                          )),
+                                        );
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                "Error: ${snapshot.error}"));
+                                      }
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.docs.isEmpty) {
+                                        return Center(
+                                            child: Text(
+                                          "No Attendees!",
+                                          style: TextStyle(color: Colors.white),
+                                        ));
+                                      }
+                                      List<MyUser> users =
+                                          snapshot.data!.docs.map((doc) {
+                                        return MyUser.fromJson(
+                                            doc.data() as Map<String, dynamic>);
+                                      }).toList();
 
-                            attendees = users
-                                .where((user) =>
-                                    widget.event.attendees!.contains(user.id))
-                                .toList();
+                                      attendees = users
+                                          .where((user) => widget
+                                              .event.attendees!
+                                              .contains(user.id))
+                                          .toList();
 
-                            nonAttendees = users
-                                .where((user) =>
-                                    !widget.event.attendees!.contains(user.id))
-                                .toList();
-                            return Container(
-                              height: 300,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: PageView(
-                                controller: _pageController,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    isClicked = index == 0;
-                                  });
-                                },
-                                children: [
-                                  buildGridView(attendees),
-                                  buildGridView(nonAttendees),
-                                ],
-                              ),
-                            );
-                          })
+                                      nonAttendees = users
+                                          .where((user) => !widget
+                                              .event.attendees!
+                                              .contains(user.id))
+                                          .toList();
+                                      return Container(
+                                        height: 300,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        child: PageView(
+                                          controller: _pageController,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              isClicked = index == 0;
+                                            });
+                                          },
+                                          children: [
+                                            buildGridView(attendees),
+                                            buildGridView(nonAttendees),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                              ],
+                            )
                     ],
                   ),
                 ],

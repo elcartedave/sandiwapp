@@ -11,6 +11,13 @@ class FirebaseEventsAPI {
     return _firestore.collection('events').snapshots();
   }
 
+  Stream<QuerySnapshot> getAppEvents() {
+    return _firestore
+        .collection('events')
+        .where('forApp', isEqualTo: true)
+        .snapshots();
+  }
+
   Future<String> createEvent(String fee, String photoURL, String place,
       String title, DateTime dateTime) async {
     try {
@@ -23,6 +30,26 @@ class FirebaseEventsAPI {
         'place': place,
         'title': title,
         'id': docRef.id
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> createEventForApp(String fee, String photoURL, String place,
+      String title, DateTime dateTime) async {
+    try {
+      DocumentReference docRef = _firestore.collection("events").doc();
+      await docRef.set({
+        'attendees': [],
+        'date': Timestamp.fromDate(dateTime),
+        'fee': fee,
+        'photoUrl': photoURL,
+        'place': place,
+        'title': title,
+        'id': docRef.id,
+        'forApp': true
       });
       return '';
     } catch (e) {

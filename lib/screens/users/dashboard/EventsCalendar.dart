@@ -193,6 +193,10 @@ class _EventsCalendarState extends State<EventsCalendar> {
               key: _formKey,
               child: Column(
                 children: [
+                  PatrickHand(
+                      text:
+                          "Task should be final as it cannot be deleted nor edited",
+                      fontSize: 16),
                   Container(
                       alignment: Alignment.topLeft,
                       child: PatrickHandSC(text: "Title", fontSize: 20)),
@@ -510,22 +514,22 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                           child: ListTile(
                                             leading: Text(hourFormatter(
                                                 calendarEvent.date)),
-                                            onLongPress: () async {
-                                              if (calendarEvent.event == null &&
-                                                  calendarEvent.form == null &&
-                                                  calendarEvent.task == null) {
-                                                bool? result = await showDialog(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        DeleteActivity(
-                                                            id: calendarEvent
-                                                                .id!));
-                                                if (result == true) {
-                                                  _events[calendarEvent.date]!
-                                                      .remove(calendarEvent);
-                                                }
-                                              }
-                                            },
+                                            // onLongPress: () async {
+                                            //   if (calendarEvent.event == null &&
+                                            //       calendarEvent.form == null &&
+                                            //       calendarEvent.task == null) {
+                                            //     bool? result = await showDialog(
+                                            //         context: context,
+                                            //         builder: (context) =>
+                                            //             DeleteActivity(
+                                            //                 id: calendarEvent
+                                            //                     .id!));
+                                            //     if (result == true) {
+                                            //       _events[calendarEvent.date]!
+                                            //           .remove(calendarEvent);
+                                            //     }
+                                            //   }
+                                            // },
                                             onTap: () {
                                               if (calendarEvent.event != null) {
                                                 Navigator.push(
