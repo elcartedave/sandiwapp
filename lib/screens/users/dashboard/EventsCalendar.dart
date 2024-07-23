@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:linkable/linkable.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
@@ -454,7 +455,10 @@ class _EventsCalendarState extends State<EventsCalendar> {
                   builder: (context, activitySnapshot) {
                     if (activitySnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ));
                     }
                     if (activitySnapshot.hasError) {
                       return Center(
@@ -482,7 +486,9 @@ class _EventsCalendarState extends State<EventsCalendar> {
                               if (taskSnapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return Center(
-                                    child: CircularProgressIndicator());
+                                    child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ));
                               }
                               if (taskSnapshot.hasError) {
                                 return Center(
@@ -574,10 +580,13 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w600)),
-                                                PatrickHand(
-                                                    text:
-                                                        calendarEvent.content!,
-                                                    fontSize: 12)
+                                                Linkable(
+                                                  text: calendarEvent.content!,
+                                                  linkColor: Colors.black,
+                                                  style:
+                                                      GoogleFonts.patrickHand(
+                                                          fontSize: 12),
+                                                )
                                               ],
                                             ),
                                             trailing: calendarEvent.event !=

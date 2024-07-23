@@ -296,7 +296,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                 _events[date]!.add(calendarEvent);
                                 String message = await context
                                     .read<ActivityProvider>()
-                                    .createActivity(newActivity);
+                                    .createAppActivity(newActivity);
                                 if (message == "") {
                                   showCustomSnackBar(context,
                                       "Activity successfully added!", 85);

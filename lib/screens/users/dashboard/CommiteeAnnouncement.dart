@@ -67,7 +67,10 @@ class _CommitteeAnnouncementState extends State<CommitteeAnnouncement> {
             builder: (context, announcementSnapshot) {
               if (announcementSnapshot.connectionState ==
                   ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.black,
+                ));
               }
               if (announcementSnapshot.hasError) {
                 return Center(
@@ -75,7 +78,7 @@ class _CommitteeAnnouncementState extends State<CommitteeAnnouncement> {
               }
               if (!announcementSnapshot.hasData ||
                   announcementSnapshot.data!.docs.isEmpty) {
-                return Center(child: Text("Walang Anunsyo"));
+                return const Center(child: Text("Walang Anunsyo"));
               }
 
               var announcements = announcementSnapshot.data!.docs.map((doc) {

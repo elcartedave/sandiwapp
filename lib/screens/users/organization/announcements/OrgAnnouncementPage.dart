@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:linkable/linkable.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
@@ -76,8 +77,8 @@ class _OrgAnnouncementPageState extends State<OrgAnnouncementPage> {
               PatrickHandSC(
                   text: dateFormatter(widget.announcement.date), fontSize: 15),
               const SizedBox(height: 10),
-              Text(
-                widget.announcement.content,
+              Linkable(
+                text: widget.announcement.content,
                 style: GoogleFonts.patrickHand(fontSize: 20),
                 textAlign: TextAlign.justify,
               ),

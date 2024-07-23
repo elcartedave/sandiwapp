@@ -58,6 +58,22 @@ class FirebaseLinkAPI {
     }
   }
 
+  Future<String> createMinutes(String title, String url) async {
+    try {
+      DocumentReference docRef = _firestore.collection("links").doc();
+      await docRef.set({
+        'id': docRef.id,
+        'title': title,
+        'url': url,
+        'date': Timestamp.fromDate(DateTime.now()),
+        'category': "minutes"
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String> createTracker(String url, String lupon) async {
     try {
       DocumentReference docRef = _firestore.collection("links").doc();
@@ -79,6 +95,13 @@ class FirebaseLinkAPI {
     return _firestore
         .collection('links')
         .where('category', isEqualTo: "post")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getMinutes() {
+    return _firestore
+        .collection('links')
+        .where('category', isEqualTo: "minutes")
         .snapshots();
   }
 

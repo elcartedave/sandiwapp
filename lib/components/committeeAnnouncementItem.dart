@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linkable/linkable.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/models/announcementModel.dart';
 
@@ -36,8 +37,8 @@ class _CommAnnouncementItemState extends State<CommAnnouncementItem> {
               style: TextStyle(fontFamily: 'Inter', fontSize: 15),
             ),
             const SizedBox(height: 10),
-            Text(
-              widget.commAnnouncement.content,
+            Linkable(
+              text: widget.commAnnouncement.content,
               style: TextStyle(fontFamily: 'Inter', fontSize: 15),
               textAlign: TextAlign.justify,
             ),

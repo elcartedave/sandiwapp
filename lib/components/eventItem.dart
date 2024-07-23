@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:linkable/linkable.dart';
 import 'package:provider/provider.dart'; // Add this line
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
@@ -78,8 +79,8 @@ class _EventItemState extends State<EventItem> {
             ),
           ),
           const SizedBox(height: 7),
-          SelectableText(
-            widget.event.place,
+          Linkable(
+            text: widget.event.place,
             style: GoogleFonts.patrickHand(fontSize: 20, color: Colors.black),
             textAlign: TextAlign.left,
           ),

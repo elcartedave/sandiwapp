@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:linkable/linkable.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
@@ -236,8 +237,9 @@ class _ViewEventPageState extends State<ViewEventPage> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         alignment: Alignment.centerLeft,
-                        child: SelectableText(
-                          widget.event.place,
+                        child: Linkable(
+                          textColor: Colors.white,
+                          text: widget.event.place,
                           style: GoogleFonts.patrickHand(
                               fontSize: 20, color: Colors.white),
                           textAlign: TextAlign.left,

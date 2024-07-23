@@ -11,15 +11,25 @@ class LinkProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _postsStream;
   Stream<QuerySnapshot> get posts => _postsStream;
 
+  late Stream<QuerySnapshot> _minutesStream;
+  Stream<QuerySnapshot> get minutes => _minutesStream;
+
   LinkProvider() {
     fetchPubLinks();
     fetchPosts();
+    fetchMinutes();
   }
 
   Stream<QuerySnapshot> fetchPubLinks() {
     _publinksStream = firebaseLinkAPI.getPubLinks();
     notifyListeners();
     return _publinksStream;
+  }
+
+  Stream<QuerySnapshot> fetchMinutes() {
+    _minutesStream = firebaseLinkAPI.getMinutes();
+    notifyListeners();
+    return _minutesStream;
   }
 
   Stream<QuerySnapshot> fetchPosts() {
@@ -38,6 +48,10 @@ class LinkProvider with ChangeNotifier {
 
   Future<String> createPost(String title, String caption, String url) async {
     return firebaseLinkAPI.createPost(title, caption, url);
+  }
+
+  Future<String> createMinutes(String title, String url) async {
+    return firebaseLinkAPI.createMinutes(title, url);
   }
 
   Future<String> createTracker(String url, String lupon) async {

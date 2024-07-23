@@ -576,6 +576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.2"
+  linkable:
+    dependency: "direct main"
+    description:
+      name: linkable
+      sha256: "3cb3ccc83da8b23d27dc66b1421d5b42ed9e6e56ace045121e02a1235ee7a7e0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   lints:
     dependency: transitive
     description:

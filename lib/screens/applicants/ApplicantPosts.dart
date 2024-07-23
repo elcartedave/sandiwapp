@@ -1,11 +1,9 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
-import 'package:sandiwapp/components/deletePostDialog.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
@@ -111,12 +109,6 @@ class _ApplicantPostsPageState extends State<ApplicantPostsPage> {
       child: GestureDetector(
         onTap: () {
           launchUrl(Uri.parse(url));
-        },
-        onLongPress: () {
-          showDialog(
-            context: context,
-            builder: (context) => ShowPostDialog(link: link),
-          );
         },
         child: Container(
           padding: const EdgeInsets.all(8.0),

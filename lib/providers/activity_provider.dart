@@ -36,6 +36,10 @@ class ActivityProvider with ChangeNotifier {
     return firebaseService.createActivity(activity);
   }
 
+  Future<String> createAppActivity(Activity activity) async {
+    return firebaseService.createAppActivity(activity);
+  }
+
   Future<void> deletePastActivities() async {
     await firebaseService.deletePastActivities();
   }

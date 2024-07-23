@@ -17,6 +17,7 @@ import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
 import 'package:sandiwapp/screens/execs/LuponMembers.dart';
 import 'package:sandiwapp/screens/execs/MeritDemeritPage.dart';
+import 'package:sandiwapp/screens/execs/Minutes.dart';
 import 'package:sandiwapp/screens/execs/PublicationPage.dart';
 import 'package:sandiwapp/screens/execs/ViewAssignBalance.dart';
 import 'package:sandiwapp/screens/execs/ViewPaymentsPage.dart';
@@ -276,8 +277,13 @@ class _UserDashboardState extends State<UserDashboard> {
                         children: [
                           WhiteButtonWithIcon(
                             iconData: Icons.format_list_bulleted,
-                            text: "Attendance Tracker",
-                            onTap: () {},
+                            text: "Minutes",
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Minutes()));
+                            },
                           ),
                           const SizedBox(height: 10),
                         ],

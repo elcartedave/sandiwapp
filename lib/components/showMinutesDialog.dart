@@ -9,20 +9,20 @@ import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
 
-class ShowPubLinkDialog extends StatefulWidget {
-  final Link pubLink;
-  const ShowPubLinkDialog({required this.pubLink, super.key});
+class ShowMinutesDialog extends StatefulWidget {
+  final Link minutes;
+  const ShowMinutesDialog({required this.minutes, super.key});
 
   @override
-  State<ShowPubLinkDialog> createState() => _ShowPubLinkDialogState();
+  State<ShowMinutesDialog> createState() => _ShowMinutesDialogState();
 }
 
-class _ShowPubLinkDialogState extends State<ShowPubLinkDialog> {
+class _ShowMinutesDialogState extends State<ShowMinutesDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.white,
-      title: PatrickHand(text: "Pub Link", fontSize: 24),
+      title: PatrickHand(text: "Minutes", fontSize: 24),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -33,7 +33,7 @@ class _ShowPubLinkDialogState extends State<ShowPubLinkDialog> {
               await showDialog(
                   context: context,
                   builder: (context) =>
-                      ShowEditLinkDialog(link: widget.pubLink));
+                      ShowEditLinkDialog(link: widget.minutes));
               Navigator.of(context).pop();
             },
           ),
@@ -44,7 +44,7 @@ class _ShowPubLinkDialogState extends State<ShowPubLinkDialog> {
               await showDialog(
                   context: context,
                   builder: (context) => ShowDeleteLinkDialog(
-                        link: widget.pubLink,
+                        link: widget.minutes,
                       ));
               Navigator.of(context).pop();
             },
@@ -93,7 +93,7 @@ class _ShowDeleteLinkDialogState extends State<ShowDeleteLinkDialog> {
                             .deleteLink(widget.link.id!);
                         if (message == "") {
                           showCustomSnackBar(
-                              context, "Link Successfully Deleted!", 85);
+                              context, "Minutes Successfully Deleted!", 85);
                           Navigator.pop(context);
                         } else {
                           showCustomSnackBar(context, message, 85);
@@ -151,7 +151,7 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("Edit Link"),
+      title: Text("Edit Minutes"),
       backgroundColor: Colors.white,
       content: Form(
         key: _formKey,
@@ -166,7 +166,7 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
             Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                    "Link of Pub (ex. https://canva.com/ptPbdUdjbB1gfLaS6)",
+                    "Link of Minutes (ex. https://docs.google.com/ptPbdUdjbB1gfLaS6)",
                     style: blackText)),
             MyTextField2(
                 controller: _urlController,
@@ -202,7 +202,7 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
                                   _urlController.text);
                           if (message == "") {
                             showCustomSnackBar(
-                                context, "Link Successfully Edited!", 85);
+                                context, "Minutes Successfully Edited!", 85);
                             Navigator.of(context).pop();
                           } else {
                             showCustomSnackBar(context, message, 85);

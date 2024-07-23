@@ -18,16 +18,25 @@ class FirebaseActivityAPI {
         'sender': email,
         'date': Timestamp.fromDate(activity.date),
       });
-      if (activity.lupon == "Aplikante") {
-        await docRef.set({
-          'id': docRef.id,
-          'title': activity.title,
-          'content': activity.content,
-          'lupon': "Lupon ng Kasapian",
-          'sender': email,
-          'date': Timestamp.fromDate(activity.date),
-        });
-      }
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> createAppActivity(Activity activity) async {
+    try {
+      DocumentReference docRef = _firestore.collection("activities").doc();
+      String email = _firebaseAuthAPI.getUserEmail()!;
+      // Set the document data with the auto-generated ID
+      await docRef.set({
+        'id': docRef.id,
+        'title': activity.title,
+        'content': activity.content,
+        'lupon': activity.lupon,
+        'sender': email,
+        'date': Timestamp.fromDate(activity.date),
+      });
 
       return '';
     } catch (e) {
