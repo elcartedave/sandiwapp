@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sandiwapp/components/orgOverviewMenu.dart';
+import 'package:sandiwapp/screens/execs/Minutes.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Kasaysayan.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Konstitusyon.dart';
 
@@ -54,6 +55,13 @@ class _OrgOverviewState extends State<OrgOverview> {
                     icon: Icons.folder, text: "UPSSB Repository", onTap: () {}),
                 OrgOverviewMenu(
                     icon: Icons.school, text: "Acad Drive", onTap: () {}),
+                OrgOverviewMenu(
+                    icon: Icons.list,
+                    text: "Minutes of the Meetings",
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Minutes()));
+                    }),
               ],
             ),
           ),

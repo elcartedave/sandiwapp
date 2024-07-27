@@ -12,7 +12,8 @@ import 'package:sandiwapp/providers/link_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Minutes extends StatefulWidget {
-  const Minutes({super.key});
+  final bool? isPinuno;
+  const Minutes({this.isPinuno, super.key});
 
   @override
   State<Minutes> createState() => _MinutesState();
@@ -69,10 +70,13 @@ class _MinutesState extends State<Minutes> {
                                     mode: LaunchMode.platformDefault);
                               },
                               onLongPress: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => ShowMinutesDialog(
-                                        minutes: minutes[index]));
+                                if (widget.isPinuno != null &&
+                                    widget.isPinuno == true) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => ShowMinutesDialog(
+                                          minutes: minutes[index]));
+                                }
                               },
                               child: Card(
                                 elevation: 5,
@@ -99,16 +103,19 @@ class _MinutesState extends State<Minutes> {
                   }),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: BlackButton(
-              text: "Mag-add ng Link",
-              onTap: () {
-                showDialog(
-                    context: context, builder: (context) => CreateMinutes());
-              },
-            ),
-          )
+          widget.isPinuno != null && widget.isPinuno == true
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: BlackButton(
+                    text: "Mag-add ng Link",
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => CreateMinutes());
+                    },
+                  ),
+                )
+              : Container()
         ],
       ),
     );

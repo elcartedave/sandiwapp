@@ -43,7 +43,7 @@ class MyTextField2 extends StatelessWidget {
           }
           if (isURL != null && isURL == true) {
             if (!Validator.url(value)) {
-              return "Please enter a valid link!";
+              return "Please enter a valid link! Must have https://";
             }
           }
           if (isEmail != null && isEmail == true) {

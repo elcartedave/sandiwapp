@@ -26,6 +26,7 @@ import 'package:sandiwapp/screens/users/dashboard/BulacanStatementPage.dart';
 import 'package:sandiwapp/screens/users/dashboard/CommiteeAnnouncement.dart';
 import 'package:sandiwapp/screens/users/dashboard/EventsCalendar.dart';
 import 'package:sandiwapp/screens/users/dashboard/PaymentPage.dart';
+import 'package:sandiwapp/screens/users/dashboard/PersonalNotes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserDashboard extends StatefulWidget {
@@ -61,6 +62,43 @@ class _UserDashboardState extends State<UserDashboard> {
               MyUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           Stream<DocumentSnapshot> _trackerStream =
               context.watch<LinkProvider>().fetchCommittee(user.lupon!);
+          List<Map<String, dynamic>> buttons = [
+            {
+              'icon': Icons.calendar_today,
+              'text': "Sandiwa Calendar",
+              'onTap': () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EventsCalendar(
+                              isPinuno: user.position!.contains("Pinuno"),
+                              lupon: user.lupon!,
+                            )));
+              },
+            },
+            {
+              'icon': Icons.track_changes,
+              'text': "Bloodline Tracker",
+              'onTap': () {},
+            },
+            {
+              'icon': Icons.task,
+              'text': "Task Assignments",
+              'onTap': () {
+                showDialog(
+                    context: context,
+                    builder: (context) => TaskManagerDialog());
+              },
+            },
+            {
+              'icon': Icons.edit_note,
+              'text': "My Personal Notes",
+              'onTap': () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PersonalNotes()));
+              }, // Add your desired onTap action here
+            },
+          ];
           return Container(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: SingleChildScrollView(
@@ -142,44 +180,29 @@ class _UserDashboardState extends State<UserDashboard> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     ///////////////For users in general///////////////
-                    Column(
-                      children: [
-                        WhiteButtonWithIcon(
-                          iconData: Icons.calendar_today,
-                          text: "Sandiwa Calendar",
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EventsCalendar(
-                                          isPinuno:
-                                              user.position!.contains("Pinuno"),
-                                          lupon: user.lupon!,
-                                        )));
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        WhiteButtonWithIcon(
-                          iconData: Icons.track_changes,
-                          text: "Bloodline Tracker",
-                          onTap: () {},
-                        ),
-                        const SizedBox(height: 10),
-                        WhiteButtonWithIcon(
-                          iconData: Icons.task,
-                          text: "Task Assignments",
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => TaskManagerDialog());
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                      ],
+                    GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(16.0),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // Number of columns
+                        mainAxisSpacing: 10.0, // Spacing between rows
+                        crossAxisSpacing: 10.0, // Spacing between columns
+                        childAspectRatio:
+                            3 / 2, // Aspect ratio of each grid item
+                      ),
+                      itemCount: buttons.length,
+                      itemBuilder: (context, index) {
+                        return WhiteBoxWithIcon(
+                          iconData: buttons[index]['icon'],
+                          text: buttons[index]['text'],
+                          onTap: buttons[index]['onTap'],
+                        );
+                      },
                     ),
-
                     ///////////////////////////Unique Pinuno features///////////////////////////
                     if (!user.position!.contains("Residente") &&
                         !user.position!.contains("Aplikante"))
@@ -272,6 +295,18 @@ class _UserDashboardState extends State<UserDashboard> {
                           const SizedBox(height: 10),
                         ],
                       ),
+                    if (user.position!.contains("Pinuno") &&
+                        user.lupon!.contains("Ugnayang Panlabas"))
+                      Column(
+                        children: [
+                          WhiteButtonWithIcon(
+                            iconData: Icons.handshake,
+                            text: "Partnerships",
+                            onTap: () {},
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
                     if (user.position!.contains("Kalihim"))
                       Column(
                         children: [
@@ -282,7 +317,8 @@ class _UserDashboardState extends State<UserDashboard> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Minutes()));
+                                      builder: (context) =>
+                                          Minutes(isPinuno: true)));
                             },
                           ),
                           const SizedBox(height: 10),

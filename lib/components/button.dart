@@ -138,3 +138,42 @@ class _WhiteButtonWithIconState extends State<WhiteButtonWithIcon> {
     );
   }
 }
+
+class WhiteBoxWithIcon extends StatefulWidget {
+  final Function()? onTap;
+  final IconData iconData;
+  final String text;
+  const WhiteBoxWithIcon(
+      {required this.iconData, required this.text, this.onTap, super.key});
+
+  @override
+  State<WhiteBoxWithIcon> createState() => _WhiteBoxWithIconState();
+}
+
+class _WhiteBoxWithIconState extends State<WhiteBoxWithIcon> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: widget.onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: Colors.black),
+            borderRadius: BorderRadius.circular(10)),
+        child: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(widget.iconData),
+            const SizedBox(width: 10),
+            Text(
+              widget.text,
+              style: blackText,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        )),
+      ),
+    );
+  }
+}

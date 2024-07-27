@@ -93,15 +93,8 @@ class _CommitteeAnnouncementState extends State<CommitteeAnnouncement> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     borderRadius: BorderRadius.circular(10),
-                    onLongPress: () {
-                      if (widget.user.position!.contains("Pinuno")) {
-                        showDialog(
-                            context: context,
-                            builder: (context) => ShowAnnouncementDialog(
-                                announcement: announcements[index]));
-                      }
-                    },
                     child: CommAnnouncementItem(
+                        isPinuno: widget.user.position!.contains("Pinuno"),
                         commAnnouncement: announcements[index]),
                   );
                 },

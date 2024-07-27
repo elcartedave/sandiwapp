@@ -20,6 +20,7 @@ class ApplicantAnnouncement extends StatefulWidget {
 
 class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
   @override
+  @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _announcementsStream =
         context.watch<AnnouncementProvider>().appAnnouncements;
@@ -33,90 +34,106 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
           style: GoogleFonts.patrickHandSc(fontSize: 32),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          image: DecorationImage(
-            opacity: 0.5,
-            image: AssetImage("assets/images/sunflower.jpg"),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          // Background image
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(
+                  opacity: 0.5,
+                  image: AssetImage("assets/images/sunflower.jpg"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              widget.isPinuno
-                  ? BlackButton(
-                      text: "Gumawa ng Event",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CreateEventPage(isApplicant: true)));
-                      },
-                    )
-                  : Container(),
-              StreamBuilder(
-                stream: _announcementsStream,
-                builder: (context, announcementSnapshot) {
-                  if (announcementSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (announcementSnapshot.hasError) {
-                    return Center(
-                        child: Text("Error: ${announcementSnapshot.error}"));
-                  }
-                  if (!announcementSnapshot.hasData ||
-                      announcementSnapshot.data!.docs.isEmpty) {
-                    return Center(child: Text("Walang Anunsyo"));
-                  }
-
-                  var announcements =
-                      announcementSnapshot.data!.docs.map((doc) {
-                    return Announcement.fromJson(
-                        doc.data() as Map<String, dynamic>);
-                  }).toList();
-
-                  announcements.sort((a, b) => b.date.compareTo(a.date));
-
-                  return ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: announcements.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onLongPress: () {
-                          if (widget.isPinuno) {
-                            showDialog(
-                                context: context,
-                                builder: (context) => ShowAnnouncementDialog(
-                                    announcement: announcements[index]));
-                          }
-                        },
-                        child: CommAnnouncementItem(
-                            commAnnouncement: announcements[index]),
+          // Content
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                if (widget.isPinuno)
+                  BlackButton(
+                    text: "Gumawa ng Event",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const CreateEventPage(isApplicant: true),
+                        ),
                       );
                     },
-                  );
-                },
-              ),
-            ],
+                  ),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: _announcementsStream,
+                    builder: (context, announcementSnapshot) {
+                      if (announcementSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (announcementSnapshot.hasError) {
+                        return Center(
+                            child:
+                                Text("Error: ${announcementSnapshot.error}"));
+                      }
+                      if (!announcementSnapshot.hasData ||
+                          announcementSnapshot.data!.docs.isEmpty) {
+                        return Center(child: Text("Walang Anunsyo"));
+                      }
+
+                      var announcements =
+                          announcementSnapshot.data!.docs.map((doc) {
+                        return Announcement.fromJson(
+                            doc.data() as Map<String, dynamic>);
+                      }).toList();
+
+                      announcements.sort((a, b) => b.date.compareTo(a.date));
+
+                      return ListView.builder(
+                        itemCount: announcements.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onLongPress: () {
+                              if (widget.isPinuno) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => ShowAnnouncementDialog(
+                                    announcement: announcements[index],
+                                  ),
+                                );
+                              }
+                            },
+                            child: CommAnnouncementItem(
+                              isPinuno: widget.isPinuno,
+                              commAnnouncement: announcements[index],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButton: widget.isPinuno
           ? FloatingActionButton(
               shape: CircleBorder(),
               onPressed: () async {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CreateAnnouncementPage(type: "Applicant")));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CreateAnnouncementPage(type: "Applicant"),
+                  ),
+                );
               },
               backgroundColor: Colors.black,
               child: Icon(

@@ -43,7 +43,8 @@ class _CreateMinutesState extends State<CreateMinutes> {
               Container(
                   alignment: Alignment.topLeft,
                   child: const PatrickHand(
-                      text: "Enter the url (should start with https://)",
+                      text:
+                          "Enter the document for the minutes (should start with https://)",
                       fontSize: 16)),
               MyTextField2(
                   controller: _urlController,

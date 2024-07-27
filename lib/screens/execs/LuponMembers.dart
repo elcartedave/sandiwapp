@@ -9,6 +9,7 @@ import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/components/viewTasksDialog.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/users/ResidentsProfilePage.dart';
 
 class LuponMembers extends StatefulWidget {
   final String lupon;
@@ -72,59 +73,68 @@ class _LuponMembersState extends State<LuponMembers> {
                         final member = luponMembers[index];
                         return Column(
                           children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: member.photoUrl == null ||
-                                            member.photoUrl == ""
-                                        ? Image.asset(
-                                            'assets/images/base_image.png',
-                                            height: 100,
-                                            width: double.infinity,
-                                            fit: BoxFit.fill,
-                                          )
-                                        : ImageBuffer(
-                                            photoURL: member.photoUrl!,
-                                            width: double.infinity,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Flexible(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      PatrickHand(
-                                          text: member.name, fontSize: 20),
-                                      const SizedBox(height: 10),
-                                      WhiteButton(
-                                        text: "View Tasks",
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  ViewTasks(user: member));
-                                        },
-                                      ),
-                                      const SizedBox(height: 5),
-                                      WhiteButton(
-                                        text: "Assign Tasks",
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  CreateTask(user: member));
-                                        },
-                                      )
-                                    ],
-                                  ))
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ResidentProfilePage(user: member)));
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Flexible(
+                                      child: member.photoUrl == null ||
+                                              member.photoUrl == ""
+                                          ? Image.asset(
+                                              'assets/images/base_image.png',
+                                              height: 100,
+                                              width: double.infinity,
+                                              fit: BoxFit.fill,
+                                            )
+                                          : ImageBuffer(
+                                              photoURL: member.photoUrl!,
+                                              width: double.infinity,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Flexible(
+                                        child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        PatrickHand(
+                                            text: member.name, fontSize: 20),
+                                        const SizedBox(height: 10),
+                                        WhiteButton(
+                                          text: "View Tasks",
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    ViewTasks(user: member));
+                                          },
+                                        ),
+                                        const SizedBox(height: 5),
+                                        WhiteButton(
+                                          text: "Assign Tasks",
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    CreateTask(user: member));
+                                          },
+                                        )
+                                      ],
+                                    ))
+                                  ],
+                                ),
                               ),
                             ),
                             Divider(),

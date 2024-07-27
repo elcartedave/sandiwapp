@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:sandiwapp/providers/note_data.dart';
 import 'package:sandiwapp/providers/activity_provider.dart';
 import 'package:sandiwapp/providers/announcement_provider.dart';
 import 'package:sandiwapp/providers/event_provider.dart';
@@ -17,6 +19,8 @@ import 'package:sandiwapp/screens/users/UserHomePage.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('note_database');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -35,6 +39,7 @@ void main() async {
       ChangeNotifierProvider(create: ((context) => ActivityProvider())),
       ChangeNotifierProvider(create: ((context) => StatementProvider())),
       ChangeNotifierProvider(create: ((context) => LinkProvider())),
+      ChangeNotifierProvider(create: ((context) => NoteData()))
     ],
     child: const RootWidget(),
   ));

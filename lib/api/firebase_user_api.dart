@@ -41,9 +41,25 @@ class FirebaseUserAPI {
   Future<String> uploadImage(String photoURL) async {
     try {
       String id = firebaseService.getUserId()!;
+      String name = await getNameFromID(id);
+
       await db.collection('users').doc(id).update({
         'photoUrl': photoURL,
       });
+
+      QuerySnapshot msgs = await db
+          .collection('messages')
+          .where('sender', isEqualTo: name)
+          .get();
+
+      WriteBatch batch = db.batch();
+
+      for (var doc in msgs.docs) {
+        batch.update(doc.reference, {'photoUrl': photoURL});
+      }
+
+      await batch.commit();
+
       return "";
     } catch (e) {
       return e.toString();
@@ -333,12 +349,6 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getFinMembers() {
     return db
         .collection('users')
-        .where('position', whereIn: [
-          "Residente",
-          "Pangkalahatang Kalihim",
-          "Ikalawang Tagapangulo",
-          "Tagapangulo"
-        ])
         .where('lupon', isEqualTo: "Lupon ng Pananalapi")
         .snapshots();
   }
@@ -346,12 +356,6 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getEdukMembers() {
     return db
         .collection('users')
-        .where('position', whereIn: [
-          "Residente",
-          "Pangkalahatang Kalihim",
-          "Ikalawang Tagapangulo",
-          "Tagapangulo"
-        ])
         .where('lupon', isEqualTo: "Lupon ng Edukasyon at Pananaliksik")
         .snapshots();
   }
@@ -359,12 +363,6 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getPubMembers() {
     return db
         .collection('users')
-        .where('position', whereIn: [
-          "Residente",
-          "Pangkalahatang Kalihim",
-          "Ikalawang Tagapangulo",
-          "Tagapangulo"
-        ])
         .where('lupon', isEqualTo: "Lupon ng Pamamahayag at Publikasyon")
         .snapshots();
   }
@@ -372,12 +370,6 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getMemMembers() {
     return db
         .collection('users')
-        .where('position', whereIn: [
-          "Residente",
-          "Pangkalahatang Kalihim",
-          "Ikalawang Tagapangulo",
-          "Tagapangulo"
-        ])
         .where('lupon', isEqualTo: "Lupon ng Kasapian")
         .snapshots();
   }
@@ -385,12 +377,6 @@ class FirebaseUserAPI {
   Stream<QuerySnapshot> getExteMembers() {
     return db
         .collection('users')
-        .where('position', whereIn: [
-          "Residente",
-          "Pangkalahatang Kalihim",
-          "Ikalawang Tagapangulo",
-          "Tagapangulo"
-        ])
         .where('lupon', isEqualTo: "Lupon ng Ugnayang Panlabas")
         .snapshots();
   }

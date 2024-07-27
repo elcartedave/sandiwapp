@@ -66,7 +66,7 @@ class FirebasePaymentAPI {
             .doc(id)
             .update({'confirmed': true, 'amount': amount});
         String newBalance =
-            (double.parse(balance) - double.parse(amount)).toString();
+            (double.parse(balance) - double.parse(amount)).toStringAsFixed(2);
         await _firestore
             .collection("users")
             .doc(userId)
