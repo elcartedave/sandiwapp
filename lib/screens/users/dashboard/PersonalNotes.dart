@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,8 @@ import 'package:sandiwapp/providers/note_data.dart';
 import 'EditingNotePage.dart';
 
 class PersonalNotes extends StatefulWidget {
-  const PersonalNotes({super.key});
+  final String userId;
+  const PersonalNotes({required this.userId, super.key});
 
   @override
   State<PersonalNotes> createState() => _PersonalNotesState();
@@ -16,11 +18,11 @@ class PersonalNotes extends StatefulWidget {
 
 class _PersonalNotesState extends State<PersonalNotes> {
   void createNewNote() {
-    int id = Provider.of<NoteData>(context, listen: false).getAllNotes().length;
     Note newNote = Note(
-      id: id,
       text: '',
       date: DateTime.now(),
+      userId: widget.userId,
+      content: '',
     );
     goToNotePage(newNote, true);
   }
@@ -30,6 +32,7 @@ class _PersonalNotesState extends State<PersonalNotes> {
       context,
       CupertinoPageRoute(
         builder: (context) => EditingNotePage(
+          userId: widget.userId,
           note: note,
           isNewNote: isNewNote,
         ),
@@ -37,7 +40,7 @@ class _PersonalNotesState extends State<PersonalNotes> {
     );
   }
 
-  void deleteNoteWithConfirmation(Note note) {
+  void deleteNoteWithConfirmation(String id) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -58,7 +61,7 @@ class _PersonalNotesState extends State<PersonalNotes> {
             CupertinoDialogAction(
               isDestructiveAction: true,
               onPressed: () {
-                Provider.of<NoteData>(context, listen: false).deleteNote(note);
+                Provider.of<NoteData>(context, listen: false).deleteNote(id);
                 Navigator.of(context).pop();
               },
               child: Text('Delete', style: TextStyle(color: Colors.black)),
@@ -71,81 +74,88 @@ class _PersonalNotesState extends State<PersonalNotes> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<NoteData>(
-      builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: PatrickHandSC(text: "My Personal Notes", fontSize: 32),
-        ),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      "Notes are stored in the device and is not stored on the account!",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    child: value.getAllNotes().isEmpty
-                        ? Center(
+    Stream<QuerySnapshot> _notesStream =
+        context.watch<NoteData>().initializeNotes();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: PatrickHandSC(text: "My Personal Notes", fontSize: 32),
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Expanded(
+              child: CupertinoScrollbar(
+                  child: StreamBuilder(
+                      stream: _notesStream,
+                      builder: (context, value) {
+                        if (value.connectionState == ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ));
+                        }
+                        if (value.hasError) {
+                          return const Center(
+                              child: Text("Error fetching user data"));
+                        }
+                        if (!value.hasData || !value.data!.docs.isNotEmpty) {
+                          return const Center(
                             child: PatrickHand(text: "No Notes!", fontSize: 20),
-                          )
-                        : CupertinoScrollbar(
-                            child: ListView.builder(
-                              itemCount: value.getAllNotes().length,
-                              itemBuilder: (context, index) {
-                                final note = value.getAllNotes()[index];
-                                return CupertinoListTile(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  leading: Text(
-                                    shortDateFormatter(note.date!),
-                                    style: TextStyle(
-                                        color: CupertinoColors.systemGrey,
-                                        fontSize: 14),
-                                  ),
-                                  title: Text(
-                                    note.text,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  trailing: CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () =>
-                                        deleteNoteWithConfirmation(note),
-                                    child: Icon(CupertinoIcons.delete,
-                                        color: CupertinoColors.systemRed),
-                                  ),
-                                  onTap: () => goToNotePage(note, false),
-                                );
-                              },
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: CupertinoButton(
-                  onPressed: createNewNote,
-                  color: CupertinoColors.black,
-                  padding: EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(30),
-                  child: Icon(
-                    CupertinoIcons.add,
-                    color: CupertinoColors.white,
-                  ),
+                          );
+                        }
+                        var notes = value.data!.docs.map((doc) {
+                          return Note.fromMap(
+                              doc.data() as Map<String, dynamic>);
+                        }).toList();
+                        notes.sort((a, b) => b.date!.compareTo(a.date!));
+                        return ListView.builder(
+                          itemCount: notes.length,
+                          itemBuilder: (context, index) {
+                            final note = notes[index];
+                            return CupertinoListTile(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              leading: Text(
+                                shortDateFormatter(note.date!),
+                                style: TextStyle(
+                                    color: CupertinoColors.systemGrey,
+                                    fontSize: 14),
+                              ),
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              trailing: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () =>
+                                    deleteNoteWithConfirmation(note.id!),
+                                child: Icon(CupertinoIcons.delete,
+                                    color: CupertinoColors.systemRed),
+                              ),
+                              onTap: () => goToNotePage(note, false),
+                            );
+                          },
+                        );
+                      })),
+            ),
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: CupertinoButton(
+                onPressed: createNewNote,
+                color: CupertinoColors.black,
+                padding: EdgeInsets.all(16),
+                borderRadius: BorderRadius.circular(30),
+                child: Icon(
+                  CupertinoIcons.add,
+                  color: CupertinoColors.white,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

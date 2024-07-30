@@ -9,6 +9,8 @@ import 'package:sandiwapp/components/showMinutesDialog.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
+import 'package:sandiwapp/screens/execs/CreateMinutesQuill.dart';
+import 'package:sandiwapp/screens/users/dashboard/ViewMinutes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Minutes extends StatefulWidget {
@@ -66,11 +68,39 @@ class _MinutesState extends State<Minutes> {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: GestureDetector(
                               onTap: () {
-                                launchUrl(Uri.parse(minutes[index].url),
-                                    mode: LaunchMode.platformDefault);
+                                if (minutes[index].caption != null &&
+                                    minutes[index].caption != "") {
+                                  if (widget.isPinuno != null &&
+                                      widget.isPinuno == true) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CreateMinutesQuill(
+                                                  isNewMinutes: false,
+                                                  minutes: minutes[index],
+                                                )));
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ViewMinutes(
+                                                  minutes: minutes[index],
+                                                )));
+                                  }
+                                } else
+                                  launchUrl(Uri.parse(minutes[index].url),
+                                      mode: LaunchMode.platformDefault);
                               },
                               onLongPress: () {
-                                if (widget.isPinuno != null &&
+                                if (minutes[index].caption != null &&
+                                    minutes[index].caption != "") {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => ShowMinutesDialog(
+                                          deleteOnly: true,
+                                          minutes: minutes[index]));
+                                } else if (widget.isPinuno != null &&
                                     widget.isPinuno == true) {
                                   showDialog(
                                       context: context,
@@ -91,7 +121,11 @@ class _MinutesState extends State<Minutes> {
                                   subtitle: Column(
                                     children: [
                                       Text(dateFormatter(minutes[index].date)),
-                                      Text(minutes[index].url),
+                                      minutes[index].caption != null &&
+                                              minutes[index].caption != ""
+                                          ? Text(minutes[index].caption!,
+                                              maxLines: 2)
+                                          : Text(minutes[index].url),
                                     ],
                                   ),
                                   trailing: Icon(Icons.edit_document, size: 30),
@@ -106,13 +140,29 @@ class _MinutesState extends State<Minutes> {
           widget.isPinuno != null && widget.isPinuno == true
               ? Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: BlackButton(
-                    text: "Mag-add ng Link",
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => CreateMinutes());
-                    },
+                  child: Column(
+                    children: [
+                      BlackButton(
+                        text: "Mag-add ng Link",
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => CreateMinutes());
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      WhiteButton(
+                        text: "Gumawa ng Minutes",
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateMinutesQuill(
+                                        isNewMinutes: true,
+                                      )));
+                        },
+                      )
+                    ],
                   ),
                 )
               : Container()

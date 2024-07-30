@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/providers/note_data.dart';
 import 'package:sandiwapp/providers/activity_provider.dart';
@@ -19,8 +19,6 @@ import 'package:sandiwapp/screens/users/UserHomePage.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  await Hive.openBox('note_database');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

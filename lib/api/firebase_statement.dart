@@ -30,7 +30,8 @@ class FirebaseStatementAPI {
         .snapshots();
   }
 
-  Future<String> createStatement(String title, String content) async {
+  Future<String> createStatement(
+      String title, String content, String format) async {
     try {
       String senderId = firebaseService.getUserId()!;
       DocumentReference docRef = db.collection("statements").doc();
@@ -41,7 +42,8 @@ class FirebaseStatementAPI {
         'date': Timestamp.fromDate(DateTime.now()),
         'senderId': senderId,
         'isFinal': false,
-        'status': "Pending"
+        'status': "Pending",
+        'format': format,
       });
       return '';
     } catch (e) {
@@ -58,7 +60,8 @@ class FirebaseStatementAPI {
     }
   }
 
-  Future<String> createAndSubmitStatement(String title, String content) async {
+  Future<String> createAndSubmitStatement(
+      String title, String content, String format) async {
     try {
       String senderId = firebaseService.getUserId()!;
       DocumentReference docRef = db.collection("statements").doc();
@@ -69,7 +72,8 @@ class FirebaseStatementAPI {
         'date': Timestamp.fromDate(DateTime.now()),
         'senderId': senderId,
         'isFinal': true,
-        'status': "Pending"
+        'status': "Pending",
+        'format': format,
       });
       return '';
     } catch (e) {
@@ -89,12 +93,14 @@ class FirebaseStatementAPI {
     }
   }
 
-  Future<String> editStatement(String id, String title, String content) async {
+  Future<String> editStatement(
+      String id, String title, String content, String format) async {
     try {
       await db.collection('statements').doc(id).update({
         'title': title,
         'content': content,
-        'date': Timestamp.fromDate(DateTime.now())
+        'date': Timestamp.fromDate(DateTime.now()),
+        'format': format,
       });
       return '';
     } catch (e) {

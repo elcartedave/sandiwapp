@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
@@ -21,15 +24,31 @@ class _CreateStatementState extends State<CreateStatement> {
   bool _isLoading = false;
   bool _isLoading2 = false;
   late TextEditingController _titleController;
-  late TextEditingController _contentController;
+  QuillController _controller = QuillController.basic();
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(
         text: widget.statement == null ? '' : widget.statement!.title);
-    _contentController = TextEditingController(
-        text: widget.statement == null ? '' : widget.statement!.content);
+    if (widget.statement != null) {
+      loadExistingStatement();
+    }
+  }
+
+  void loadExistingStatement() {
+    final List<dynamic> docJson = widget.statement!.format != null
+        ? jsonDecode(widget.statement!.format!)
+        : [
+            {"insert": "\n"}
+          ];
+    final doc = Document.fromJson(docJson);
+    setState(() {
+      _controller = QuillController(
+        document: doc,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    });
   }
 
   @override
@@ -55,7 +74,7 @@ class _CreateStatementState extends State<CreateStatement> {
                       )
                     : GestureDetector(
                         onTap: () async {
-                          if (_contentController.text != "" &&
+                          if (!_controller.document.isEmpty() &&
                               _titleController.text != "") {
                             setState(() {
                               _isLoading2 = true;
@@ -65,7 +84,10 @@ class _CreateStatementState extends State<CreateStatement> {
                                   .read<StatementProvider>()
                                   .createAndSubmitStatement(
                                       _titleController.text,
-                                      _contentController.text);
+                                      _controller.document.toPlainText(),
+                                      jsonEncode(_controller.document
+                                          .toDelta()
+                                          .toJson()));
                               if (message == '') {
                                 showCustomSnackBar(
                                     context,
@@ -79,17 +101,26 @@ class _CreateStatementState extends State<CreateStatement> {
                                 _isLoading2 = false;
                               });
                             } else {
-                              String message = await context
+                              String message1 = await context
+                                  .read<StatementProvider>()
+                                  .editStatement(
+                                      widget.statement!.id!,
+                                      _titleController.text,
+                                      _controller.document.toPlainText(),
+                                      jsonEncode(_controller.document
+                                          .toDelta()
+                                          .toJson()));
+                              String message2 = await context
                                   .read<StatementProvider>()
                                   .submit(widget.statement!.id!, true);
-                              if (message == "") {
+                              if (message1 == "" && message2 == "") {
                                 showCustomSnackBar(
                                     context,
                                     "Statement submitted to head for approval",
                                     30);
                                 Navigator.pop(context);
                               } else {
-                                showCustomSnackBar(context, message, 30);
+                                showCustomSnackBar(context, message1, 30);
                               }
                               setState(() {
                                 _isLoading2 = false;
@@ -132,12 +163,61 @@ class _CreateStatementState extends State<CreateStatement> {
                           hintText: ""),
                       const SizedBox(height: 10),
                       PatrickHandSC(text: "Content", fontSize: 20),
-                      MyTextField2(
-                        controller: _contentController,
-                        obscureText: false,
-                        hintText: "",
-                        maxLines: 15,
-                      ),
+                      Container(
+                        height: 550,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 2),
+                          borderRadius: BorderRadius.circular(
+                              12), // Adjust the radius as needed
+                        ),
+                        child: Column(
+                          children: [
+                            QuillToolbar.simple(
+                              configurations: QuillSimpleToolbarConfigurations(
+                                showAlignmentButtons: false,
+                                showBackgroundColorButton: false,
+                                showCenterAlignment: false,
+                                showClearFormat: false,
+                                showClipboardCopy: false,
+                                showClipboardCut: false,
+                                showClipboardPaste: false,
+                                showCodeBlock: false,
+                                showColorButton: false,
+                                showDirection: false,
+                                showDividers: false,
+                                showFontFamily: false,
+                                showFontSize: false,
+                                showHeaderStyle: false,
+                                showIndent: false,
+                                showInlineCode: false,
+                                showItalicButton: false,
+                                showJustifyAlignment: false,
+                                showLeftAlignment: false,
+                                showLineHeightButton: false,
+                                showLink: false,
+                                showQuote: false,
+                                showRightAlignment: false,
+                                showSearchButton: false,
+                                showSmallButton: false,
+                                showStrikeThrough: false,
+                                showSubscript: false,
+                                showSuperscript: false,
+                                color: Colors.white,
+                                controller: _controller,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(25),
+                                child: QuillEditor.basic(
+                                  configurations: QuillEditorConfigurations(
+                                      controller: _controller),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -170,8 +250,12 @@ class _CreateStatementState extends State<CreateStatement> {
                               print(true);
                               message = await context
                                   .read<StatementProvider>()
-                                  .createStatement(_titleController.text,
-                                      _contentController.text);
+                                  .createStatement(
+                                      _titleController.text,
+                                      _controller.document.toPlainText(),
+                                      jsonEncode(_controller.document
+                                          .toDelta()
+                                          .toJson()));
                             } else {
                               print(false);
                               message = await context
@@ -179,7 +263,10 @@ class _CreateStatementState extends State<CreateStatement> {
                                   .editStatement(
                                       widget.statement!.id!,
                                       _titleController.text,
-                                      _contentController.text);
+                                      _controller.document.toPlainText(),
+                                      jsonEncode(_controller.document
+                                          .toDelta()
+                                          .toJson()));
                             }
                             if (message == '') {
                               showCustomSnackBar(

@@ -7,12 +7,14 @@ class Link {
   final String category;
   final String url;
   final DateTime date;
+  final String? format;
   Link(
       {required this.title,
       this.caption,
       this.id,
       required this.category,
       required this.url,
+      this.format,
       required this.date});
   factory Link.fromJson(Map<String, dynamic> json) {
     return Link(
@@ -21,6 +23,7 @@ class Link {
       category: json['category'],
       caption: json['caption'],
       url: json['url'],
+      format: json['format'],
       date: (json['date'] as Timestamp).toDate(),
     );
   }

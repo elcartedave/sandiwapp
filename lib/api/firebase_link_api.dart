@@ -74,6 +74,25 @@ class FirebaseLinkAPI {
     }
   }
 
+  Future<String> createMinutesQuill(
+      String title, String content, String format) async {
+    try {
+      DocumentReference docRef = _firestore.collection("links").doc();
+      await docRef.set({
+        'id': docRef.id,
+        'title': title,
+        'url': '',
+        'caption': content,
+        'format': format,
+        'date': Timestamp.fromDate(DateTime.now()),
+        'category': "minutes"
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String> createTracker(String url, String lupon) async {
     try {
       DocumentReference docRef = _firestore.collection("links").doc();
@@ -120,6 +139,22 @@ class FirebaseLinkAPI {
         'id': id,
         'title': title,
         'url': url,
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> editMinutesQuill(
+      String id, String title, String content, String format) async {
+    try {
+      await _firestore.collection('links').doc(id).update({
+        'id': id,
+        'title': title,
+        'url': '',
+        'caption': content,
+        'format': format,
       });
       return '';
     } catch (e) {

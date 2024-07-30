@@ -8,8 +8,10 @@ class Statement {
   final DateTime date;
   final bool isFinal;
   final String status;
+  final String? format;
   Statement(
       {required this.title,
+      this.format,
       required this.content,
       required this.senderId,
       required this.date,
@@ -25,6 +27,7 @@ class Statement {
         content: json['content'],
         senderId: json['senderId'],
         date: (json['date'] as Timestamp).toDate(),
-        isFinal: json['isFinal']);
+        isFinal: json['isFinal'],
+        format: json['format']);
   }
 }

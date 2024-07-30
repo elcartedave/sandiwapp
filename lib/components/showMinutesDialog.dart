@@ -11,7 +11,8 @@ import 'package:sandiwapp/providers/link_provider.dart';
 
 class ShowMinutesDialog extends StatefulWidget {
   final Link minutes;
-  const ShowMinutesDialog({required this.minutes, super.key});
+  final bool? deleteOnly;
+  const ShowMinutesDialog({this.deleteOnly, required this.minutes, super.key});
 
   @override
   State<ShowMinutesDialog> createState() => _ShowMinutesDialogState();
@@ -26,17 +27,19 @@ class _ShowMinutesDialogState extends State<ShowMinutesDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: Icon(Icons.edit),
-            title: PatrickHand(text: "Edit", fontSize: 20),
-            onTap: () async {
-              await showDialog(
-                  context: context,
-                  builder: (context) =>
-                      ShowEditLinkDialog(link: widget.minutes));
-              Navigator.of(context).pop();
-            },
-          ),
+          widget.deleteOnly != null && widget.deleteOnly == true
+              ? Container()
+              : ListTile(
+                  leading: Icon(Icons.edit),
+                  title: PatrickHand(text: "Edit", fontSize: 20),
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) =>
+                            ShowEditLinkDialog(link: widget.minutes));
+                    Navigator.of(context).pop();
+                  },
+                ),
           ListTile(
             leading: Icon(Icons.delete),
             title: PatrickHand(text: "Delete", fontSize: 20),
@@ -93,10 +96,10 @@ class _ShowDeleteLinkDialogState extends State<ShowDeleteLinkDialog> {
                             .deleteLink(widget.link.id!);
                         if (message == "") {
                           showCustomSnackBar(
-                              context, "Minutes Successfully Deleted!", 85);
+                              context, "Minutes Successfully Deleted!", 120);
                           Navigator.pop(context);
                         } else {
-                          showCustomSnackBar(context, message, 85);
+                          showCustomSnackBar(context, message, 120);
                         }
                       },
                     ),
@@ -202,10 +205,10 @@ class _ShowEditLinkDialogState extends State<ShowEditLinkDialog> {
                                   _urlController.text);
                           if (message == "") {
                             showCustomSnackBar(
-                                context, "Minutes Successfully Edited!", 85);
+                                context, "Minutes Successfully Edited!", 120);
                             Navigator.of(context).pop();
                           } else {
-                            showCustomSnackBar(context, message, 85);
+                            showCustomSnackBar(context, message, 120);
                             setState(() {
                               _isLoading = false;
                             });

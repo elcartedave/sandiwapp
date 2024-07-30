@@ -36,20 +36,22 @@ class StatementProvider with ChangeNotifier {
     return _draftStatementStream;
   }
 
-  Future<String> createStatement(String title, String content) {
-    return firebaseService.createStatement(title, content);
+  Future<String> createStatement(String title, String content, String format) {
+    return firebaseService.createStatement(title, content, format);
   }
 
-  Future<String> editStatement(String id, String title, String content) {
-    return firebaseService.editStatement(id, title, content);
+  Future<String> editStatement(
+      String id, String title, String content, String format) {
+    return firebaseService.editStatement(id, title, content, format);
   }
 
   Future<String> deleteStatement(String id) {
     return firebaseService.deleteStatement(id);
   }
 
-  Future<String> createAndSubmitStatement(String title, String content) {
-    return firebaseService.createAndSubmitStatement(title, content);
+  Future<String> createAndSubmitStatement(
+      String title, String content, String format) {
+    return firebaseService.createAndSubmitStatement(title, content, format);
   }
 
   Future<String> submit(String id, bool isFinal) {

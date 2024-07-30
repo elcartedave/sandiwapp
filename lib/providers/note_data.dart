@@ -1,50 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import '../hive_database/hive_database.dart';
-import '../models/noteModel.dart';
+import 'package:sandiwapp/api/firebase_auth_api.dart';
+import 'package:sandiwapp/api/firebase_note_api.dart';
+import 'package:sandiwapp/models/noteModel.dart';
 
 class NoteData extends ChangeNotifier {
-  final db = HiveDatabase();
-  List<Note> allNotes = [];
-
+  final FirebaseNoteApi firebaseService = FirebaseNoteApi();
+  final FirebaseAuthAPI auth = FirebaseAuthAPI();
+  late Stream<QuerySnapshot> _notesStream;
+  Stream<QuerySnapshot> get notes => _notesStream;
   NoteData() {
     initializeNotes();
   }
 
-  void initializeNotes() {
-    allNotes = db.loadNotes();
+  Stream<QuerySnapshot> initializeNotes() {
+    _notesStream = firebaseService.getUserNote();
     notifyListeners();
+    return _notesStream;
   }
 
-  List<Note> getAllNotes() {
-    return allNotes;
+  Future<String> addNewNote(Note note) async {
+    return firebaseService.addNewNote(note);
   }
 
-  void addNewNote(Note note) {
-    allNotes.add(note);
-    sortNotesByDate();
-    db.saveNotes(allNotes);
-    notifyListeners();
+  Future<String> updateNote(Note note, String text, String content) async {
+    return firebaseService.updateNote(note, text, content);
   }
 
-  void updateNote(Note note, String text) {
-    for (var n in allNotes) {
-      if (n.id == note.id) {
-        n.text = text;
-        n.date = DateTime.now();
-        break;
-      }
-    }
-    db.saveNotes(allNotes);
-    notifyListeners();
-  }
-
-  void deleteNote(Note note) {
-    allNotes.remove(note);
-    db.saveNotes(allNotes);
-    notifyListeners();
-  }
-
-  void sortNotesByDate() {
-    allNotes.sort((a, b) => b.date!.compareTo(a.date!));
+  Future<String> deleteNote(String id) async {
+    return firebaseService.deleteNote(id);
   }
 }

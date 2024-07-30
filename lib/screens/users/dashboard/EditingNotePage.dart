@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +11,12 @@ import 'package:sandiwapp/providers/note_data.dart';
 class EditingNotePage extends StatefulWidget {
   final Note note;
   final bool isNewNote;
-  EditingNotePage({required this.note, required this.isNewNote, super.key});
+  final String userId;
+  EditingNotePage(
+      {required this.userId,
+      required this.note,
+      required this.isNewNote,
+      super.key});
 
   @override
   State<EditingNotePage> createState() => _EditingNotePageState();
@@ -25,26 +32,39 @@ class _EditingNotePageState extends State<EditingNotePage> {
   }
 
   void loadExistingNote() {
-    final doc = Document()..insert(0, widget.note.text);
+    final List<dynamic> docJson = widget.note.content.isNotEmpty
+        ? jsonDecode(widget.note.content)
+        : [
+            {"insert": "\n"}
+          ];
+    final doc = Document.fromJson(docJson);
     setState(() {
       _controller = QuillController(
-          document: doc, selection: const TextSelection.collapsed(offset: 0));
+        document: doc,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
     });
   }
 
   void addNewNote() {
-    int id = Provider.of<NoteData>(context, listen: false).getAllNotes().length;
     String text = _controller.document.toPlainText();
+    String content = jsonEncode(_controller.document.toDelta().toJson());
     Provider.of<NoteData>(context, listen: false).addNewNote(Note(
       text: text,
-      id: id,
+      content: content,
+      userId: widget.userId,
       date: DateTime.now(),
     ));
   }
 
   void updateNote() {
     String text = _controller.document.toPlainText();
-    Provider.of<NoteData>(context, listen: false).updateNote(widget.note, text);
+    String content = jsonEncode(_controller.document.toDelta().toJson());
+    Provider.of<NoteData>(context, listen: false).updateNote(
+      widget.note,
+      text,
+      content,
+    );
   }
 
   @override
@@ -98,9 +118,6 @@ class _EditingNotePageState extends State<EditingNotePage> {
                   showLeftAlignment: false,
                   showLineHeightButton: false,
                   showLink: false,
-                  showListBullets: false,
-                  showListCheck: false,
-                  showListNumbers: false,
                   showQuote: false,
                   showRightAlignment: false,
                   showSearchButton: false,

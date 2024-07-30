@@ -40,7 +40,7 @@ class _UserHomePageState extends State<UserHomePage> {
         child: Image.asset(
           photoURL[_currentIndex],
           fit: BoxFit.cover,
-          opacity: AlwaysStoppedAnimation(0.6),
+          opacity: AlwaysStoppedAnimation(0.5),
         ),
       ),
       Scaffold(

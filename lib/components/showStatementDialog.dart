@@ -64,30 +64,85 @@ class _ShowStatementDialogState extends State<ShowStatementDialog> {
                                   },
                                 ),
                       const SizedBox(height: 8),
-                      _isLoading2
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            )
-                          : WhiteButton(
-                              text: "Delete",
-                              onTap: () async {
-                                setState(() {
-                                  _isLoading2 = true;
-                                });
-                                String message = await context
-                                    .read<StatementProvider>()
-                                    .deleteStatement(widget.statement.id!);
-                                if (message == '') {
-                                  showCustomSnackBar(
-                                      context, "Statement deleted!", 30);
-                                  Navigator.pop(context);
-                                } else {
-                                  showCustomSnackBar(context, message, 30);
-                                }
-                              },
-                            ),
+                      WhiteButton(
+                        text: "Delete",
+                        onTap: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return AlertDialog(
+                                        title: const PatrickHand(
+                                          text: "Delete Statement",
+                                          fontSize: 20,
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        content: const PatrickHand(
+                                            text:
+                                                "Are you sure you want to delete the statement?",
+                                            fontSize: 16),
+                                        actions: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: _isLoading2
+                                                    ? const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    : BlackButton(
+                                                        text: "Yes",
+                                                        onTap: () async {
+                                                          setState(() {
+                                                            _isLoading2 = true;
+                                                          });
+                                                          String message = await context
+                                                              .read<
+                                                                  StatementProvider>()
+                                                              .deleteStatement(
+                                                                  widget
+                                                                      .statement
+                                                                      .id!);
+                                                          if (message == "") {
+                                                            showCustomSnackBar(
+                                                                context,
+                                                                "Statement Successfully Deleted!",
+                                                                30);
+                                                            Navigator.pop(
+                                                                context);
+                                                          } else {
+                                                            showCustomSnackBar(
+                                                                context,
+                                                                message,
+                                                                30);
+                                                          }
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Center(
+                                                  child: WhiteButton(
+                                                    text: "No",
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  ));
+                        },
+                      ),
                     ],
                   ),
             Padding(

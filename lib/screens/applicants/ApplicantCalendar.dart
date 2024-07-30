@@ -42,7 +42,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
     _events = {};
     _activityStream =
         context.read<ActivityProvider>().fetchApplicantActivities();
-    _eventsStream = context.read<EventProvider>().events;
+    _eventsStream = context.read<EventProvider>().appEvents;
     _initializeEvents();
   }
 

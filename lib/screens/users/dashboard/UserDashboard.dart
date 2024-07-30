@@ -94,8 +94,12 @@ class _UserDashboardState extends State<UserDashboard> {
               'icon': Icons.edit_note,
               'text': "My Personal Notes",
               'onTap': () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PersonalNotes()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PersonalNotes(
+                              userId: user.id!,
+                            )));
               }, // Add your desired onTap action here
             },
           ];

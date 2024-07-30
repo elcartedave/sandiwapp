@@ -54,6 +54,11 @@ class LinkProvider with ChangeNotifier {
     return firebaseLinkAPI.createMinutes(title, url);
   }
 
+  Future<String> createMinutesQuill(
+      String title, String content, String format) async {
+    return firebaseLinkAPI.createMinutesQuill(title, content, format);
+  }
+
   Future<String> createTracker(String url, String lupon) async {
     return firebaseLinkAPI.createTracker(url, lupon);
   }
@@ -64,5 +69,10 @@ class LinkProvider with ChangeNotifier {
 
   Future<String> editLink(String id, String title, String url) async {
     return firebaseLinkAPI.editLink(id, title, url);
+  }
+
+  Future<String> editMinutesQuill(
+      String id, String title, String content, String format) async {
+    return firebaseLinkAPI.editMinutesQuill(id, title, content, format);
   }
 }
