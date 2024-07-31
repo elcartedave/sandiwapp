@@ -60,8 +60,8 @@ class _PersonalNotesState extends State<PersonalNotes> {
             ),
             CupertinoDialogAction(
               isDestructiveAction: true,
-              onPressed: () {
-                Provider.of<NoteData>(context, listen: false).deleteNote(id);
+              onPressed: () async {
+                await context.read<NoteData>().deleteNote(id);
                 Navigator.of(context).pop();
               },
               child: Text('Delete', style: TextStyle(color: Colors.black)),
@@ -75,89 +75,73 @@ class _PersonalNotesState extends State<PersonalNotes> {
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> _notesStream =
-        context.watch<NoteData>().initializeNotes();
+        context.watch<NoteData>().firebaseService.getUserNote();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: PatrickHandSC(text: "My Personal Notes", fontSize: 32),
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Expanded(
-              child: CupertinoScrollbar(
-                  child: StreamBuilder(
-                      stream: _notesStream,
-                      builder: (context, value) {
-                        if (value.connectionState == ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          ));
-                        }
-                        if (value.hasError) {
-                          return const Center(
-                              child: Text("Error fetching user data"));
-                        }
-                        if (!value.hasData || !value.data!.docs.isNotEmpty) {
-                          return const Center(
-                            child: PatrickHand(text: "No Notes!", fontSize: 20),
-                          );
-                        }
-                        var notes = value.data!.docs.map((doc) {
-                          return Note.fromMap(
-                              doc.data() as Map<String, dynamic>);
-                        }).toList();
-                        notes.sort((a, b) => b.date!.compareTo(a.date!));
-                        return ListView.builder(
-                          itemCount: notes.length,
-                          itemBuilder: (context, index) {
-                            final note = notes[index];
-                            return CupertinoListTile(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              leading: Text(
-                                shortDateFormatter(note.date!),
-                                style: TextStyle(
-                                    color: CupertinoColors.systemGrey,
-                                    fontSize: 14),
-                              ),
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              trailing: CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () =>
-                                    deleteNoteWithConfirmation(note.id!),
-                                child: Icon(CupertinoIcons.delete,
-                                    color: CupertinoColors.systemRed),
-                              ),
-                              onTap: () => goToNotePage(note, false),
-                            );
-                          },
-                        );
-                      })),
-            ),
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: CupertinoButton(
-                onPressed: createNewNote,
-                color: CupertinoColors.black,
-                padding: EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(30),
-                child: Icon(
-                  CupertinoIcons.add,
-                  color: CupertinoColors.white,
-                ),
-              ),
-            ),
-          ],
+      floatingActionButton: CupertinoButton(
+        onPressed: createNewNote,
+        color: CupertinoColors.black,
+        padding: EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(30),
+        child: Icon(
+          CupertinoIcons.add,
+          color: CupertinoColors.white,
         ),
       ),
+      body: CupertinoScrollbar(
+          child: StreamBuilder(
+              stream: _notesStream,
+              builder: (context, value) {
+                if (value.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ));
+                }
+                if (value.hasError) {
+                  return const Center(child: Text("Error fetching user data"));
+                }
+                if (!value.hasData || !value.data!.docs.isNotEmpty) {
+                  return const Center(
+                    child: PatrickHand(text: "No Notes!", fontSize: 20),
+                  );
+                }
+                var notes = value.data!.docs.map((doc) {
+                  return Note.fromMap(doc.data() as Map<String, dynamic>);
+                }).toList();
+                notes.sort((a, b) => b.date!.compareTo(a.date!));
+                return ListView.builder(
+                  itemCount: notes.length,
+                  itemBuilder: (context, index) {
+                    final note = notes[index];
+                    return CupertinoListTile(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      leading: Text(
+                        shortDateFormatter(note.date!),
+                        style: TextStyle(
+                            color: CupertinoColors.systemGrey, fontSize: 14),
+                      ),
+                      title: Text(
+                        note.text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      trailing: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => deleteNoteWithConfirmation(note.id!),
+                        child: Icon(CupertinoIcons.delete,
+                            color: CupertinoColors.systemRed),
+                      ),
+                      onTap: () => goToNotePage(note, false),
+                    );
+                  },
+                );
+              })),
     );
   }
 }

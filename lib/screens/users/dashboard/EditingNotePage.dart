@@ -46,25 +46,25 @@ class _EditingNotePageState extends State<EditingNotePage> {
     });
   }
 
-  void addNewNote() {
+  void addNewNote() async {
     String text = _controller.document.toPlainText();
     String content = jsonEncode(_controller.document.toDelta().toJson());
-    Provider.of<NoteData>(context, listen: false).addNewNote(Note(
-      text: text,
-      content: content,
-      userId: widget.userId,
-      date: DateTime.now(),
-    ));
+    await context.read<NoteData>().addNewNote(Note(
+          text: text,
+          content: content,
+          userId: widget.userId,
+          date: DateTime.now(),
+        ));
   }
 
-  void updateNote() {
+  void updateNote() async {
     String text = _controller.document.toPlainText();
     String content = jsonEncode(_controller.document.toDelta().toJson());
-    Provider.of<NoteData>(context, listen: false).updateNote(
-      widget.note,
-      text,
-      content,
-    );
+    await context.read<NoteData>().updateNote(
+          widget.note,
+          text,
+          content,
+        );
   }
 
   @override
