@@ -73,7 +73,7 @@ class _LuponMembersState extends State<LuponMembers> {
                         final member = luponMembers[index];
                         return Column(
                           children: [
-                            GestureDetector(
+                            InkWell(
                               onTap: () {
                                 Navigator.push(
                                     context,

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/imageBuffer.dart';
+import 'package:sandiwapp/components/showMessageDialog.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -12,7 +13,8 @@ import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 
 class ViewAssignBalancePage extends StatefulWidget {
-  const ViewAssignBalancePage({super.key});
+  final String email;
+  const ViewAssignBalancePage({required this.email, super.key});
 
   @override
   State<ViewAssignBalancePage> createState() => _ViewAssignBalancePageState();
@@ -99,6 +101,13 @@ class _ViewAssignBalancePageState extends State<ViewAssignBalancePage> {
                           ),
                           child: ListTile(
                             splashColor: Color(0xFFEEEEEE),
+                            onLongPress: () {
+                              if (user.email != widget.email)
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => ShowMessageDialog(
+                                        senderEmail: widget.email, user: user));
+                            },
                             onTap: () {
                               showDialog(
                                   context: context,

@@ -104,3 +104,46 @@ class MyTextField2 extends StatelessWidget {
     );
   }
 }
+
+class MyMultiLineTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String hintText;
+
+  const MyMultiLineTextField({
+    Key? key,
+    required this.controller,
+    required this.focusNode,
+    required this.hintText,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      constraints: BoxConstraints(
+        maxHeight: 120, // Set the fixed height for the border container
+      ),
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          reverse: true,
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            keyboardType: TextInputType.multiline,
+            maxLines: null, // Allow multiple lines
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none, // Remove the internal border
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

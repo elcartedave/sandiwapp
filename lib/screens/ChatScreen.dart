@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/chatBubble.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
@@ -14,8 +15,10 @@ class ChatPage extends StatefulWidget {
   final String receiverID;
   final String receiverName;
   final String myPhotoUrl;
+  final bool? isNotification;
   ChatPage({
     super.key,
+    this.isNotification,
     required this.myPhotoUrl,
     required this.receiverEmail,
     required this.receiverID,
@@ -72,7 +75,7 @@ class _ChatPageState extends State<ChatPage> {
               "assets/icons/sandiwa_logo.png", // Your image path
               width: 200,
               height: 200,
-              opacity: AlwaysStoppedAnimation(0.3),
+              opacity: AlwaysStoppedAnimation(0.2),
             ),
           ),
           Column(
@@ -81,7 +84,9 @@ class _ChatPageState extends State<ChatPage> {
               Expanded(
                 child: _buildMessageList(context),
               ),
-              _buildUserInput(context),
+              if (widget.isNotification == null ||
+                  widget.isNotification == false)
+                _buildUserInput(context),
             ],
           ),
         ],
@@ -92,32 +97,69 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessageList(BuildContext context) {
     String senderID = context.read<UserAuthProvider>().authService.getUserId()!;
     return StreamBuilder(
-        stream: context
-            .watch<MessageProvider>()
-            .getMessages(widget.receiverID, senderID),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return PatrickHandSC(text: "Error!", fontSize: 16);
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
+      stream: context
+          .watch<MessageProvider>()
+          .getMessages(widget.receiverID, senderID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return PatrickHandSC(text: "Error!", fontSize: 16);
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+            ),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+              child: PatrickHand(text: "No messages yet", fontSize: 20));
+        }
+
+        // List of message widgets to display
+        List<Widget> messageWidgets = [];
+        String? previousDate;
+
+        for (var doc in snapshot.data!.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          DateTime messageDate = (data['timestamp'] as Timestamp).toDate();
+          String formattedDate = _formatDate(messageDate);
+
+          // Check if the current message is from a new day
+          if (formattedDate != previousDate) {
+            // Add date separator
+            messageWidgets.add(
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Text(
+                    formattedDate,
+                    style: const TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+                ),
               ),
             );
+            previousDate = formattedDate;
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-                child: PatrickHand(text: "No messages yet", fontSize: 16));
-          }
-          return ListView(
-            controller: _scrollController,
-            children: snapshot.data!.docs
-                .map((doc) =>
-                    _buildMessageItem(doc, senderID, widget.myPhotoUrl!))
-                .toList(),
-          );
-        });
+
+          // Add the message item
+          messageWidgets
+              .add(_buildMessageItem(doc, senderID, widget.myPhotoUrl));
+        }
+
+        return ListView(
+          controller: _scrollController,
+          children: messageWidgets,
+        );
+      },
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    // Format the date as needed
+    return DateFormat('MMMM d, yyyy').format(date);
   }
 
   Widget _buildMessageItem(
@@ -206,38 +248,38 @@ class _ChatPageState extends State<ChatPage> {
       child: Row(
         children: [
           Expanded(
-            child: MyTextField2(
-                controller: _messageController,
-                obscureText: false,
-                focusNode: myFocusNode,
-                hintText: "Enter message"),
+            child: MyMultiLineTextField(
+              controller: _messageController,
+              focusNode: myFocusNode,
+              hintText: "Enter message",
+            ),
           ),
           Container(
             decoration:
                 BoxDecoration(color: Colors.black, shape: BoxShape.circle),
             margin: EdgeInsets.all(16),
             child: IconButton(
-                onPressed: () async {
-                  if (_messageController.text.isNotEmpty) {
-                    String message = await context
-                        .read<MessageProvider>()
-                        .sendMessage(
-                            widget.receiverID, _messageController.text);
-                    if (message != "") {
-                      showCustomSnackBar(context, message, 85);
-                    } else {
-                      _messageController.clear();
-                    }
+              onPressed: () async {
+                if (_messageController.text.isNotEmpty) {
+                  String message = await context
+                      .read<MessageProvider>()
+                      .sendMessage(widget.receiverID, _messageController.text);
+                  if (message != "") {
+                    showCustomSnackBar(context, message, 85);
                   } else {
-                    showCustomSnackBar(
-                        context, "Please enter a valid message", 85);
+                    _messageController.clear();
                   }
-                  scrollDown();
-                },
-                icon: Icon(
-                  Icons.send,
-                  color: Colors.white,
-                )),
+                } else {
+                  showCustomSnackBar(
+                      context, "Please enter a valid message", 85);
+                }
+                scrollDown();
+              },
+              icon: Icon(
+                Icons.send,
+                color: Colors.white,
+              ),
+            ),
           )
         ],
       ),

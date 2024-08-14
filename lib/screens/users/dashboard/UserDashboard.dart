@@ -248,7 +248,9 @@ class _UserDashboardState extends State<UserDashboard> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          ViewAssignBalancePage()));
+                                          ViewAssignBalancePage(
+                                            email: user.email,
+                                          )));
                             },
                           ),
                           const SizedBox(height: 10),

@@ -87,6 +87,88 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
                       .split('_')
                       .firstWhere((id) => id != currentUserID);
 
+                  if (chatRoomID.contains("Notification")) {
+                    // Handle "Notification" chat rooms differently
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("chat_rooms")
+                          .doc(chatRoomID)
+                          .collection("messages")
+                          .orderBy("timestamp", descending: true)
+                          .limit(1)
+                          .snapshots(),
+                      builder: (context, messageSnapshot) {
+                        if (!messageSnapshot.hasData) {
+                          return Container();
+                        }
+
+                        final mostRecentMessage =
+                            messageSnapshot.data!.docs.first;
+                        final String messageText =
+                            mostRecentMessage['message'] ?? "No message";
+                        final DateTime messageDate =
+                            mostRecentMessage['timestamp'].toDate();
+
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 30,
+                            child: Icon(
+                              Icons.notifications,
+                              color: Colors.black,
+                              size: 30,
+                            ),
+                          ),
+                          title: Text(
+                            "Notification",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: messageText,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  shortDateFormatter(messageDate),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                    myPhotoUrl: widget.myPhotoUrl,
+                                    receiverEmail: "",
+                                    receiverID: receiverID,
+                                    receiverName: "Notification",
+                                    isNotification: true),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+
+                  // Original user chat room handling
                   return StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection("chat_rooms")

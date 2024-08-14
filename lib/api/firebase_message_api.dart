@@ -12,12 +12,53 @@ class FirebaseMessageApi {
     List<String> ids = [userID, otherUserID];
     ids.sort();
     String chatRoomID = ids.join('_');
+    updateSenderPhotoUrl(userID, otherUserID);
     return _firestore
         .collection("chat_rooms")
         .doc(chatRoomID)
         .collection("messages")
         .orderBy("timestamp", descending: false)
         .snapshots();
+  }
+
+  Future<void> updateSenderPhotoUrl(
+      String currentUserID, String otherUserID) async {
+    List<String> ids = [currentUserID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join('_');
+
+    // Fetch the photoUrl of the otherUserID
+    String otherUserPhotoUrl =
+        await firebaseUserAPI.getPhotoURLFromID(otherUserID);
+
+    // Get a reference to the messages collection
+    CollectionReference messagesRef = _firestore
+        .collection("chat_rooms")
+        .doc(chatRoomID)
+        .collection("messages");
+
+    // Fetch all the messages
+    QuerySnapshot messagesSnapshot = await messagesRef.get();
+
+    // Create a batch for the updates
+    WriteBatch batch = _firestore.batch();
+
+    // Iterate over each message document
+    for (QueryDocumentSnapshot messageDoc in messagesSnapshot.docs) {
+      Map<String, dynamic> messageData =
+          messageDoc.data() as Map<String, dynamic>;
+      String senderID = messageData['senderID'];
+
+      // Only update if the senderID is not equal to the currentUserID
+      if (senderID != currentUserID) {
+        batch.update(messageDoc.reference, {
+          'senderPhotoUrl': otherUserPhotoUrl,
+        });
+      }
+    }
+
+    // Commit the batch
+    await batch.commit();
   }
 
   Stream<QuerySnapshot> getChatRooms() {
