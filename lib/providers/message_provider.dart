@@ -3,24 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:sandiwapp/api/firebase_message_api.dart';
 
 class MessageProvider with ChangeNotifier {
-  FirebaseMessageApi _firebaseMessageApi = FirebaseMessageApi();
+  final FirebaseMessageApi _firebaseMessageApi = FirebaseMessageApi();
 
-  Stream<QuerySnapshot> getUserMessages(String email) {
-    return _firebaseMessageApi.getUserMessages(email);
+  late Stream<QuerySnapshot> _chatRooms;
+  Stream<QuerySnapshot> get chatRooms => _chatRooms;
+
+  MessageProvider() {
+    fetchChatRooms();
   }
 
-  Future<String?> sendMessage(
-      String id, String content, String selectedLupon, String photoUrl) async {
-    return _firebaseMessageApi.createMessage(
-        id, content, selectedLupon, photoUrl);
+  Stream<QuerySnapshot> fetchChatRooms() {
+    _chatRooms = _firebaseMessageApi.getChatRooms();
+    notifyListeners();
+    return _chatRooms;
   }
 
-  Future<String?> messageEveryone(
-      String senderEmail, String content, String name) async {
-    return _firebaseMessageApi.messageEveryone(senderEmail, content, name);
+  Stream<QuerySnapshot> getMessages(String userID, String otherUserID) {
+    return _firebaseMessageApi.getMessages(userID, otherUserID);
   }
 
-  Future<void> deleteOldMessages() async {
-    await _firebaseMessageApi.deleteOldMessages();
+  Future<String> sendMessage(
+    String receiverID,
+    String message,
+  ) async {
+    return _firebaseMessageApi.sendMessage(receiverID, message);
   }
 }

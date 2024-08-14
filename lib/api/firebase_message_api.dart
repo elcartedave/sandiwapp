@@ -1,97 +1,79 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sandiwapp/api/firebase_auth_api.dart';
 import 'package:sandiwapp/api/firebase_user_api.dart';
+import 'package:sandiwapp/models/messageModel.dart';
 
 class FirebaseMessageApi {
   final FirebaseAuthAPI firebaseAuthAPI = FirebaseAuthAPI();
   final FirebaseUserAPI firebaseUserAPI = FirebaseUserAPI();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Stream<QuerySnapshot> getUserMessages(String email) {
-    deleteOldMessages();
+  Stream<QuerySnapshot> getMessages(String userID, otherUserID) {
+    List<String> ids = [userID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join('_');
     return _firestore
-        .collection('messages')
-        .where('receiver', isEqualTo: email)
+        .collection("chat_rooms")
+        .doc(chatRoomID)
+        .collection("messages")
+        .orderBy("timestamp", descending: false)
         .snapshots();
   }
 
-  Future<String?> createMessage(
-      String id, content, selectedLupon, photoUrl) async {
+  Stream<QuerySnapshot> getChatRooms() {
+    return _firestore.collection("chat_rooms").snapshots();
+  }
+
+  Future<String> sendMessage(String receiverID, message,
+      {String? senderID, String? senderEmail, String? senderPhotoUrl}) async {
+    //get current user info
     try {
-      String receiver =
-          await firebaseUserAPI.getEmailOfLuponHead(selectedLupon);
-      print("RECEIVER: $receiver");
-      String sender = await firebaseUserAPI.getNameFromID(id);
-      await _firestore.collection('messages').doc().set({
-        'content': content,
-        'date': Timestamp.fromDate(DateTime.now()),
-        'receiver': receiver,
-        'sender': sender,
-        'photoUrl': photoUrl,
+      final String currentUserID = senderID ?? firebaseAuthAPI.getUserId()!;
+      final String currentUserEmail =
+          senderEmail ?? firebaseAuthAPI.getUserEmail()!;
+      final String currentSenderPhotoUrl = senderPhotoUrl ??
+          await firebaseUserAPI.getPhotoURLFromID(currentUserID);
+      final String receiverPhotoUrl =
+          await firebaseUserAPI.getPhotoURLFromID(receiverID);
+      final Timestamp timestamp = Timestamp.now();
+      List<String> ids = [currentUserID, receiverID];
+      ids.sort(); //any 2 people have same id;
+      String chatRoomID = ids.join('_');
+      //create new message
+      Message newMessage = Message(
+          senderID: currentUserID,
+          receiverID: receiverID,
+          senderEmail: currentUserEmail,
+          message: message,
+          senderPhotoUrl: currentSenderPhotoUrl,
+          receiverPhotoUrl: receiverPhotoUrl,
+          id: chatRoomID,
+          timestamp: timestamp);
+      //construct chat room id
+
+      await _firestore
+          .collection("chat_rooms")
+          .doc(chatRoomID)
+          .collection("messages")
+          .add(newMessage.toMap());
+      await _firestore.collection("chat_rooms").doc(chatRoomID).set({
+        "chatRoomID": chatRoomID,
       });
-      return "";
+      return '';
     } catch (e) {
-      return ("${e.toString()}");
+      return e.toString();
     }
   }
 
-  Future<void> deleteOldMessages() async {
+  Future<void> notify(String receiverId, String message) async {
     try {
-      final DateTime sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
-      final QuerySnapshot querySnapshot = await _firestore
-          .collection('messages')
-          .where('date', isLessThan: Timestamp.fromDate(sevenDaysAgo))
-          .get();
-
-      WriteBatch batch = _firestore.batch();
-
-      for (var doc in querySnapshot.docs) {
-        batch.delete(doc.reference);
-      }
-      print("Deleted message");
-      return batch.commit();
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<String?> messageEveryone(
-      String senderEmail, String content, String name) async {
-    try {
-      late String receiver;
-      if (name.contains("Lupon ng ")) {
-        receiver = await firebaseUserAPI.getEmailOfLuponHead("Pinuno ng $name");
-      } else {
-        receiver = await firebaseUserAPI.getEmailFromName(name);
-      }
-      print("RECEIVER: $receiver");
-      String sender = await firebaseUserAPI.getNameFromEmail(senderEmail);
-      String photoUrl = await firebaseUserAPI.getPhotoURLFromEmail(senderEmail);
-      print("sender: $sender");
-      await _firestore.collection('messages').doc().set({
-        'content': content,
-        'date': Timestamp.fromDate(DateTime.now()),
-        'receiver': receiver,
-        'sender': sender,
-        'photoUrl': photoUrl,
-      });
-      return "";
-    } catch (e) {
-      return ("${e.toString()}");
-    }
-  }
-
-  Future<void> notify(
-      String receiverId, String message, String senderName) async {
-    try {
-      String receiver = await firebaseUserAPI.getEmailFromID(receiverId);
-      print("Receiver: ${receiver}");
-      await _firestore.collection('messages').doc().set({
-        'content': message,
-        'date': Timestamp.fromDate(DateTime.now()),
-        'receiver': receiver,
-        'sender': senderName
-      });
+      await sendMessage(
+        receiverId,
+        message,
+        senderID: "1234Notification1234",
+        senderEmail: "1234Notification1234",
+        senderPhotoUrl: "Notification",
+      );
     } catch (e) {
       print(e.toString());
     }

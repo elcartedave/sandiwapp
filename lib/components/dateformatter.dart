@@ -54,3 +54,20 @@ String shortDateFormatter(DateTime dateTime) {
 
   return '$month $day, $time';
 }
+
+String calculateAge(String birthday) {
+  DateFormat dateFormat = DateFormat('MMMM d, yyyy');
+  DateTime birthDate = dateFormat.parse(birthday);
+  DateTime today = DateTime.now();
+
+  print(birthDate);
+
+  int age = today.year - birthDate.year;
+
+  if (today.month < birthDate.month ||
+      (today.month == birthDate.month && today.day < birthDate.day)) {
+    age--; // Decrement age if birthday hasn't occurred yet this year
+  }
+
+  return age.toString();
+}

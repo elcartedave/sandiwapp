@@ -50,9 +50,9 @@ class FirebaseTaskAPI {
         'date': Timestamp.fromDate(DateTime.now())
       });
       await _firebaseMessageApi.notify(
-          receiverId,
-          "Mayroon kang bagong task, pumunta lamang sa 'Task Assignments' upang makita ito",
-          "Notification");
+        receiverId,
+        "Mayroon kang bagong task, pumunta lamang sa 'Task Assignments' upang makita ito",
+      );
       return '';
     } catch (e) {
       return e.toString();

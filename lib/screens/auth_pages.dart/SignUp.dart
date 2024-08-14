@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:intl/intl.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -56,7 +57,6 @@ class _SignUpState extends State<SignUp> {
   final _birthdayController = TextEditingController();
   final _collegeaddressController = TextEditingController();
   final _homeaddressController = TextEditingController();
-  final _ageController = TextEditingController();
   final _sponsorController = TextEditingController();
   final _batchController = TextEditingController();
   String _phoneNum = '';
@@ -151,51 +151,23 @@ class _SignUpState extends State<SignUp> {
                       obscureText: false,
                       hintText: "Enter your nickname"),
                   const SizedBox(height: 10),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Birthday",
-                              style: blackText,
-                              textAlign: TextAlign.start,
-                            ),
-                            const SizedBox(height: 5),
-                            GestureDetector(
-                              onTap: () => _selectDate(context),
-                              child: AbsorbPointer(
-                                child: MyTextField2(
-                                  controller: _birthdayController,
-                                  obscureText: false,
-                                  hintText: "Enter your birthday",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      Text(
+                        "Birthday",
+                        style: blackText,
+                        textAlign: TextAlign.start,
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Age",
-                              style: blackText,
-                              textAlign: TextAlign.start,
-                            ),
-                            const SizedBox(height: 5),
-                            MyTextField2(
-                              controller: _ageController,
-                              obscureText: false,
-                              hintText: "Enter your age",
-                              keyboardType: TextInputType.number,
-                              isNumber: true,
-                            ),
-                          ],
+                      const SizedBox(height: 5),
+                      GestureDetector(
+                        onTap: () => _selectDate(context),
+                        child: AbsorbPointer(
+                          child: MyTextField2(
+                            controller: _birthdayController,
+                            obscureText: false,
+                            hintText: "Enter your birthday",
+                          ),
                         ),
                       ),
                     ],
@@ -321,7 +293,7 @@ class _SignUpState extends State<SignUp> {
                           "Enter degree program (ex. BS Computer Science)"),
                   const SizedBox(height: 10),
                   Text(
-                    "Sponsor (Put N/A if applicant)",
+                    "Sponsor",
                     style: blackText,
                   ),
                   const SizedBox(height: 5),
@@ -422,7 +394,7 @@ class _SignUpState extends State<SignUp> {
                                     name: _nameController.text,
                                     nickname: _nicknameController.text,
                                     birthday: _birthdayController.text,
-                                    age: _ageController.text,
+                                    age: calculateAge(_birthdayController.text),
                                     contactno: _phoneNum,
                                     collegeAddress:
                                         _collegeaddressController.text,

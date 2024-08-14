@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/models/userModel.dart';
 
 class FirebaseAuthAPI {
@@ -7,6 +8,7 @@ class FirebaseAuthAPI {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<User?> userSignedIn() {
+    updateAge();
     return auth.authStateChanges();
   }
 
@@ -68,6 +70,27 @@ class FirebaseAuthAPI {
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> updateAge() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await _firestore.collection("users").doc(auth.currentUser!.uid).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data();
+        if (data != null && data.containsKey('birthday')) {
+          await _firestore
+              .collection('users')
+              .doc(auth.currentUser!.uid)
+              .update({"age": calculateAge(data['birthday'])});
+          print("Age updated successfully!");
+        }
+      }
+      return;
+    } catch (e) {
+      print('Error fetching name: $e');
+      return;
     }
   }
 

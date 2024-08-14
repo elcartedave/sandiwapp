@@ -5,9 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:sandiwapp/components/showMessageDialog.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/ChatScreen.dart';
 
 class ResidentProfilePage extends StatefulWidget {
   final MyUser user;
@@ -94,19 +95,32 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                                 }
                                 MyUser user = MyUser.fromJson(snapshot.data!
                                     .data() as Map<String, dynamic>);
-                                return InkWell(
-                                  onTap: () async {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (context) => ShowMessageDialog(
-                                            senderEmail: user.email,
-                                            user: widget.user));
-                                  },
-                                  child: Icon(
-                                    Icons.message,
-                                    color: Colors.white,
-                                  ),
-                                );
+                                if (user.id != widget.user.id!) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      String photoURL = await context
+                                          .read<UserProvider>()
+                                          .firebaseService
+                                          .getPhotoURLFromID(user.id!);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ChatPage(
+                                                  myPhotoUrl: photoURL,
+                                                  receiverEmail:
+                                                      widget.user.email,
+                                                  receiverID: widget.user.id!,
+                                                  receiverName:
+                                                      widget.user.name)));
+                                    },
+                                    child: Icon(
+                                      Icons.message,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                } else {
+                                  return Container();
+                                }
                               }),
                         )
                       ],
@@ -168,7 +182,8 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                         children: [
                           buildDetailRow('Nickname:', widget.user.nickname),
                           buildDetailRow('Birthday:', widget.user.birthday),
-                          buildDetailRow('Age:', widget.user.age),
+                          buildDetailRow(
+                              'Age:', calculateAge(widget.user.birthday)),
                           buildDetailRow(
                               'College Address:', widget.user.collegeAddress),
                           buildDetailRow(

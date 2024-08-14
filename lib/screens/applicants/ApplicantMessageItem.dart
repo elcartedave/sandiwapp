@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
-import 'package:sandiwapp/components/messageEveryone.dart';
 import 'package:sandiwapp/models/messageModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
 import 'package:sandiwapp/models/userModel.dart';
@@ -38,22 +36,8 @@ class ApplicantMessageItem extends StatelessWidget {
           return MyUser.fromJson(doc.data() as Map<String, dynamic>);
         }).toList();
 
-        MyUser? senderUser = users.firstWhere(
-          (user) => user.name == message.sender,
-        );
-
         return InkWell(
-          onTap: () {
-            if (doesContain == false) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return MessageEveryone(
-                      name: message.sender, sender: message.receiver);
-                },
-              );
-            }
-          },
+          onTap: () {},
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Container(
@@ -70,17 +54,12 @@ class ApplicantMessageItem extends StatelessWidget {
                     CircleAvatar(
                       backgroundColor: Colors.transparent,
                       radius: 25,
-                      child: senderUser != null && senderUser.photoUrl != ""
-                          ? null
-                          : const Icon(
-                              Icons.account_circle,
-                              size: 50,
-                              color: Colors.black,
-                            ),
-                      backgroundImage:
-                          senderUser != null && senderUser.photoUrl != ""
-                              ? CachedNetworkImageProvider(senderUser.photoUrl!)
-                              : null,
+                      child: const Icon(
+                        Icons.account_circle,
+                        size: 50,
+                        color: Colors.black,
+                      ),
+                      backgroundImage: null,
                     ),
                     SizedBox(width: 10),
                     Expanded(
@@ -91,7 +70,7 @@ class ApplicantMessageItem extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  message.sender,
+                                  message.senderID,
                                   style: GoogleFonts.patrickHand(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
@@ -99,14 +78,14 @@ class ApplicantMessageItem extends StatelessWidget {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                shortDateFormatter(message.date),
+                                shortDateFormatter(message.timestamp.toDate()),
                                 style: GoogleFonts.patrickHand(fontSize: 16),
                               )
                             ],
                           ),
                           SizedBox(height: 4),
                           Text(
-                            message.content,
+                            message.message,
                             style: GoogleFonts.patrickHand(fontSize: 14),
                           ),
                         ],

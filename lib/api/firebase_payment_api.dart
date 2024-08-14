@@ -28,13 +28,13 @@ class FirebasePaymentAPI {
         'amount': ''
       });
       await _firebaseMessageApi.notify(
-          receiver,
-          "Si $sender ay nagpadala ng payment, pumunta lamang sa 'View Payments' upang makita ito",
-          "Notification");
+        receiver,
+        "Si $sender ay nagpadala ng payment, pumunta lamang sa 'View Payments' upang makita ito",
+      );
       await _firebaseMessageApi.notify(
-          firebaseAuthAPI.getUserId()!,
-          "Ang iyong payment ay naipadala na, pakihintay na lamang ang kumpirmasyon ng Lupon ng Pananalapi",
-          "Notification");
+        firebaseAuthAPI.getUserId()!,
+        "Ang iyong payment ay naipadala na, pakihintay na lamang ang kumpirmasyon ng Lupon ng Pananalapi",
+      );
     } catch (e) {
       print(e.toString());
     }
@@ -82,14 +82,14 @@ class FirebasePaymentAPI {
               .update({'paid': true});
         }
         await _firebaseMessageApi.notify(
-            userId,
-            "Ang iyong payment na nagkakahalagang Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala ka nang natitirang balanse!" : "Ikaw ay may balanse pang Php ${newBalance}"}. Paki-acknowledge na lamang ang iyong bagong balanse.",
-            "Lupon ng Pananalapi");
+          userId,
+          "Ang iyong payment na nagkakahalagang Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala ka nang natitirang balanse!" : "Ikaw ay may balanse pang Php ${newBalance}"}. Paki-acknowledge na lamang ang iyong bagong balanse.",
+        );
 
         await _firebaseMessageApi.notify(
-            firebaseAuthAPI.getUserId()!,
-            "Ang payment ni $name na Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala na siyang balanse" : "Siya ay may balanse pang Php ${newBalance}"}",
-            "Notification");
+          firebaseAuthAPI.getUserId()!,
+          "Ang payment ni $name na Php ${amount} ay nakumpirma. ${newBalance == "0" || newBalance == "0.0" ? "Wala na siyang balanse" : "Siya ay may balanse pang Php ${newBalance}"}",
+        );
         return "";
       }
     } catch (e) {

@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
+import 'package:sandiwapp/components/dateformatter.dart';
 import 'package:sandiwapp/components/imageBuffer.dart';
 import 'package:sandiwapp/components/scrollDownAnimation.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -336,7 +337,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           buildInfoRow("Nickname:", user.nickname),
                           buildInfoRow("Email:", user.email),
                           buildInfoRow("Birthday:", user.birthday),
-                          buildInfoRow("Age:", user.age),
+                          buildInfoRow("Age:", calculateAge(user.birthday)),
                           buildInfoRow("Contact Number:", user.contactno),
                           buildInfoRow("Degree Program:", user.degprog),
                           buildInfoRow("College Address:", user.collegeAddress),
@@ -359,17 +360,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           leading: Icon(Icons.info),
                           title: Text(
                             "About",
-                            style: GoogleFonts.patrickHandSc(fontSize: 24),
-                          ),
-                          onTap: () {
-                            // Handle About tap
-                          },
-                          trailing: Icon(Icons.navigate_next),
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.info),
-                          title: Text(
-                            "Election Page",
                             style: GoogleFonts.patrickHandSc(fontSize: 24),
                           ),
                           onTap: () {

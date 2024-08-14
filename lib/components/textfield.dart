@@ -14,6 +14,7 @@ class MyTextField2 extends StatelessWidget {
   final bool? isEmail;
   final bool? isPassword;
   final TextEditingController? password;
+  final FocusNode? focusNode;
 
   const MyTextField2(
       {required this.controller,
@@ -26,6 +27,7 @@ class MyTextField2 extends StatelessWidget {
       this.isEmail,
       this.password,
       this.isPassword,
+      this.focusNode,
       super.key});
 
   @override
@@ -61,6 +63,7 @@ class MyTextField2 extends StatelessWidget {
           }
         },
         cursorColor: Colors.black,
+        focusNode: focusNode,
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(

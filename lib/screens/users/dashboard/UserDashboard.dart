@@ -6,14 +6,13 @@ import 'package:sandiwapp/components/amountBox.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/committeeTracker.dart';
 import 'package:sandiwapp/components/dottedBorder.dart';
-import 'package:sandiwapp/components/messages.dart';
-import 'package:sandiwapp/components/sendMessage.dart';
 import 'package:sandiwapp/components/taskManager.dart';
 import 'package:sandiwapp/models/linksModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/link_provider.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/MessagesList.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
 import 'package:sandiwapp/screens/execs/LuponMembers.dart';
 import 'package:sandiwapp/screens/execs/MeritDemeritPage.dart';
@@ -143,14 +142,14 @@ class _UserDashboardState extends State<UserDashboard> {
                           },
                         ),
                         WhiteButton(
-                          text: "Magmensahe",
+                          text: "Mga Mensahe",
                           onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return SendMessage(user: user);
-                              },
-                            );
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatRoomsPage(
+                                          myPhotoUrl: user.photoUrl!,
+                                        )));
                           },
                         ),
                       ],
@@ -480,12 +479,6 @@ class _UserDashboardState extends State<UserDashboard> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 25),
-                    Text(
-                      'Mensahe/Follow-up:',
-                      style: GoogleFonts.patrickHand(fontSize: 20),
-                    ),
-                    MyMessages()
                   ],
                 ),
               ),

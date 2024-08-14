@@ -157,6 +157,23 @@ class FirebaseUserAPI {
     }
   }
 
+  Future<String> getPhotoURLFromID(String id) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await db.collection("users").doc(id).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data();
+        if (data != null && data.containsKey('photoUrl')) {
+          return data['photoUrl'] as String;
+        }
+      }
+      return '';
+    } catch (e) {
+      print('Error fetching photoURL: $e');
+      return '';
+    }
+  }
+
   Future<bool> isCurrentPinuno() async {
     try {
       DocumentSnapshot<Map<String, dynamic>> docSnapshot =
@@ -406,9 +423,9 @@ class FirebaseUserAPI {
       await db.collection('users').doc(id).update({'balance': newBalance});
       await db.collection("users").doc(id).update({'acknowledged': false});
       await _firebaseMessageApi.notify(
-          id,
-          "Ikaw ay may bagong balanse na Php $newBalance. Paki-acknowledge na lamang ang iyong bagong balanse at pumunta sa 'Bayaran' section upang masettle ito.",
-          "Lupon ng Pananalapi");
+        id,
+        "Ikaw ay may bagong balanse na Php $newBalance. Paki-acknowledge na lamang ang iyong bagong balanse at pumunta sa 'Bayaran' section upang masettle ito.",
+      );
       return '';
     } catch (e) {
       return e.toString();
@@ -419,12 +436,10 @@ class FirebaseUserAPI {
     try {
       if (merit == "Merit") {
         await db.collection('users').doc(id).update({'merit': amount});
-        await _firebaseMessageApi.notify(
-            id, "Ang iyong merit ay naupdate", "Notification");
+        await _firebaseMessageApi.notify(id, "Ang iyong merit ay naupdate");
       } else {
         await db.collection('users').doc(id).update({'demerit': amount});
-        await _firebaseMessageApi.notify(
-            id, "Ang iyong demerit ay naupdate", "Notification");
+        await _firebaseMessageApi.notify(id, "Ang iyong demerit ay naupdate");
       }
       return '';
     } catch (e) {

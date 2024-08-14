@@ -50,10 +50,12 @@ class _SampleCardState extends State<SampleCard> {
                           )));
             },
             onLongPress: () {
-              showDialog(
-                  context: context,
-                  builder: (context) => ShowMessageDialog(
-                      senderEmail: currentUser.email, user: widget.user));
+              if (widget.user.id != currentUser.id!) {
+                showDialog(
+                    context: context,
+                    builder: (context) => ShowMessageDialog(
+                        senderEmail: currentUser.email, user: widget.user));
+              }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

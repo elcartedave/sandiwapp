@@ -7,10 +7,10 @@ import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_auth_provider.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/MessagesList.dart';
 import 'package:sandiwapp/screens/applicants/AllResidentsPage.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantAnnouncement.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantCalendar.dart';
-import 'package:sandiwapp/screens/applicants/ApplicantMessages.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantOrgPage.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantPosts.dart';
 import 'package:sandiwapp/screens/applicants/ApplicantProfilePge.dart';
@@ -212,9 +212,8 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                           ApplicantGrid(
                               icon: Icons.sms,
                               text: "Mga Mensahe",
-                              onTap: () => _navigateToPage(ApplicantMessages(
-                                    userEmail: user.email,
-                                  ))),
+                              onTap: () => _navigateToPage(
+                                  ChatRoomsPage(myPhotoUrl: user.photoUrl!))),
                           ApplicantGrid(
                               icon: Icons.calendar_month,
                               text: "Calendar of Events",
