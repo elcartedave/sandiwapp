@@ -29,7 +29,7 @@ class FirebaseMessageApi {
 
     // Fetch the photoUrl of the otherUserID
     String otherUserPhotoUrl =
-        await firebaseUserAPI.getPhotoURLFromID(otherUserID);
+        await firebaseUserAPI.getPhotoURLFromID(currentUserID);
 
     // Get a reference to the messages collection
     CollectionReference messagesRef = _firestore
@@ -50,7 +50,7 @@ class FirebaseMessageApi {
       String senderID = messageData['senderID'];
 
       // Only update if the senderID is not equal to the currentUserID
-      if (senderID != currentUserID) {
+      if (senderID != otherUserID) {
         batch.update(messageDoc.reference, {
           'senderPhotoUrl': otherUserPhotoUrl,
         });

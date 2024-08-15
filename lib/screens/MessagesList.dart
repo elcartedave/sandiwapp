@@ -43,7 +43,7 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
           }).toList();
 
           if (chatRooms.isEmpty) {
-            return Center(child: Text("No chat rooms available"));
+            return Center(child: Text("No messages yet!"));
           }
 
           return StreamBuilder<List<Map<String, dynamic>>>(

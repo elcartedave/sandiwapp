@@ -26,7 +26,7 @@ class _DeleteActivityState extends State<DeleteActivity> {
         children: [
           ListTile(
             leading: Icon(Icons.delete),
-            title: PatrickHand(text: "Delete Draft", fontSize: 20),
+            title: PatrickHand(text: "Delete Activity", fontSize: 20),
             onTap: () async {
               bool? result = await showDialog(
                   context: context,

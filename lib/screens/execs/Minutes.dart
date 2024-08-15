@@ -94,7 +94,9 @@ class _MinutesState extends State<Minutes> {
                               },
                               onLongPress: () {
                                 if (minutes[index].caption != null &&
-                                    minutes[index].caption != "") {
+                                    minutes[index].caption != "" &&
+                                    widget.isPinuno != null &&
+                                    widget.isPinuno == true) {
                                   showDialog(
                                       context: context,
                                       builder: (context) => ShowMinutesDialog(

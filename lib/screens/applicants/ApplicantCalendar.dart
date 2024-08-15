@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/manageActivity.dart';
 import 'package:sandiwapp/components/textfield.dart';
 import 'package:sandiwapp/components/texts.dart';
 import 'package:sandiwapp/models/activityModel.dart';
@@ -125,10 +126,6 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
     }
   }
 
-  void _refreshData() {
-    _initializeEvents();
-  }
-
   void _showAddActivityDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -143,10 +140,6 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
               key: _formKey,
               child: Column(
                 children: [
-                  PatrickHand(
-                      text:
-                          "Task should be final as it cannot be deleted nor edited",
-                      fontSize: 16),
                   Container(
                       alignment: Alignment.topLeft,
                       child: PatrickHandSC(text: "Title", fontSize: 20)),
@@ -301,7 +294,6 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                   showCustomSnackBar(context,
                                       "Activity successfully added!", 85);
                                   Navigator.pop(context);
-                                  _refreshData();
                                 } else {
                                   showCustomSnackBar(context, message, 85);
                                 }
@@ -390,6 +382,24 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                 selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
                 eventLoader: _getActivitiesForDay,
                 lastDay: DateTime(2101),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, date, events) {
+                    if (events.isNotEmpty) {
+                      return Positioned(
+                        bottom: 4, // Position of the dot in the cell
+                        child: Container(
+                          width: 7, // Customize the dot size
+                          height: 7,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black, // Dot color
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox(); // If no events, return an empty widget
+                  },
+                ),
               ),
               const SizedBox(height: 8),
               Center(
@@ -401,7 +411,9 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
               const SizedBox(height: 5),
               Expanded(
                 child: StreamBuilder(
-                  stream: _activityStream,
+                  stream: context
+                      .watch<ActivityProvider>()
+                      .fetchApplicantActivities(),
                   builder: (context, activitySnapshot) {
                     if (activitySnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -414,8 +426,28 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                       return Center(
                           child: Text("Error: ${activitySnapshot.error}"));
                     }
+                    _events.clear();
+
+                    List<Activity> activities =
+                        activitySnapshot.data!.docs.map((doc) {
+                      return Activity.fromJson(
+                          doc.data() as Map<String, dynamic>);
+                    }).toList();
+
+                    // Add activities to the events map
+                    for (var activity in activities) {
+                      DateTime date = _normalizeDate(activity.date);
+                      CalendarEvent calendarEvent = CalendarEvent(
+                        title: activity.title,
+                        date: activity.date,
+                        content: activity.content,
+                        id: activity.id!,
+                      );
+                      if (_events[date] == null) _events[date] = [];
+                      _events[date]!.add(calendarEvent);
+                    }
                     return StreamBuilder(
-                        stream: _eventsStream,
+                        stream: context.watch<EventProvider>().appEvents,
                         builder: (context, eventSnapshot) {
                           if (eventSnapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -428,6 +460,25 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                             return Center(
                                 child: Text("Error: ${eventSnapshot.error}"));
                           }
+
+                          List<Event> events =
+                              eventSnapshot.data!.docs.map((doc) {
+                            return Event.fromJson(
+                                doc.data() as Map<String, dynamic>);
+                          }).toList();
+
+                          for (var event in events) {
+                            DateTime date = _normalizeDate(event.date);
+                            CalendarEvent calendarEvent = CalendarEvent(
+                              title: event.title,
+                              date: event.date,
+                              content: event.place,
+                              event: event,
+                            );
+                            if (_events[date] == null) _events[date] = [];
+                            _events[date]!.add(calendarEvent);
+                          }
+
                           List<CalendarEvent> activitiesForDay =
                               _getActivitiesForDay(_selectedDay!);
 
@@ -450,6 +501,21 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: ListTile(
+                                        onLongPress: () async {
+                                          if (calendarEvent.event == null) {
+                                            bool? result = await showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    DeleteActivity(
+                                                        id: calendarEvent.id!));
+                                            if (result == true) {
+                                              setState(() {
+                                                activitiesForDay
+                                                    .removeAt(index);
+                                              });
+                                            }
+                                          }
+                                        },
                                         onTap: () {
                                           if (calendarEvent.event != null) {
                                             Navigator.push(

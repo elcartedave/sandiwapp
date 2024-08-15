@@ -59,8 +59,12 @@ class _OrgOverviewState extends State<OrgOverview> {
                     icon: Icons.list,
                     text: "Minutes of the Meetings",
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Minutes()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Minutes(
+                                    isPinuno: false,
+                                  )));
                     }),
               ],
             ),

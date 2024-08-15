@@ -68,7 +68,7 @@ class _UPSSBPageState extends State<UPSSBPage> {
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Ang UP Sandiwa Samahang Bulakenyo ay isang varsitarian oganization ng itinatag noong 1994. ",
+              "Ang UP Sandiwa Samahang Bulakenyo ay isang varsitarian oganization ng itinatag noong 1994. Ito ay itinatag upang pagbuklurin ang mga mag-aaral ng UPLB na nanggaling sa lalawigan ng Bulacan.",
               style: TextStyle(fontFamily: 'Inter', fontSize: 14),
               textAlign: TextAlign.center,
             ),
