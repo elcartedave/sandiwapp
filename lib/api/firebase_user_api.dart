@@ -16,6 +16,23 @@ class FirebaseUserAPI {
         .snapshots();
   }
 
+  Future<String> getLuponofUser() async {
+    try {
+      String id = firebaseService.getUserId()!;
+      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await db.collection("users").doc(id).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data();
+        if (data != null && data.containsKey('lupon')) {
+          return data['lupon'] as String;
+        }
+      }
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Stream<DocumentSnapshot> getSpecificUser(String id) {
     // obtain a stream of specific user document
     return db.collection("users").doc(id).snapshots();
@@ -429,6 +446,24 @@ class FirebaseUserAPI {
       return '';
     } catch (e) {
       return e.toString();
+    }
+  }
+
+  Future<String> updateAttribute(String attribute, String value) async {
+    try {
+      String id = firebaseService.getUserId()!;
+      await db.collection('users').doc(id).update({attribute: value});
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> addBatch(String id, String batch) async {
+    try {
+      await db.collection('users').doc(id).update({'batch': batch});
+    } catch (e) {
+      print(e.toString());
     }
   }
 

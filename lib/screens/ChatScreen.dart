@@ -120,7 +120,10 @@ class _ChatPageState extends State<ChatPage> {
         List<Widget> messageWidgets = [];
         String? previousDate;
 
-        for (var doc in snapshot.data!.docs) {
+        for (var i = 0; i < snapshot.data!.docs.length; i++) {
+          var doc = snapshot.data!.docs[i];
+          bool isLast = i == snapshot.data!.docs.length - 1;
+
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           DateTime messageDate = (data['timestamp'] as Timestamp).toDate();
           String formattedDate = _formatDate(messageDate);
@@ -145,8 +148,9 @@ class _ChatPageState extends State<ChatPage> {
           }
 
           // Add the message item
+
           messageWidgets
-              .add(_buildMessageItem(doc, senderID, widget.myPhotoUrl));
+              .add(_buildMessageItem(doc, senderID, widget.myPhotoUrl, isLast));
         }
 
         return ListView(
@@ -162,8 +166,8 @@ class _ChatPageState extends State<ChatPage> {
     return DateFormat('MMMM d, yyyy').format(date);
   }
 
-  Widget _buildMessageItem(
-      DocumentSnapshot doc, String senderID, String myPhotoUrlFuture) {
+  Widget _buildMessageItem(DocumentSnapshot doc, String senderID,
+      String myPhotoUrlFuture, bool isLast) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     bool isCurrentUser = data['senderID'] == senderID;
 
@@ -181,7 +185,9 @@ class _ChatPageState extends State<ChatPage> {
           if (isCurrentUser)
             Flexible(
                 child: ChatBubble(
+                    isLast: isLast ? true : null,
                     message: data['message'],
+                    seen: data['seen'],
                     date: (data['timestamp'] as Timestamp).toDate(),
                     isCurrentUser: true))
           else
@@ -216,6 +222,7 @@ class _ChatPageState extends State<ChatPage> {
           if (!isCurrentUser)
             Flexible(
                 child: ChatBubble(
+                    seen: data['seen'],
                     message: data['message'],
                     date: (data['timestamp'] as Timestamp).toDate(),
                     isCurrentUser: false)),

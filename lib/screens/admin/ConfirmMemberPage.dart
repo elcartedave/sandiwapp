@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sandiwapp/components/applicantDialog.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/components/texts.dart';
@@ -275,13 +276,19 @@ class _ConfirmMemberPageState extends State<ConfirmMemberPage> {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
                       padding: EdgeInsets.all(10),
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      ResidentProfilePage(user: applicant)));
+                                  builder: (context) => ResidentProfilePage(
+                                      user: applicant, message: false)));
+                        },
+                        onLongPress: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  ApplicantDialog(user: applicant));
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

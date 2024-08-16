@@ -85,6 +85,14 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _activityStream =
+        context.watch<ActivityProvider>().fetchApplicantActivities();
+    _eventsStream = context.watch<EventProvider>().appEvents;
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
@@ -293,6 +301,10 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                 if (message == "") {
                                   showCustomSnackBar(context,
                                       "Activity successfully added!", 85);
+                                  _titleController.clear();
+                                  _contentController.clear();
+                                  _selectedTime = null;
+
                                   Navigator.pop(context);
                                 } else {
                                   showCustomSnackBar(context, message, 85);
@@ -411,9 +423,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
               const SizedBox(height: 5),
               Expanded(
                 child: StreamBuilder(
-                  stream: context
-                      .watch<ActivityProvider>()
-                      .fetchApplicantActivities(),
+                  stream: _activityStream,
                   builder: (context, activitySnapshot) {
                     if (activitySnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -447,7 +457,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                       _events[date]!.add(calendarEvent);
                     }
                     return StreamBuilder(
-                        stream: context.watch<EventProvider>().appEvents,
+                        stream: _eventsStream,
                         builder: (context, eventSnapshot) {
                           if (eventSnapshot.connectionState ==
                               ConnectionState.waiting) {

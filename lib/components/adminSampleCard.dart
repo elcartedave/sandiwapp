@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sandiwapp/components/reassignUserDialog.dart';
 import 'package:sandiwapp/components/styles.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/user_provider.dart';
+import 'package:sandiwapp/screens/users/ResidentsProfilePage.dart';
 
 class AdminSampleCard extends StatefulWidget {
   const AdminSampleCard({required this.user});
@@ -16,7 +19,21 @@ class AdminSampleCard extends StatefulWidget {
 class _AdminSampleCardState extends State<AdminSampleCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ResidentProfilePage(
+                      user: widget.user,
+                      message: false,
+                    )));
+      },
+      onLongPress: () {
+        showDialog(
+            context: context,
+            builder: (context) => ReassignUser(user: widget.user));
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -76,24 +93,56 @@ class _AdminSampleCardState extends State<AdminSampleCard> {
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14, color: Colors.red)),
                   onPressed: () async {
-                    try {
-                      await context
-                          .read<UserProvider>()
-                          .rejectAndDelete(widget.user.email);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Colors.white,
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: Text('Delete Note'),
                           content: Text(
-                            "User successfully deleted!",
-                            style: blackText,
-                          )));
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Colors.white,
-                          content: Text(
-                            "User deletion failed",
-                            style: blackText,
-                          )));
-                    }
+                              'Are you sure you want to delete this user?'),
+                          actions: [
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                            CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              onPressed: () async {
+                                try {
+                                  await context
+                                      .read<UserProvider>()
+                                      .rejectAndDelete(widget.user.email);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.white,
+                                          content: Text(
+                                            "User successfully deleted!",
+                                            style: blackText,
+                                          )));
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.white,
+                                          content: Text(
+                                            "User deletion failed",
+                                            style: blackText,
+                                          )));
+                                }
+                              },
+                              child: Text('Delete',
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               ],

@@ -59,6 +59,19 @@ class FirebaseTaskAPI {
     }
   }
 
+  Future<String> editTask(String id, DateTime dueDate, String content) async {
+    try {
+      await _firestore.collection('tasks').doc(id).update({
+        'dueDate': Timestamp.fromDate(dueDate),
+        'task': content,
+        'status': false,
+      });
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String> deleteTask(String recipient) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
@@ -71,6 +84,16 @@ class FirebaseTaskAPI {
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         await doc.reference.delete();
       }
+
+      return '';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> deleteaTask(String id) async {
+    try {
+      await _firestore.collection("tasks").doc(id).delete();
 
       return '';
     } catch (e) {

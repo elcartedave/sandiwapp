@@ -189,6 +189,7 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
                       final DateTime messageDate =
                           mostRecentMessage['timestamp'].toDate();
                       final String senderID = mostRecentMessage['senderID'];
+                      final bool seen = mostRecentMessage['seen'];
 
                       // Determine if the message is sent by the current user
                       final isSentByMe = senderID == currentUserID;
@@ -240,14 +241,13 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
                                         if (isSentByMe)
                                           TextSpan(
                                             text: "Me: ",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black),
+                                            style:
+                                                TextStyle(color: Colors.black),
                                           ),
                                         TextSpan(
                                           text: messageText,
                                           style: TextStyle(
-                                            fontWeight: isSentByMe
+                                            fontWeight: isSentByMe || seen
                                                 ? FontWeight.normal
                                                 : FontWeight.bold,
                                             color: Colors.black,

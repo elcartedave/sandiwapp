@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sandiwapp/components/button.dart';
 import 'package:sandiwapp/components/customSnackbar.dart';
 import 'package:sandiwapp/components/dateformatter.dart';
+import 'package:sandiwapp/components/showTasksDialog.dart';
 import 'package:sandiwapp/models/taskModel.dart';
 import 'package:sandiwapp/models/userModel.dart';
 import 'package:sandiwapp/providers/task_provider.dart';
@@ -75,8 +76,10 @@ class _ViewTasksState extends State<ViewTasks> {
                         ),
                         value: tasks[index].status,
                         onChanged: (bool? value) {
-                          showCustomSnackBar(
-                              context, "Only the member can edit the task", 30);
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  ShowTaskDialog(task: tasks[index]));
                         },
                       );
                     });

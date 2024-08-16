@@ -11,6 +11,7 @@ class Message {
   final Timestamp timestamp;
   final String? senderPhotoUrl;
   final String? receiverPhotoUrl;
+  final bool? seen;
 
   Message({
     this.id,
@@ -21,10 +22,12 @@ class Message {
     required this.timestamp,
     this.senderPhotoUrl,
     this.receiverPhotoUrl,
+    this.seen,
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'senderID': senderID,
       'senderEmail': senderEmail,
       'receiverID': receiverID,
@@ -32,6 +35,7 @@ class Message {
       'timestamp': timestamp,
       'senderPhotoUrl': senderPhotoUrl,
       'receiverPhotoUrl': receiverPhotoUrl,
+      'seen': seen
     };
   }
 }

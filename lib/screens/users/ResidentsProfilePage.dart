@@ -12,7 +12,8 @@ import 'package:sandiwapp/screens/ChatScreen.dart';
 
 class ResidentProfilePage extends StatefulWidget {
   final MyUser user;
-  const ResidentProfilePage({required this.user, super.key});
+  final bool? message;
+  const ResidentProfilePage({this.message, required this.user, super.key});
 
   @override
   State<ResidentProfilePage> createState() => _ResidentProfilePageState();
@@ -95,7 +96,8 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                                 }
                                 MyUser user = MyUser.fromJson(snapshot.data!
                                     .data() as Map<String, dynamic>);
-                                if (user.id != widget.user.id!) {
+                                if (user.id != widget.user.id! &&
+                                    widget.message == null) {
                                   return InkWell(
                                     onTap: () async {
                                       String photoURL = await context
@@ -192,7 +194,14 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                               'Degree Program:', widget.user.degprog),
                           buildDetailRow('Sponsor:', widget.user.sponsor),
                           buildDetailRow('Batch:', widget.user.batch),
-                          buildDetailRow('Lupon:', widget.user.lupon!),
+                          !widget.user.position!.contains("Aplikante")
+                              ? buildDetailRow('Lupon:', widget.user.lupon!)
+                              : Container(),
+                          buildDetailRow(
+                              'Position:',
+                              widget.user.position!.contains("Pinuno")
+                                  ? "Pinuno"
+                                  : widget.user.position!),
                         ],
                       ),
                     ),

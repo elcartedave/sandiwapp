@@ -34,4 +34,12 @@ class TaskProvider with ChangeNotifier {
   Future<String> deleteTask(String email) async {
     return firebaseService.deleteTask(email);
   }
+
+  Future<String> editTask(String id, DateTime dueDate, String content) {
+    return firebaseService.editTask(id, dueDate, content);
+  }
+
+  Future<String> deleteaTask(String id) async {
+    return firebaseService.deleteaTask(id);
+  }
 }

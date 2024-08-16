@@ -145,4 +145,12 @@ class UserProvider with ChangeNotifier {
   Future<String> updateMerit(String id, String merit, String amount) async {
     return firebaseService.updateMerit(id, merit, amount);
   }
+
+  Future<String> editAttribute(String attribute, String value) async {
+    return firebaseService.updateAttribute(attribute, value);
+  }
+
+  Future<void> addBatch(String id, String batch) async {
+    return firebaseService.addBatch(id, batch);
+  }
 }

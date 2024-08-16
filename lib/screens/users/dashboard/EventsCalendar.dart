@@ -58,7 +58,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
         context.read<ActivityProvider>().fetchActivities(widget.lupon);
     _eventsStream = context.read<EventProvider>().events;
     _formsStream = context.read<FormsProvider>().forms;
-    _tasksStream = context.read<TaskProvider>().fetchTasks();
+    _tasksStream = context.read<TaskProvider>().tasks;
     _initializeEvents();
   }
 
@@ -139,6 +139,16 @@ class _EventsCalendarState extends State<EventsCalendar> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _activityStream =
+        context.watch<ActivityProvider>().fetchActivities(widget.lupon);
+    _eventsStream = context.watch<EventProvider>().fetchEvents();
+    _formsStream = context.watch<FormsProvider>().fetchForms();
+    _tasksStream = context.watch<TaskProvider>().fetchTasks();
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -342,9 +352,14 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                     .createActivity(newActivity);
                                 if (message == "") {
                                   showCustomSnackBar(context,
-                                      "Activity successfully added!", 85);
+                                      "Activity Successfully Added!", 85);
+                                  _selectedTime = null;
+                                  setState(() {
+                                    _titleController.clear();
+                                    _contentController.clear();
+                                  });
+
                                   Navigator.pop(context);
-                                  // _refreshData();
                                 } else {
                                   showCustomSnackBar(context, message, 85);
                                 }
@@ -461,9 +476,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
               const SizedBox(height: 5),
               Expanded(
                 child: StreamBuilder(
-                  stream: context
-                      .watch<ActivityProvider>()
-                      .fetchActivities(widget.lupon),
+                  stream: _activityStream,
                   builder: (context, activitySnapshot) {
                     if (activitySnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -499,7 +512,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
                     }
 
                     return StreamBuilder(
-                      stream: context.watch<EventProvider>().events,
+                      stream: _eventsStream,
                       builder: (context, eventSnapshot) {
                         if (eventSnapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -532,7 +545,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
                         }
 
                         return StreamBuilder(
-                            stream: context.watch<TaskProvider>().fetchTasks(),
+                            stream: _tasksStream,
                             builder: (context, taskSnapshot) {
                               if (taskSnapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -567,9 +580,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
                               }
 
                               return StreamBuilder(
-                                  stream: context
-                                      .watch<FormsProvider>()
-                                      .fetchForms(),
+                                  stream: _formsStream,
                                   builder: (context, formSnapshot) {
                                     if (formSnapshot.connectionState ==
                                         ConnectionState.waiting) {

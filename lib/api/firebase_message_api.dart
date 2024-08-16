@@ -13,6 +13,7 @@ class FirebaseMessageApi {
     ids.sort();
     String chatRoomID = ids.join('_');
     updateSenderPhotoUrl(userID, otherUserID);
+    seenMessage(userID, otherUserID);
     return _firestore
         .collection("chat_rooms")
         .doc(chatRoomID)
@@ -61,6 +62,43 @@ class FirebaseMessageApi {
     await batch.commit();
   }
 
+  Future<void> seenMessage(String currentUserID, String otherUserID) async {
+    List<String> ids = [currentUserID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join('_');
+
+    // Fetch the photoUrl of the otherUserID
+
+    // Get a reference to the messages collection
+    CollectionReference messagesRef = _firestore
+        .collection("chat_rooms")
+        .doc(chatRoomID)
+        .collection("messages");
+
+    // Fetch all the messages
+    QuerySnapshot messagesSnapshot = await messagesRef.get();
+
+    // Create a batch for the updates
+    WriteBatch batch = _firestore.batch();
+
+    // Iterate over each message document
+    for (QueryDocumentSnapshot messageDoc in messagesSnapshot.docs) {
+      Map<String, dynamic> messageData =
+          messageDoc.data() as Map<String, dynamic>;
+      String senderID = messageData['senderID'];
+
+      // Only update if the senderID is not equal to the currentUserID
+      if (senderID != otherUserID) {
+        batch.update(messageDoc.reference, {
+          'seen': true,
+        });
+      }
+    }
+
+    // Commit the batch
+    await batch.commit();
+  }
+
   Stream<QuerySnapshot> getChatRooms() {
     return _firestore.collection("chat_rooms").snapshots();
   }
@@ -88,7 +126,7 @@ class FirebaseMessageApi {
           message: message,
           senderPhotoUrl: currentSenderPhotoUrl,
           receiverPhotoUrl: receiverPhotoUrl,
-          id: chatRoomID,
+          seen: false,
           timestamp: timestamp);
       //construct chat room id
 
