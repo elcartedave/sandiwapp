@@ -17,7 +17,10 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ApplicantCalendar extends StatefulWidget {
-  const ApplicantCalendar({super.key});
+  final String userID;
+  final DateTime selectedDay;
+  const ApplicantCalendar(
+      {required this.selectedDay, required this.userID, super.key});
 
   @override
   State<ApplicantCalendar> createState() => _ApplicantCalendarState();
@@ -25,8 +28,8 @@ class ApplicantCalendar extends StatefulWidget {
 
 class _ApplicantCalendarState extends State<ApplicantCalendar> {
   DateTime today = DateTime.now();
-  DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -39,11 +42,11 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
+    _selectedDay = widget.selectedDay;
     _events = {};
     _activityStream =
         context.read<ActivityProvider>().fetchApplicantActivities();
-    _eventsStream = context.read<EventProvider>().appEvents;
+    _eventsStream = context.read<EventProvider>().fetchAppEvents();
     _initializeEvents();
   }
 
@@ -89,7 +92,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
     super.didChangeDependencies();
     _activityStream =
         context.watch<ActivityProvider>().fetchApplicantActivities();
-    _eventsStream = context.watch<EventProvider>().appEvents;
+    _eventsStream = context.watch<EventProvider>().fetchAppEvents();
   }
 
   @override
@@ -526,9 +529,9 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                             }
                                           }
                                         },
-                                        onTap: () {
+                                        onTap: () async {
                                           if (calendarEvent.event != null) {
-                                            Navigator.push(
+                                            bool? result = await Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
@@ -540,6 +543,19 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                                 ),
                                               ),
                                             );
+                                            if (result != null &&
+                                                result == true) {
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ApplicantCalendar(
+                                                            userID:
+                                                                widget.userID,
+                                                            selectedDay:
+                                                                _selectedDay!,
+                                                          )));
+                                            }
                                           }
                                         },
                                         leading: Text(
@@ -557,7 +573,8 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                                                     fontWeight:
                                                         FontWeight.w600)),
                                             PatrickHand(
-                                                text: calendarEvent.content!,
+                                                text:
+                                                    "${calendarEvent.content!}${calendarEvent.event != null ? " -  ${calendarEvent.event!.attendees!.contains(widget.userID) ? "Going" : "Not Going"}" : ""}",
                                                 fontSize: 12)
                                           ],
                                         ),

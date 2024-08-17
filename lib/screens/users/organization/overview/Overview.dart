@@ -4,6 +4,7 @@ import 'package:sandiwapp/components/orgOverviewMenu.dart';
 import 'package:sandiwapp/screens/execs/Minutes.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Kasaysayan.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Konstitusyon.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrgOverview extends StatefulWidget {
   const OrgOverview({super.key});
@@ -54,7 +55,12 @@ class _OrgOverviewState extends State<OrgOverview> {
                 OrgOverviewMenu(
                     icon: Icons.folder, text: "UPSSB Repository", onTap: () {}),
                 OrgOverviewMenu(
-                    icon: Icons.school, text: "Acad Drive", onTap: () {}),
+                    icon: Icons.school,
+                    text: "Acad Drive",
+                    onTap: () {
+                      launchUrl(Uri.parse(
+                          "https://drive.google.com/drive/folders/1U5TnT6UZLNR0yODkm2f4CSt3p-Hkzf6M?usp=drive_link"));
+                    }),
                 OrgOverviewMenu(
                     icon: Icons.list,
                     text: "Minutes of the Meetings",

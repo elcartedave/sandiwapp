@@ -217,8 +217,9 @@ class _ApplicantHomeState extends State<ApplicantHome> {
                           ApplicantGrid(
                               icon: Icons.calendar_month,
                               text: "Calendar of Events",
-                              onTap: () =>
-                                  _navigateToPage(ApplicantCalendar())),
+                              onTap: () => _navigateToPage(ApplicantCalendar(
+                                  userID: user.id!,
+                                  selectedDay: DateTime.now()))),
                         ],
                       ),
                       const SizedBox(height: 10),

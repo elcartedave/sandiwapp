@@ -25,10 +25,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EventsCalendar extends StatefulWidget {
   final String lupon;
-
+  final DateTime selectedDay;
   final bool isPinuno;
+  final String userID;
   const EventsCalendar(
-      {required this.isPinuno, required this.lupon, super.key});
+      {required this.selectedDay,
+      required this.userID,
+      required this.isPinuno,
+      required this.lupon,
+      super.key});
 
   @override
   State<EventsCalendar> createState() => _EventsCalendarState();
@@ -52,13 +57,13 @@ class _EventsCalendarState extends State<EventsCalendar> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
+    _selectedDay = widget.selectedDay;
     _events = {};
     _activityStream =
         context.read<ActivityProvider>().fetchActivities(widget.lupon);
-    _eventsStream = context.read<EventProvider>().events;
-    _formsStream = context.read<FormsProvider>().forms;
-    _tasksStream = context.read<TaskProvider>().tasks;
+    _eventsStream = context.read<EventProvider>().fetchEvents();
+    _formsStream = context.read<FormsProvider>().fetchForms();
+    _tasksStream = context.read<TaskProvider>().fetchTasks();
     _initializeEvents();
   }
 
@@ -665,10 +670,11 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                                       }
                                                     }
                                                   },
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     if (calendarEvent.event !=
                                                         null) {
-                                                      Navigator.push(
+                                                      bool? result =
+                                                          await Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
@@ -681,6 +687,21 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                                           ),
                                                         ),
                                                       );
+                                                      if (result != null &&
+                                                          result == true) {
+                                                        Navigator.pushReplacement(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) => EventsCalendar(
+                                                                    userID: widget
+                                                                        .userID,
+                                                                    isPinuno: widget
+                                                                        .isPinuno,
+                                                                    selectedDay:
+                                                                        _selectedDay!,
+                                                                    lupon: widget
+                                                                        .lupon)));
+                                                      }
                                                     }
                                                     if (calendarEvent.form !=
                                                         null) {
@@ -717,8 +738,8 @@ class _EventsCalendarState extends State<EventsCalendar> {
                                                                       FontWeight
                                                                           .w600)),
                                                       Linkable(
-                                                        text: calendarEvent
-                                                            .content!,
+                                                        text:
+                                                            "${calendarEvent.content!}${calendarEvent.event != null ? " -  ${calendarEvent.event!.attendees!.contains(widget.userID) ? "Going" : "Not Going"}" : ""}",
                                                         linkColor: Colors.black,
                                                         style: GoogleFonts
                                                             .patrickHand(

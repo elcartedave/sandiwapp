@@ -34,6 +34,7 @@ class _ViewMinutesState extends State<ViewMinutes> {
       _controller = QuillController(
         document: doc,
         selection: const TextSelection.collapsed(offset: 0),
+        readOnly: true,
       );
     });
   }
@@ -57,6 +58,7 @@ class _ViewMinutesState extends State<ViewMinutes> {
                     text: dateFormatter(widget.minutes.date), fontSize: 16),
                 const SizedBox(height: 10),
                 QuillEditor.basic(
+                  controller: _controller,
                   configurations: QuillEditorConfigurations(
                     readOnlyMouseCursor: MouseCursor.defer,
                     disableClipboard: true,
@@ -68,7 +70,6 @@ class _ViewMinutesState extends State<ViewMinutes> {
                     padding: EdgeInsets.zero,
                     autoFocus: false,
                     expands: false,
-                    controller: _controller,
                   ),
                 ),
               ],

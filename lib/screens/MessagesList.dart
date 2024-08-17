@@ -108,6 +108,7 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
                             mostRecentMessage['message'] ?? "No message";
                         final DateTime messageDate =
                             mostRecentMessage['timestamp'].toDate();
+                        final bool seen = mostRecentMessage['seen'];
 
                         return ListTile(
                           leading: CircleAvatar(
@@ -133,7 +134,8 @@ class _ChatRoomsPageState extends State<ChatRoomsPage> {
                                       TextSpan(
                                         text: messageText,
                                         style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight:
+                                              seen ? null : FontWeight.bold,
                                           color: Colors.black,
                                         ),
                                       ),

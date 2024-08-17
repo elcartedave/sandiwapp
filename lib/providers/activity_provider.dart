@@ -9,6 +9,9 @@ class ActivityProvider with ChangeNotifier {
 
   late Stream<QuerySnapshot> _allActivitiesStream;
   Stream<QuerySnapshot> get allActivities => _allActivitiesStream;
+
+  late Stream<QuerySnapshot> _appActivitiesStream;
+  Stream<QuerySnapshot> get appActivities => _appActivitiesStream;
   FirebaseActivityAPI firebaseService = FirebaseActivityAPI();
 
   ActivityProvider() {
@@ -23,7 +26,8 @@ class ActivityProvider with ChangeNotifier {
 
   Stream<QuerySnapshot> fetchApplicantActivities() {
     deletePastActivities();
-    return firebaseService.getApplicantActivities();
+    _appActivitiesStream = firebaseService.getApplicantActivities();
+    return _appActivitiesStream;
   }
 
   Stream<QuerySnapshot> fetchAllActivities() {

@@ -193,7 +193,9 @@ class _ResidentProfilePageState extends State<ResidentProfilePage> {
                           buildDetailRow(
                               'Degree Program:', widget.user.degprog),
                           buildDetailRow('Sponsor:', widget.user.sponsor),
-                          buildDetailRow('Batch:', widget.user.batch),
+                          !widget.user.position!.contains("Aplikante")
+                              ? buildDetailRow('Batch:', widget.user.batch)
+                              : Container(),
                           !widget.user.position!.contains("Aplikante")
                               ? buildDetailRow('Lupon:', widget.user.lupon!)
                               : Container(),

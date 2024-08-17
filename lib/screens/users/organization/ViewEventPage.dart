@@ -364,7 +364,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                           await context
                               .read<EventProvider>()
                               .toggleGoing(widget.event.id!, true);
-                          Navigator.pop(context);
+                          Navigator.of(context).pop(true);
                           showCustomSnackBar(
                               context, "You are going to the event", 85);
                         },
@@ -389,7 +389,7 @@ class _ViewEventPageState extends State<ViewEventPage> {
                           await context
                               .read<EventProvider>()
                               .toggleGoing(widget.event.id!, false);
-                          Navigator.pop(context);
+                          Navigator.of(context).pop(true);
                           showCustomSnackBar(
                               context, "You are not going to the event", 85);
                         },

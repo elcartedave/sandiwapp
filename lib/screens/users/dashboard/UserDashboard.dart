@@ -70,8 +70,10 @@ class _UserDashboardState extends State<UserDashboard> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => EventsCalendar(
+                              userID: user.id!,
                               isPinuno: user.position!.contains("Pinuno"),
                               lupon: user.lupon!,
+                              selectedDay: DateTime.now(),
                             )));
               },
             },
