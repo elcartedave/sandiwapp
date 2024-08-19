@@ -28,7 +28,8 @@ class _OrgPostsState extends State<OrgPosts> {
   Widget build(BuildContext context) {
     Future<bool> isCurrentPinuno =
         context.read<UserProvider>().isCurrentPinuno();
-    Stream<QuerySnapshot> _postsStream = context.watch<LinkProvider>().posts;
+    Stream<QuerySnapshot> _postsStream =
+        context.watch<LinkProvider>().fetchPosts();
 
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 16, 8, 16),
@@ -148,6 +149,7 @@ class _OrgPostsState extends State<OrgPosts> {
           }
         },
         child: AnyLinkPreview.builder(
+          key: UniqueKey(),
           link: url,
           itemBuilder: (context, metadata, imageProvider, _) => Container(
             child: Column(

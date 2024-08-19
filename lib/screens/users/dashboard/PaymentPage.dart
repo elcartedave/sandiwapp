@@ -60,7 +60,7 @@ class _PaymentPageState extends State<PaymentPage> {
             child: Column(
               children: [
                 Text(
-                  "Ipadala lamang ang kakulangan sa isa sa mga accounts na ito",
+                  "Ipadala lamang ang kakulangan sa isa sa mga accounts na ito:",
                   style: GoogleFonts.patrickHand(fontSize: 20),
                 ),
                 Container(
@@ -68,9 +68,8 @@ class _PaymentPageState extends State<PaymentPage> {
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("GCash: 09123456789"),
-                      Text("BPI: 09123456789"),
-                      Text("Landbank: 09123456789")
+                      Text("GCash: 09696241898 -  Ianna Nicole S."),
+                      Text("Landbank: 1896 5608 47 - Ianna Nicole C Sabijon")
                     ],
                   ),
                 ),

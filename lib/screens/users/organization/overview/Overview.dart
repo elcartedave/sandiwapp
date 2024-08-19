@@ -53,7 +53,12 @@ class _OrgOverviewState extends State<OrgOverview> {
                               builder: (context) => Konstitusyon()));
                     }),
                 OrgOverviewMenu(
-                    icon: Icons.folder, text: "UPSSB Repository", onTap: () {}),
+                    icon: Icons.folder,
+                    text: "UPSSB Repository",
+                    onTap: () {
+                      launchUrl(Uri.parse(
+                          "https://drive.google.com/drive/folders/0AOPcIAhJVC6dUk9PVA"));
+                    }),
                 OrgOverviewMenu(
                     icon: Icons.school,
                     text: "Acad Drive",

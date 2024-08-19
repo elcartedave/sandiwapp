@@ -152,6 +152,7 @@ class _ApplicantPostsPageState extends State<ApplicantPostsPage> {
               ),
               const SizedBox(height: 8),
               AnyLinkPreview.builder(
+                key: UniqueKey(),
                 link: url,
                 itemBuilder: (context, metadata, imageProvider, _) => Container(
                   child: Column(

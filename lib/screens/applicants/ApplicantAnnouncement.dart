@@ -73,7 +73,10 @@ class _ApplicantAnnouncementState extends State<ApplicantAnnouncement> {
                     builder: (context, announcementSnapshot) {
                       if (announcementSnapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.black,
+                        ));
                       }
                       if (announcementSnapshot.hasError) {
                         return Center(

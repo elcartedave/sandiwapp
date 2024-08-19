@@ -206,6 +206,9 @@ class _ShowDeletePostDialogState extends State<ShowDeletePostDialog> {
                         if (message == "") {
                           showCustomSnackBar(
                               context, "Post Successfully Deleted!", 85);
+                          setState(() {
+                            _isLoading = false;
+                          });
                           Navigator.pop(context);
                         } else {
                           showCustomSnackBar(context, message, 85);
