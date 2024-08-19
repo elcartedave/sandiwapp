@@ -53,16 +53,19 @@ class _EventsCalendarState extends State<EventsCalendar> {
   late Stream<QuerySnapshot> _eventsStream;
   late Stream<QuerySnapshot> _formsStream;
   late Stream<QuerySnapshot> _tasksStream;
+  int rebuildCount = 0;
 
   @override
   void initState() {
+    _rebuild(); // This triggers the rebuild safely outside the build method
+
     super.initState();
     _selectedDay = widget.selectedDay;
     _events = {};
     _activityStream =
         context.read<ActivityProvider>().fetchActivities(widget.lupon);
     _eventsStream = context.read<EventProvider>().fetchEvents();
-    _formsStream = context.read<FormsProvider>().fetchForms();
+    _formsStream = context.read<FormsProvider>().forms;
     _tasksStream = context.read<TaskProvider>().fetchTasks();
     _initializeEvents();
   }
@@ -113,18 +116,6 @@ class _EventsCalendarState extends State<EventsCalendar> {
         _events[date]!.add(calendarEvent);
       }
 
-      for (var myEvent in myEvents) {
-        DateTime date = _normalizeDate(myEvent.date);
-        CalendarEvent calendarEvent = CalendarEvent(
-          title: myEvent.title,
-          date: myEvent.date,
-          event: myEvent,
-          content: myEvent.place,
-        );
-        if (_events[date] == null) _events[date] = [];
-        _events[date]!.add(calendarEvent);
-      }
-
       for (var myForm in myForms) {
         DateTime date = _normalizeDate(myForm.date);
         CalendarEvent calendarEvent = CalendarEvent(
@@ -132,6 +123,18 @@ class _EventsCalendarState extends State<EventsCalendar> {
           date: myForm.date,
           content: myForm.url,
           form: myForm,
+        );
+        if (_events[date] == null) _events[date] = [];
+        _events[date]!.add(calendarEvent);
+      }
+
+      for (var myEvent in myEvents) {
+        DateTime date = _normalizeDate(myEvent.date);
+        CalendarEvent calendarEvent = CalendarEvent(
+          title: myEvent.title,
+          date: myEvent.date,
+          event: myEvent,
+          content: myEvent.place,
         );
         if (_events[date] == null) _events[date] = [];
         _events[date]!.add(calendarEvent);
@@ -188,6 +191,19 @@ class _EventsCalendarState extends State<EventsCalendar> {
       return _events[normalizedDay]!;
     } else {
       return [];
+    }
+  }
+
+  void _rebuild() {
+    if (rebuildCount < 10) {
+      rebuildCount++;
+      print("Rebuilt! Count: $rebuildCount");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _focusedDay = DateTime.now();
+        });
+      });
     }
   }
 
@@ -455,6 +471,7 @@ class _EventsCalendarState extends State<EventsCalendar> {
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, date, events) {
                     if (events.isNotEmpty) {
+                      _rebuild();
                       return Positioned(
                         bottom: 4, // Position of the dot in the cell
                         child: Container(

@@ -36,12 +36,14 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
   late Map<DateTime, List<CalendarEvent>> _events;
   TimeOfDay? _selectedTime;
   bool _isLoading = false;
+  int rebuildCount = 0;
 
   late Stream<QuerySnapshot> _activityStream;
   late Stream<QuerySnapshot> _eventsStream;
   @override
   void initState() {
     super.initState();
+    _rebuild();
     _selectedDay = widget.selectedDay;
     _events = {};
     _activityStream =
@@ -100,6 +102,19 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  void _rebuild() {
+    if (rebuildCount < 10) {
+      rebuildCount++;
+      print("Rebuilt! Count: $rebuildCount");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _focusedDay = DateTime.now();
+        });
+      });
+    }
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -400,6 +415,7 @@ class _ApplicantCalendarState extends State<ApplicantCalendar> {
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, date, events) {
                     if (events.isNotEmpty) {
+                      _rebuild();
                       return Positioned(
                         bottom: 4, // Position of the dot in the cell
                         child: Container(

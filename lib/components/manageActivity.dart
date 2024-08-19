@@ -82,6 +82,9 @@ class _ShowDeleteActivityDialogState extends State<ShowDeleteActivityDialog> {
                         if (message == "") {
                           showCustomSnackBar(
                               context, "Activity Successfully Deleted!", 80);
+                          setState(() {
+                            _isLoading = false;
+                          });
                           Navigator.of(context).pop(true);
                         } else {
                           showCustomSnackBar(context, message, 80);
