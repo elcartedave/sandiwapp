@@ -185,7 +185,9 @@ class _OrgPostsState extends State<OrgPosts> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       metadata.title == null ||
-                              metadata.title == "UP Sandiwa Samahang Bulakenyo"
+                              metadata.title ==
+                                  "UP Sandiwa Samahang Bulakenyo" ||
+                              metadata.title == "Pangcat"
                           ? Text(
                               link.title,
                               style: GoogleFonts.patrickHand(

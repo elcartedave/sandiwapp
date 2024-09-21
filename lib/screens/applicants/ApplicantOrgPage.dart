@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sandiwapp/components/animatedButton.dart';
 import 'package:sandiwapp/components/texts.dart';
+import 'package:sandiwapp/screens/applicants/ApplicantOrgEvents.dart';
 import 'package:sandiwapp/screens/applicants/Execs.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Kasaysayan.dart';
 import 'package:sandiwapp/screens/users/organization/overview/Konstitusyon.dart';
@@ -132,8 +133,8 @@ class _ApplicantOrgPageState extends State<ApplicantOrgPage> {
                   order: 1,
                   isPressed: _isPressed3,
                   icon: Icons.list_alt,
-                  text: "Mga Lupon at Katungkulan",
-                  onTap: () => _navigateToPage(Konstitusyon(), 3),
+                  text: "Mga Aktibidad ng Organisasyon",
+                  onTap: () => _navigateToPage(Applicantorgevents(), 3),
                 ),
               ),
               const SizedBox(height: 10),
